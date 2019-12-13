@@ -1,0 +1,46 @@
+[
+  {
+    "img": "fay.png",
+    "title": "Fay's Salon",
+    "date": "Oct 2019",
+    "role": "Designer & Full Stack",
+    "links": [
+      {
+        "text": "Visit Site",
+        "link": "https://www.google.com"
+      }
+    ]
+  },
+  {
+    "img": "kic.png",
+    "title": "Kelowna Islamic Center",
+    "date": "Aug 2019",
+    "role": "Android / iOS / Full Stack",
+    "links": [
+      {
+        "text": "Google Play",
+        "link": "https://play.google.com/store/apps/details?id=com.kelownamasjid.android.app&showAllReviews=true"
+      },
+      {
+        "text": "App Store",
+        "link": "https://apps.apple.com/us/app/kelowna-islamic-center/id1479503537?ls=1"
+      },
+      {
+        "text": "Site Unavailable",
+        "link": null
+      },
+    ]
+  },
+  {
+    "img": "msa.png",
+    "title": "Muslim Student Association",
+    "date": "Nov 2017",
+    "role": "Designer & Full Stack",
+    "links": [
+      {
+        "text": "Visit Site",
+        "link": "https://www.google.com"
+      }
+    ]
+  },
+]
