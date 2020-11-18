@@ -1,10 +1,26 @@
 [
   {
     "id": 1,
+    "title": "Grillzzy Foods",
+    "date": "Nov 2020",
+    "roles": [
+      "Website Designer",
+      "Front End Developer"
+    ],
+    "links": [
+      {
+        "type": "web",
+        "text": "Visit Site",
+        "link": "https://grillzzy.com"
+      }
+    ]
+  },
+  {
+    "id": 2,
     "title": "Kelowna Wholesale Auto",
     "date": "Jan 2020",
     "roles": [
-      "Web Designer",
+      "Website Designer",
       "Full Stack Developer"
     ],
     "links": [
@@ -16,11 +32,11 @@
     ]
   },
   {
-    "id": 2,
+    "id": 3,
     "title": "Fay's Salon",
     "date": "Oct 2019",
     "roles": [
-      "Web Designer",
+      "Website Designer",
       "Full Stack Developer"
     ],
     "links": [
@@ -32,11 +48,11 @@
     ]
   },
   {
-    "id": 3,
+    "id": 4,
     "title": "Kelowna Islamic Center",
     "date": "July 2019",
     "roles": [
-      "Web Designer & App Designer",
+      "Webapp & Mobile App Designer",
       "Android App Developer",
       "iOS App Developer",
       "Full Stack Web App Developer"
@@ -60,11 +76,11 @@
     ]
   },
   {
-    "id": 4,
+    "id": 5,
     "title": "Muslim Student Association (UBCO)",
     "date": "Nov 2017",
     "roles": [
-      "Web Designer",
+      "Website Designer",
       "Full Stack Developer"
     ],
     "links": [
