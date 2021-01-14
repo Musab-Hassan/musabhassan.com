@@ -410,6 +410,8 @@ body {
 #content-container .work-list ul .list-item img {
   z-index: 1;
   height: 110%;
+  width: 110%;
+  object-fit: cover;
   position: absolute;
   top: 50%;
   left: 50%;
