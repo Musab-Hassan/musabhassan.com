@@ -4,398 +4,569 @@ $c_light: #F4F6F8
 $c_dark_grey: #212B36
 
 @font-face
-  font-family: "Nexa Bold"
-  src: url(fonts/NexaBold.woff)
+    font-family: "Nexa Bold"
+    src: url(fonts/NexaBold.woff)
 
 @font-face
-  font-family: "Nexa Light"
-  src: url(fonts/NexaLight.woff)
+    font-family: "Nexa Light"
+    src: url(fonts/NexaLight.woff)
 
 *
-  margin: 0
-  padding: 0
-
-body
-  background-color: $c_light
-  overflow-x: hidden
-
-@media only screen and (max-width: 1250px)
-  #listing-container .content-wrapper
-    .item-date
-      font-size: 6vw !important
-    .item-title
-      font-size: 9vw !important
-      p
-        overflow-wrap: break-word !important
-
-#listing-container.moving *
-  white-space: nowrap
-
-
-#listing-container
-  position: fixed
-  top: 0
-  left: 0
-  width: 0
-  height: 100vh
-  z-index: 10
-  background-color: $c_dark_grey
-  overflow: hidden
-
-  *
-    white-space: normal
-
-  .content-wrapper
-    padding: 12vh 7vw
-    padding-left: 0vw
-    box-sizing: border-box
-    width: 100%
-    height: 100%
-    display: flex
-    flex-direction: column
-    justify-content: center
-
-    .close-container
-      position: absolute
-      top: 12vh
-      font-size: 8vh
-      color: $c_light
-      font-family: "Questrial", sans-serif
-      cursor: pointer
-
-    .item-title
-      font-family: "Nexa Bold", sans-serif
-      font-size: 9vh
-      letter-spacing: 0.5vh
-      text-transform: uppercase
-      position: relative
-      color: $c_light
-      font-family: "Nexa Bold", sans-serif
-      font-size: 10vh
-      letter-spacing: 0.5vh
-      text-transform: uppercase
-      position: relative
-      -ms-word-break: break-all
-      word-break: break-all
-
-    .item-date
-      color: $c_light
-      font-family: "Nexa Light", sans-serif
-      font-size: 5vh
-      letter-spacing: 0.5vh
-      text-transform: uppercase
-      position: relative
-
-    .role-container
-      margin-top: 3vh
-
-      ul
-        list-style-type: none
-
-      li.role
-        color: $c_light
-        font-family: "Nexa Light", sans-serif
-        font-size: 2vh
-        letter-spacing: 0.5vh
-        text-transform: uppercase
-        line-height: 200%
-
-        &:before
-          content: "> "
-
-    .links
-      position: absolute
-      bottom: 12vh
-      font-family: "Questrial", sans-serif
-      text-transform: uppercase
-      letter-spacing: 0.4vh
-
-#content-container
-  height: 100vh
-  width: 100vw
-  padding: 12vh 7vw
-  box-sizing: border-box
-  position: relative
-
-  .load
-    width: 100%
-    height: 100%
-    display: flex
-    flex-direction: column
-    justify-content: center
-    text-align: center
-
-    .loader
-      width: 100%
-      height: 100%
-      display: flex
-      flex-direction: column
-      justify-content: center
-      text-align: center
-      font-family: "Nexa Bold", sans-serif
-      font-size: 3vh
-      letter-spacing: 1vh
-      color: $c_dark_grey
-      text-transform: uppercase
-
-  .nav-wrapper
-    width: 100%
-    position: relative
-    margin-bottom: 7vh
-
-    *
-      display: inline-block
-
-    p.year
-      position: absolute
-      right: 0
-      font-family: "Nexa Bold", sans-serif
-      font-size: 3vh
-      color: $c_dark_grey
-      letter-spacing: 0.5vh
-
-  .content-wrapper
-    position: relative
-    height: 100%
-    box-sizing: border-box
-    z-index: 2
-
-  .text-content
-    z-index: 2
-    width: 100%
-    height: 90%
-    display: flex
-    flex-direction: column
-    justify-content: center
-    position: relative
-    padding: 0 5vw
-    box-sizing: border-box
-
-    .bottom
-      position: absolute
-      bottom: 5vh
-      right: 8vh
-
-  .parallax-wrapper
-    position: absolute
-    left: 0
-    z-index: -1
-    width: 100%
-    height: 100%
-    border-radius: 1.5vh
-    box-shadow: 3px 9px 18px rgba(0, 0, 0, 0.2)
-    overflow: hidden
-    box-sizing: border-box
+    margin: 0
+    padding: 0
     -webkit-touch-callout: none
     -webkit-user-select: none
     -moz-user-select: none
     -ms-user-select: none
     user-select: none
 
-@media only screen and (max-width: 1160px)
-  #content-container .parallax-wrapper img
-    height: 100%
+body
+    background-color: $c_light
+    overflow-x: hidden
+    transition: background-color 0.8s ease
+    -webkit-transition: background-color 0.8s ease
 
-@media only screen and (min-width: 1160px)
-  #content-container .parallax-wrapper img
-    width: 100%
 
-@media only screen and (min-width: 1250px)
-  .h-signature
-    display: block
+.nav-wrapper
+	width: 100vw
+	position: fixed
+	margin: 0 auto
+	top: 13vh
+	z-index: 10
+	display: flex;
+	justify-content: center;
 
-  #content-container .text-content *
-    text-align: right
+	#nav-container
+		ul
+			list-style-type: none
+
+			li
+				color: $c_dark_grey
+				display: inline-block
+				font-family: "Questrial", sans-serif
+				font-weight: bold
+				text-transform: uppercase
+				letter-spacing: 0.3rem
+				cursor: pointer
+				
+				&:not(:last-child):after
+					content: "\25C6"
+					margin: 0 0.3rem
+
+				&::before
+					
+				
+
 
 @media only screen and (max-width: 1250px)
-  #content-container .text-content *
-    text-align: left
+    #listing-container .content-wrapper
+        .item-date
+            font-size: 6vw !important
+        .item-title
+            font-size: 9vw !important
+            p
+                overflow-wrap: break-word !important
 
-  .h-signature
-    display: none
+#listing-container.moving *
+    white-space: nowrap
 
-  #content-container .text-content .bottom
-    text-align: left
-    left: 5vw
 
-@media only screen and (max-width: 750px)
-  .title
-    font-size: 8vw
-    letter-spacing: 0.5vw
+#listing-container
+    position: fixed
+    top: 0
+    left: 0
+    width: 0
+    height: 100vh
+    z-index: 10
+    background-color: $c_dark_grey
+    overflow: hidden
 
-  .subtitle
-    font-size: 4vw
-    letter-spacing: 0.7vw
+    *
+        white-space: normal
 
-  .subheader
-    font-size: 3.5vw
-    letter-spacing: 0.7vw
+    .content-wrapper
+        padding: 12vh 7vw
+        padding-left: 0vw
+        box-sizing: border-box
+        width: 100%
+        height: 100%
+        display: flex
+        flex-direction: column
+        justify-content: center
 
-@media only screen and (min-width: 750px)
-  .title
-    font-size: 6vh
-    letter-spacing: 0.5vh
+        .close-container
+            position: absolute
+            top: 12vh
+            font-size: 8vh
+            color: $c_light
+            font-family: "Questrial", sans-serif
+            cursor: pointer
 
-  .subtitle
-    font-size: 3vh
-    letter-spacing: 1vh
+        .item-title
+            font-family: "Nexa Bold", sans-serif
+            font-size: 9vh
+            letter-spacing: 0.5vh
+            text-transform: uppercase
+            position: relative
+            color: $c_light
+            font-family: "Nexa Bold", sans-serif
+            font-size: 10vh
+            letter-spacing: 0.5vh
+            text-transform: uppercase
+            position: relative
+            -ms-word-break: break-all
+            word-break: break-all
 
-  .subheader
-    font-size: 2.5vh
-    letter-spacing: 1vh
+        .item-date
+            color: $c_light
+            font-family: "Nexa Light", sans-serif
+            font-size: 5vh
+            letter-spacing: 0.5vh
+            text-transform: uppercase
+            position: relative
 
-.title, .subtitle, .subheader
-  color: $c_dark_grey
-  font-weight: normal
-  font-family: "Nexa Light", sans-serif
-  text-transform: uppercase
+        .role-container
+            margin-top: 3vh
 
-.title span
-  font-family: "Nexa Bold", sans-serif
+            ul
+                list-style-type: none
 
-#content-container .work-list
-  box-shadow: border-box
+            li.role
+                color: $c_light
+                font-family: "Nexa Light", sans-serif
+                font-size: 2vh
+                letter-spacing: 0.5vh
+                text-transform: uppercase
+                line-height: 200%
 
-  ul
-    list-style-type: none
+                &:before
+                    content: "> "
 
-    .list-item
-      .item-title
-        color: $c_dark_grey
-        font-family: "Nexa Bold", sans-serif
-        font-size: 7vh
-        cursor: pointer
-        z-index: 0
-        opacity: 1
-        letter-spacing: 0.5vh
-        text-transform: uppercase
-        position: relative
-        margin-bottom: 8vh
-        transition: opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
+        .links
+            position: absolute
+            bottom: 12vh
+            font-family: "Questrial", sans-serif
+            text-transform: uppercase
+            letter-spacing: 0.4vh
 
-      &:hover .item-title
-        &:not(.overlay)
-          opacity: 0
+#content-container
+    height: 100vh
+    width: 100vw
+    padding: 12vh 7vw
+    box-sizing: border-box
+    position: relative
 
-        &.overlay
-          opacity: 1
+    .load
+        width: 100%
+        height: 100%
+        display: flex
+        flex-direction: column
+        justify-content: center
+        text-align: center
 
-      .item-title.overlay
-        position: absolute
-        opacity: 0
-        top: 0
-        left: 0
-        z-index: -1
-        color: transparent
-        -webkit-text-stroke-color: #000
-        -webkit-text-stroke-width: 2px
+        .loader
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            justify-content: center
+            text-align: center
+            font-family: "Nexa Bold", sans-serif
+            font-size: 3vh
+            letter-spacing: 1vh
+            color: $c_dark_grey
+            text-transform: uppercase
 
-      .inline-wrapper
+    .title-wrapper
         width: 100%
         position: relative
-        margin-top: 1vh
+        margin-bottom: 7vh
 
         *
-          display: inline-block
+            display: inline-block
 
-@media only screen and (max-width: 1550px)
-  #content-container .work-list ul .list-item .item-title
-    font-size: 8vw !important
+        p.year
+            position: absolute
+            right: 0
+            font-family: "Nexa Bold", sans-serif
+            font-size: 3vh
+            color: $c_dark_grey
+            letter-spacing: 0.5vh
 
-  .descriptor
-    font-size: 5vw !important
+    .content-wrapper
+        position: relative
+        height: 100%
+        box-sizing: border-box
+        z-index: 2
 
-.back-parallax-wrapper
-  position: absolute
-  margin-top: -10vh
-  z-index: 0
-  -webkit-touch-callout: none
-  -webkit-user-select: none
-  -moz-user-select: none
-  -ms-user-select: none
-  user-select: none
+    .text-content
+        z-index: 2
+        width: 100%
+        height: 90%
+        display: flex
+        flex-direction: column
+        justify-content: center
+        position: relative
+        padding: 0 5vw
+        box-sizing: border-box
 
-  .back-title
-    font-size: 28vw
-    color: #DFE3E8
+        .bottom
+            position: absolute
+            bottom: 5vh
+            right: 8vh
+
+    .parallax-wrapper
+        position: absolute
+        left: 0
+        z-index: -1
+        width: 100%
+        height: 100%
+        border-radius: 1.5vh
+        box-shadow: 3px 9px 18px rgba(0, 0, 0, 0.2)
+        overflow: hidden
+        box-sizing: border-box
+        -webkit-touch-callout: none
+        -webkit-user-select: none
+        -moz-user-select: none
+        -ms-user-select: none
+        user-select: none
+
+@media only screen and (max-width: 1160px)
+    #content-container .parallax-wrapper img
+        height: 100%
+
+@media only screen and (min-width: 1160px)
+    #content-container .parallax-wrapper img
+        width: 100%
+
+@media only screen and (min-width: 1250px)
+    .h-signature
+        display: block
+
+    #content-container .text-content *
+        text-align: right
+
+@media only screen and (max-width: 1250px)
+    #content-container .text-content *
+        text-align: left
+
+    .h-signature
+        display: none
+
+    #content-container .text-content .bottom
+        text-align: left
+        left: 5vw
+
+@media only screen and (max-width: 750px)
+    .title
+        font-size: 8vw
+        letter-spacing: 0.5vw
+
+    .subtitle
+        font-size: 4vw
+        letter-spacing: 0.7vw
+
+    .subheader
+        font-size: 3.5vw
+        letter-spacing: 0.7vw
+
+@media only screen and (min-width: 750px)
+    .title
+        font-size: 6vh
+        letter-spacing: 0.5vh
+
+    .subtitle
+        font-size: 3vh
+        letter-spacing: 1vh
+
+    .subheader
+        font-size: 2.5vh
+        letter-spacing: 1vh
+
+.title, .subtitle, .subheader
+    color: $c_dark_grey
+    font-weight: normal
+    font-family: "Nexa Light", sans-serif
+    text-transform: uppercase
+
+.title span
     font-family: "Nexa Bold", sans-serif
 
+
+#content-container
+    canvas
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+        z-index: 2
+
+#content-container.work-click-area .content-wrapper
+    display: flex;
+    flex-direction: column;
+
+#content-container .work-list
+    box-sizing: border-box
+    margin-top: auto
+    height: 70vh
+    display: flex
+    flex-direction: column
+    justify-content: center
+    transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1)
+
+    &.hold
+        ul
+            .list-item
+                height: 40vh !important
+
+            .list-item.hover
+                height: 40vh !important
+                width: 25vw !important
+            
+            .list-item .w-animate
+                opacity:0 !important
+
+            .list-item.hover img
+                filter: none;
+                -webkit-filter: none;
+
+    ul
+        margin: auto 0
+        list-style-type: none
+        white-space: nowrap
+
+        .list-item
+            display: table-cell
+            vertical-align: middle
+            overflow: hidden
+            display: inline-block
+            height: 60vh
+            width: 25vw
+            padding: 5vh
+            box-sizing: border-box
+            border-radius: 1.5vh
+            box-shadow: 3px 9px 18px rgba(0, 0, 0, 0.2)
+            cursor: pointer
+            position: relative
+            overflow: hidden
+            z-index: 3
+            transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1), height 0.8s cubic-bezier(0.25, 1, 0.5, 1)
+
+            &.hover
+                height: 70vh
+                width: 45vw
+
+            &:not(:last-child)
+                margin-right: 5vh
+
+            &.hover img
+                width: 110%
+                height: auto
+	            filter: url(#waveTurbulance)
+                -webkit-filter: url(#waveTurbulance)
+
+            img
+                z-index: 1
+                height: 110%
+                position: absolute
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%)
+                -webkit-transform: translate(-50%, -50%)
+
+            .scroll-done
+                transition: 0.8s opacity ease
+                -webkit-transition: 0.8s opacity ease
+
+            .item-date
+                position: absolute
+                top: 6vh
+                left: 6vh
+                margin-right: 6vh
+                color: white
+                font-family: "Questrial", sans-serif
+                font-weight: normal
+                font-size: 1vw
+                letter-spacing: 0.5vw
+                text-transform: uppercase
+                word-wrap: break-word
+                white-space: nowrap
+                z-index: 2
+
+            .text-wrapper
+                width: 20vw
+                box-sizing: border-box
+                position: absolute
+                bottom: 6vh
+                z-index: 2
+
+                .item-title
+                    color: white
+                    font-family: "Questrial", sans-serif
+                    font-weight: normal
+                    font-size: 2.5vw
+                    z-index: 0
+                    opacity: 1
+                    letter-spacing: 0.4vw
+                    text-transform: uppercase
+                    word-wrap: break-word
+                    white-space: normal
+
+                .item-summary
+                    color: white
+                    font-family: "Questrial", sans-serif
+                    font-weight: normal
+                    font-size: 1vw
+                    letter-spacing: 0.5vw
+                    margin-bottom: 2vh
+                    line-height: 140%
+                    text-transform: uppercase
+                    word-wrap: break-word
+                    white-space: normal
+
+
+                .inline-wrapper
+                    width: 100%
+                    position: relative
+                    margin-top: 1vh
+
+                    *
+                        display: inline-block
+
+        @media only screen and (max-width: 1450px)
+            .list-item
+                width: 40vw
+
+                .text-wrapper
+                    width: 35vw
+
+        @media only screen and (max-width: 1110px)
+            .list-item
+                width: 55vw
+
+                .item-date
+                    font-size: 2vw
+
+                .text-wrapper
+                    width: 50vw
+
+                    .item-title
+                        font-size: 4vw
+                    .item-summary
+                        font-size: 2vw
+
+        @media only screen and (max-width: 650px)
+            .list-item
+                width: 70vw
+
+                .item-date
+                    font-size: 3vw
+
+                .text-wrapper
+                    width: 65vw
+
+                    .item-title
+                        font-size: 6vw
+                    .item-summary
+                        font-size: 3vw
+
+@media only screen and (max-width: 1550px)
+
+    .descriptor
+        font-size: 5vw !important
+
+.back-parallax-wrapper
+    position: absolute
+    margin-top: -10vh
+    z-index: 0
+    -webkit-touch-callout: none
+    -webkit-user-select: none
+    -moz-user-select: none
+    -ms-user-select: none
+    user-select: none
+
+    .back-title
+        font-size: 28vw
+        color: #DFE3E8
+        font-family: "Nexa Bold", sans-serif
+
 #content-container.about
-  height: 70vh
-  overflow-y: hidden
-  text-align: center
+    height: 70vh
+    overflow-y: hidden
+    text-align: center
 
 .subtle-text
-  color: #B3BCF5
-  font-family: "Questrial", sans-serif
-  font-size: 2.4vh
-  text-transform: uppercase
-  letter-spacing: 0.3em
+    color: #B3BCF5
+    font-family: "Questrial", sans-serif
+    font-size: 2.4vh
+    text-transform: uppercase
+    letter-spacing: 0.3em
 
 .white
-  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4)
-  color: #fff !important
+    text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4)
+    color: #fff !important
 
 .link-btn
-  margin-right: 2vh
-  display: inline-flex !important
-  position: relative
-  font-family: "Questrial", sans-serif
-  font-size: 1.8vh
-  color: $c_light
-  padding: 1.2vh
-  text-decoration: none
-  height: 3vh
-
-  span
-    margin: auto 0
-
-  &:before
-    content: ""
-    display: block
-    filter: invert(100%) !important
-    background-repeat: no-repeat
-    background-size: contain
+    margin-right: 2vh
+    display: inline-flex !important
     position: relative
-    width: 3vh
-    height: 100%
-    float: left
-    margin: 0 6px 0 0
+    font-family: "Questrial", sans-serif
+    font-size: 1.8vh
+    color: $c_light
+    padding: 1.2vh
+    text-decoration: none
+    height: 3vh
 
-  &.android:before
-    background-image: url("../imgs/icn_android.png")
-  &.web:before
-    background-image: url("../imgs/icn_web.png")
-  &.ios:before
-    background-image: url("../imgs/icn_ios.png")
-  &.private:before
-    background-image: url("../imgs/icn_lock.png")
+    span
+        margin: auto 0
 
-  &.private:hover
-    cursor: not-allowed
+    &:before
+        content: ""
+        display: block
+        filter: invert(100%) !important
+        background-repeat: no-repeat
+        background-size: contain
+        position: relative
+        width: 3vh
+        height: 100%
+        float: left
+        margin: 0 6px 0 0
+
+    &.android:before
+        background-image: url("../imgs/icn_android.png")
+    &.web:before
+        background-image: url("../imgs/icn_web.png")
+    &.ios:before
+        background-image: url("../imgs/icn_ios.png")
+    &.private:before
+        background-image: url("../imgs/icn_lock.png")
+
+    &.private:hover
+        cursor: not-allowed
 
 
 .link
-  color: $c_dark_grey
-  text-decoration: none
-  position: relative
+    color: $c_dark_grey
+    text-decoration: none
+    position: relative
 
-  &:hover:before
-    width: 100%
+    &:hover:before
+        width: 100%
 
-  &:before
-    content: ""
-    position: absolute
-    bottom: 0
-    left: 0
-    height: 4px
-    background-color: $c_dark_grey
-    width: 0
-    transition: 0.6s cubic-bezier(0.77, 0, 0.175, 1)
+    &:before
+        content: ""
+        position: absolute
+        bottom: 0
+        left: 0
+        height: 4px
+        background-color: $c_dark_grey
+        width: 0
+        transition: 0.6s cubic-bezier(0.77, 0, 0.175, 1)
 
 .descriptor
-  font-size: 3vh
-  font-family: "Questrial", sans-serif
-  text-transform: uppercase
-  letter-spacing: 1vh
-  color: $c_dark_grey
+    font-size: 3vh
+    font-family: "Questrial", sans-serif
+    text-transform: uppercase
+    letter-spacing: 1vh
+    color: $c_dark_grey

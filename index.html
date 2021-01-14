@@ -19,6 +19,7 @@
 
 	<body>
 
+		<!-- Item Container -->
 		<div id="listing-container">
 			<div class="content-wrapper">
 				<div class="close-container">&times;</div>
@@ -32,23 +33,37 @@
 			</div>
 		</div>
 
+		<!-- Navigation Bar -->
+		<div class="nav-wrapper">
+			<div id="nav-container">
+				<ul>
+					<li class="scroller" data-name="home">Home</li>
+					<li class="scroller" data-name="work">Work</li>
+					<li class="scroller" data-name="about">About</li>
+					<!-- TODO: Add Email popup and clipboard adder -->
+					<li>Email</li>
+				</ul>
+			</div>
+		</div>
+
+
 		<div class="fixed-scroll">
 			<div id="content-container">
 				<div class="load">
 					<div class="loader">Loading</div>
 				</div>
-				<div class="nav-wrapper">
-					<img src="files/imgs/icon.png" alt="" style = "width:7vh;" class = "img-icon">
-					<p class = "year">2020 -</p>
+				<div class="title-wrapper">
+					<img draggable="false" src="files/imgs/icon.png" alt="" style = "width:7vh;" class = "img-icon">
+					<p class = "year">2021 -</p>
 				</div>
 				<div class="content-wrapper">
 					<div class="text-content">
-						<img src="files/imgs/signature-white.png" alt="" style = "width:25vh; position:absolute;" class = "h-animate h-signature">
+						<img draggable="false" src="files/imgs/signature-white.png" alt="" style = "width:25vh; position:absolute;" class = "h-animate h-signature">
 						<h1 class = "title white h-animate">Musab <span>Hassan</span></h1>
 						<h3 class = "subtitle white h-animate">Web Developer</h3>
 						<h3 class = "subheader white bottom h-animate">Scroll Down</h3>
 						<div class="parallax-wrapper home-back">
-							<img src="files/imgs/back/home-back.jpg" alt="">
+							<img draggable="false" src="files/imgs/back/home-back.jpg" alt="">
 						</div>
 					</div>
 				</div>
@@ -57,22 +72,31 @@
 				<h1 class="back-title">WORK</h1>
 			</div>
 
-			<div id="content-container" style = "margin-top:20vh; height:auto;">
+			<div id="content-container" class="work-click-area" style = "margin-top:20vh;">
 				<div class="content-wrapper">
 					<div class="work-list">
 						<ul>
 
 						</ul>
 					</div>
+					<svg style="width: 0; height: 0"> 
+						<filter id="waveTurbulance" >
+							<feTurbulence baseFrequency="0.002" numOctaves="1">
+							<animate attributeName="baseFrequency" dur="20s" values="0.01; 0.02; 0.01" repeatCount="indefinite"/>
+							</feTurbulence>
+							<feDisplacementMap scale="30" in="SourceGraphic"/>
+						</filter>
+					</svg>
 				</div>
+				<canvas id="work-canvas"></canvas>
 			</div>
 
 			<div id="content-container" class = "about">
-				<img src="files/imgs/signature.png" alt="" style = "width:25vh; margin-bottom:4vh;" class = "a-animate">
+				<img draggable="false" src="files/imgs/signature.png" alt="" style = "width:25vh; margin-bottom:4vh;" class = "a-animate">
 				<h1 class = "title a-animate">Made In <span>Canada</span></h1>
 				<h3 class = "subheader a-animate" style = "font-family:'Nexa Bold', sans-serif; letter-spacing: 0.2vh;"><a href="" class = "link ">musabhassan04@gmail.com</a></h3>
 			</div>
-			<img src="files/imgs/back/bottom.png" alt="" class = "parallax-wrapper about" style = "position:absolute; bottom:0; width:100%;z-index:-1;">
+			<img draggable="false" src="files/imgs/back/bottom.png" alt="" class = "parallax-wrapper about" style = "position:absolute; bottom:0; width:100%;z-index:-1;">
 		</div>
 	</body>
 </html>

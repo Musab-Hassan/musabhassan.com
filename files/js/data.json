@@ -3,6 +3,7 @@
     "id": 1,
     "title": "Grillzzy Foods",
     "date": "Nov 2020",
+    "summary": "Branding, Brand Website",
     "roles": [
       "Website Designer",
       "Front End Developer"
@@ -19,6 +20,7 @@
     "id": 2,
     "title": "Kelowna Wholesale Auto",
     "date": "Jan 2020",
+    "summary": "Brand Website",
     "roles": [
       "Website Designer",
       "Full Stack Developer"
@@ -35,6 +37,7 @@
     "id": 3,
     "title": "Fay's Salon",
     "date": "Oct 2019",
+    "summary": "Brand Website",
     "roles": [
       "Website Designer",
       "Full Stack Developer"
@@ -51,6 +54,7 @@
     "id": 4,
     "title": "Kelowna Islamic Center",
     "date": "July 2019",
+    "summary": "Branding & Ecosystem solutions",
     "roles": [
       "Webapp & Mobile App Designer",
       "Android App Developer",
@@ -79,6 +83,7 @@
     "id": 5,
     "title": "Muslim Student Association (UBCO)",
     "date": "Nov 2017",
+    "summary": "Non-Profit Website",
     "roles": [
       "Website Designer",
       "Full Stack Developer"
