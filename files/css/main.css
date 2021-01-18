@@ -9,6 +9,11 @@
   src: url(fonts/NexaLight.woff);
 }
 
+@font-face {
+  font-family: "Autography";
+  src: url(fonts/Autography.woff);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -22,8 +27,8 @@
 body {
   background-color: #F4F6F8;
   overflow-x: hidden;
-  transition: background-color 0.8s ease;
-  -webkit-transition: background-color 0.8s ease;
+  transition: background-color 0.5s ease;
+  -webkit-transition: background-color 0.5s ease;
 }
 
 .nav-wrapper {
@@ -34,6 +39,14 @@ body {
   z-index: 10;
   display: flex;
   justify-content: center;
+}
+
+.nav-wrapper #nav-container.white ul li {
+  color: white;
+}
+
+.nav-wrapper #nav-container.white ul li span:before, .nav-wrapper #nav-container.white ul li span:after {
+  background-color: white;
 }
 
 .nav-wrapper #nav-container ul {
@@ -50,26 +63,48 @@ body {
   letter-spacing: 0.3rem;
   cursor: pointer;
   font-size: 1rem;
+  transition: color 0.5s ease;
+  -webkit-transition: color 0.5s ease;
+}
+
+.nav-wrapper #nav-container ul li span {
+  position: relative;
+}
+
+.nav-wrapper #nav-container ul li span:before, .nav-wrapper #nav-container ul li span:after {
+  background-color: #212B36;
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  top: 50%;
+  margin-top: -0.5px;
+}
+
+.nav-wrapper #nav-container ul li span:before {
+  left: -2.5px;
+}
+
+.nav-wrapper #nav-container ul li span:after {
+  right: 2.5px;
+  transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.nav-wrapper #nav-container ul li span:hover:before {
+  width: 100%;
+  transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.nav-wrapper #nav-container ul li span:hover:after {
+  background: transparent !important;
+  width: 100%;
+  transition: 0s;
 }
 
 .nav-wrapper #nav-container ul li:not(:last-child):after {
+  color: inherit;
   content: "\25C6";
   margin: 0 0.3rem;
-}
-
-.nav-wrapper #nav-container ul li::before {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: 40%;
-  left: 0;
-  background-color: #212B36;
-  transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-.nav-wrapper #nav-container ul li:hover::before {
-  width: calc(100%-.3rem);
 }
 
 @media only screen and (max-width: 1250px) {
@@ -316,6 +351,15 @@ body {
     font-size: 3.5vw;
     letter-spacing: 0.7vw;
   }
+  .sublink {
+    font-size: 2.5vw;
+    letter-spacing: 0.6vw;
+  }
+  .paragraph {
+    font-size: 3vw;
+    letter-spacing: 0px;
+    width: 100%;
+  }
 }
 
 @media only screen and (min-width: 750px) {
@@ -323,25 +367,56 @@ body {
     font-size: 6vh;
     letter-spacing: 0.5vh;
   }
+  .title.signed {
+    font-size: 9vh;
+  }
   .subtitle {
     font-size: 3vh;
     letter-spacing: 1vh;
+  }
+  .sublink {
+    font-size: 2.5vh;
+    letter-spacing: 0.6vh;
   }
   .subheader {
     font-size: 2.5vh;
     letter-spacing: 1vh;
   }
+  .paragraph {
+    font-size: 2.1vh;
+    letter-spacing: 0px;
+    width: 50%;
+  }
 }
 
-.title, .subtitle, .subheader {
+.title, .subtitle, .subheader, .sublink {
   color: #212B36;
   font-weight: normal;
   font-family: "Nexa Light", sans-serif;
   text-transform: uppercase;
 }
 
+.title.white, .subtitle.white, .subheader.white, .sublink.white {
+  color: white !important;
+}
+
+.sublink {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+img.link-icon {
+  height: 100%;
+}
+
 .title span {
   font-family: "Nexa Bold", sans-serif;
+}
+
+.title.signed {
+  font-family: "Autography", sans-serif !important;
+  text-transform: none !important;
 }
 
 #content-container canvas {
@@ -570,9 +645,97 @@ body {
 }
 
 #content-container.about {
-  height: 70vh;
-  overflow-y: hidden;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#content-container.about img.background {
+  position: absolute;
+  width: 110%;
+  height: 110%;
+  left: -10px;
+  top: -20px;
+  transition: opacity 0.8s ease;
+  filter: url(#waveTurbulance);
+  -webkit-filter: url(#waveTurbulance);
+}
+
+#content-container.about .paragraph {
+  margin: 0 auto;
+}
+
+#content-container.about .profile-pic {
+  height: auto;
+  width: 30vh;
+  margin: 0 auto;
+  margin-bottom: 3vh;
+}
+
+#content-container.about .inline-wrapper h3 {
+  padding: 1vh 0;
+  border-radius: 2px;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+#content-container.about .inline-wrapper h3:before, #content-container.about .inline-wrapper h3:after {
+  background-color: white;
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: 0;
+  margin-top: -0.5px;
+}
+
+#content-container.about .inline-wrapper h3:before {
+  left: -2.5px;
+}
+
+#content-container.about .inline-wrapper h3:after {
+  right: 2.5px;
+  transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+#content-container.about .inline-wrapper h3:hover:before {
+  width: 100%;
+  transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+#content-container.about .inline-wrapper h3:hover:after {
+  background: transparent !important;
+  width: 100%;
+  transition: 0s;
+}
+
+#content-container.about .inline-wrapper h3 * {
+  font-family: "Questrial", sans-serif;
+  vertical-align: bottom;
+}
+
+#content-container.about .inline-wrapper h3 img {
+  height: 3vh;
+}
+
+#content-container.about .inline-wrapper h3:not(:last-child) {
+  margin-right: 3vw;
+}
+
+#content-container.about .content-wrapper {
+  padding: 12vh 7vw;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   text-align: center;
+}
+
+.paragraph {
+  font-family: "Questrial", sans-serif;
+  line-height: 190%;
+  font-weight: normal;
 }
 
 .subtle-text {
@@ -640,22 +803,15 @@ body {
 .link {
   color: #212B36;
   text-decoration: none;
-  position: relative;
+  display: relative;
 }
 
-.link:hover:before {
-  width: 100%;
+.link.white {
+  color: white !important;
 }
 
-.link:before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  background-color: #212B36;
-  width: 0;
-  transition: 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+.link.white.white::before {
+  background-color: white !important;
 }
 
 .descriptor {

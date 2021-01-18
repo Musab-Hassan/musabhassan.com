@@ -11,6 +11,10 @@ $c_dark_grey: #212B36
 	font-family: "Nexa Light"
 	src: url(fonts/NexaLight.woff)
 
+@font-face
+	font-family: "Autography"
+	src: url(fonts/Autography.woff)
+
 *
 	margin: 0
 	padding: 0
@@ -23,8 +27,8 @@ $c_dark_grey: #212B36
 body
 	background-color: $c_light
 	overflow-x: hidden
-	transition: background-color 0.8s ease
-	-webkit-transition: background-color 0.8s ease
+	transition: background-color 0.5s ease
+	-webkit-transition: background-color 0.5s ease
 
 .nav-wrapper
 	width: 100vw
@@ -36,6 +40,13 @@ body
 	justify-content: center;
 
 	#nav-container
+		&.white
+			ul li
+				color: white
+
+				span:before, span:after
+					background-color: white
+
 		ul
 			list-style-type: none
 
@@ -49,24 +60,41 @@ body
 				letter-spacing: 0.3rem
 				cursor: pointer
 				font-size: 1rem
+				transition: color 0.5s ease
+				-webkit-transition: color 0.5s ease
+
+				span
+					position: relative
+
+					&:before, &:after
+						background-color: $c_dark_grey
+						content: ''
+						position: absolute
+						width: 0%
+						height: 2px
+						top: 50%
+						margin-top: -0.5px
+
+					&:before 
+						left: -2.5px
+						
+					&:after
+						right: 2.5px
+						transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1)
+					
+					&:hover:before 
+						width: 100%
+						transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1)
+					
+					&:hover:after
+						background: transparent !important
+						width: 100%
+						transition: 0s
 
 				&:not(:last-child):after
+					color: inherit
 					content: "\25C6"
 					margin: 0 0.3rem
-				
-				&::before
-					content: ""
-					position: absolute
-					width: 0
-					height: 2px
-					bottom: 40%
-					left: 0
-					background-color: $c_dark_grey
-					transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1)
-
-				&:hover::before
-					width: calc(100%-.3rem)
-				
 
 
 @media only screen and (max-width: 1250px)
@@ -281,28 +309,63 @@ body
 		font-size: 3.5vw
 		letter-spacing: 0.7vw
 
+	.sublink
+		font-size: 2.5vw
+		letter-spacing: 0.6vw
+
+	.paragraph
+		font-size: 3vw
+		letter-spacing: 0px
+		width: 100%
+
 @media only screen and (min-width: 750px)
 	.title
 		font-size: 6vh
 		letter-spacing: 0.5vh
 
+		&.signed
+			font-size: 9vh
+
 	.subtitle
 		font-size: 3vh
 		letter-spacing: 1vh
+
+	.sublink
+		font-size: 2.5vh
+		letter-spacing: 0.6vh
 
 	.subheader
 		font-size: 2.5vh
 		letter-spacing: 1vh
 
-.title, .subtitle, .subheader
+	.paragraph
+		font-size: 2.1vh
+		letter-spacing: 0px
+		width: 50%
+
+.title, .subtitle, .subheader, .sublink
 	color: $c_dark_grey
 	font-weight: normal
 	font-family: "Nexa Light", sans-serif
 	text-transform: uppercase
 
+	&.white
+		color: white !important
+
+.sublink
+	display: flex
+	flex-direction: column
+	justify-content: center
+
+img.link-icon
+	height: 100%
+
 .title span
 	font-family: "Nexa Bold", sans-serif
 
+.title.signed
+	font-family: "Autography", sans-serif !important
+	text-transform: none !important
 
 #content-container
 	canvas
@@ -503,9 +566,84 @@ body
 		font-family: "Nexa Bold", sans-serif
 
 #content-container.about
-	height: 70vh
-	overflow-y: hidden
-	text-align: center
+	height: 100vh
+	overflow: hidden
+	
+	img.background
+		position: absolute
+		width: 110%
+		height: 110%
+		left: -10px
+		top: -20px
+		transition: opacity 0.8s ease
+		filter: url(#waveTurbulance)
+		-webkit-filter: url(#waveTurbulance)
+
+	.paragraph 
+		margin: 0 auto
+
+	.profile-pic
+		height: auto
+		width: 30vh
+		margin: 0 auto
+		margin-bottom: 3vh
+
+	.inline-wrapper 
+		h3
+			padding: 1vh 0
+			border-radius: 2px
+			box-sizing: border-box
+			display: inline-block
+
+			&:before, &:after
+				background-color: white
+				content: ''
+				position: absolute
+				width: 0%
+				height: 2px
+				bottom: 0
+				margin-top: -0.5px
+
+			&:before 
+				left: -2.5px
+				
+			&:after
+				right: 2.5px
+				transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1)
+			
+			&:hover:before 
+				width: 100%
+				transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1)
+			
+			&:hover:after
+				background: transparent !important
+				width: 100%
+				transition: 0s
+
+			*
+				font-family: "Questrial", sans-serif
+				vertical-align: bottom
+
+			img
+				height: 3vh
+
+		h3:not(:last-child)
+			margin-right: 3vw
+
+	.content-wrapper
+		padding: 12vh 7vw
+		box-sizing: border-box
+		width: 100%
+		height: 100%
+		display: flex
+		flex-direction: column
+		justify-content: center
+		text-align: center
+
+.paragraph
+	font-family: "Questrial", sans-serif
+	line-height: 190%
+	font-weight: normal
 
 .subtle-text
 	color: #B3BCF5
@@ -560,20 +698,13 @@ body
 .link
 	color: $c_dark_grey
 	text-decoration: none
-	position: relative
+	display: relative
 
-	&:hover:before
-		width: 100%
+	&.white
+		color: white !important
 
-	&:before
-		content: ""
-		position: absolute
-		bottom: 0
-		left: 0
-		height: 4px
-		background-color: $c_dark_grey
-		width: 0
-		transition: 0.6s cubic-bezier(0.77, 0, 0.175, 1)
+		&.white::before
+			background-color: white !important
 
 .descriptor
 	font-size: 3vh
