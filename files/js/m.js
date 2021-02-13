@@ -29,12 +29,12 @@ var m = {
       if (!Array.isArray(elems)) {
         throw "Parameter passed is not an Array";
       }
-
+      
       document.querySelector(parent).style.position = "fixed";
 
-      var elem = document.querySelector(parent),
-      oldParent = elem.parentNode,
-      wrapper;
+      var elem = document.querySelector(parent);
+      var oldParent = elem.parentNode;
+      var wrapper;
 
       if (elem.parentNode.id == "scroll-height") {
         wrapper = document.querySelector("#scroll-height")
@@ -98,6 +98,7 @@ var m = {
             var top = window.scrollY / elems[i].offsetY;
             if (e) {
               e.style.transition = "transform "+ timing + "ms " + ease;
+              e.style.webkitTransition = "transform "+ timing + "ms " + ease;
               e.style.transform = "translateY("+top+"px)";
               e.style.webkitTransform = "translateY("+top+"px)";
               e.style.MozTransform = "translateY("+top+"px)";
