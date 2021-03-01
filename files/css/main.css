@@ -156,11 +156,12 @@ body .back-fill {
 .nav-wrapper .hb-button .text {
   font-family: "Questrial", sans-serif;
   font-weight: 2vh;
+  font-size: 2.1vh;
   letter-spacing: 0.3vh;
   text-transform: uppercase;
-  transition: 0.8s ease;
-  -webkit-transition: 0.8s ease;
-  -moz-transition: 0.8s ease;
+  transition: color 0.8s ease;
+  -webkit-transition: color 0.8s ease;
+  -moz-transition: color 0.8s ease;
 }
 
 .nav-wrapper .hb-button .hb {
