@@ -849,15 +849,12 @@ body .back-fill {
   position: relative;
   overflow: hidden;
   z-index: 3;
+  margin-right: 5vh;
   transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1), height 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 #content-container .work-list ul .list-item.hover {
   height: 70vh;
-}
-
-#content-container .work-list ul .list-item:not(:last-child) {
-  margin-right: 5vh;
 }
 
 #content-container .work-list ul .list-item img {
@@ -943,7 +940,7 @@ body .back-fill {
     width: 40vw;
   }
   #content-container .work-list ul .list-item .text-wrapper {
-    width: 35vw;
+    width: calc(40vw - 10vh);
   }
 }
 
@@ -955,7 +952,7 @@ body .back-fill {
     font-size: 2vw;
   }
   #content-container .work-list ul .list-item .text-wrapper {
-    width: 50vw;
+    width: calc(55vw - 10vh);
   }
   #content-container .work-list ul .list-item .text-wrapper .item-title {
     font-size: 4vw;
@@ -973,7 +970,7 @@ body .back-fill {
     font-size: 3vw;
   }
   #content-container .work-list ul .list-item .text-wrapper {
-    width: 65vw;
+    width: calc(70vw - 10vh);
   }
   #content-container .work-list ul .list-item .text-wrapper .item-title {
     font-size: 6vw;

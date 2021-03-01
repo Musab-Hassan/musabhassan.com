@@ -751,13 +751,11 @@ body
 			position: relative
 			overflow: hidden
 			z-index: 3
+			margin-right: 5vh
 			transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1), height 0.8s cubic-bezier(0.25, 1, 0.5, 1)
 
 			&.hover
 				height: 70vh
-
-			&:not(:last-child)
-				margin-right: 5vh
 
 			img
 				z-index: 1
@@ -835,7 +833,7 @@ body
 				width: 40vw
 
 				.text-wrapper
-					width: 35vw
+					width: calc(40vw - 10vh)
 
 		@media only screen and (max-width: 1110px)
 			.list-item
@@ -845,7 +843,7 @@ body
 					font-size: 2vw
 
 				.text-wrapper
-					width: 50vw
+					width: calc(55vw - 10vh)
 
 					.item-title
 						font-size: 4vw
@@ -860,7 +858,7 @@ body
 					font-size: 3vw
 
 				.text-wrapper
-					width: 65vw
+					width: calc(70vw - 10vh)
 
 					.item-title
 						font-size: 6vw
