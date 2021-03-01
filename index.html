@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang = "eng" class = "page-wrapper">
+<html lang = "eng">
 
 	<head>
 		<title>Musab Hassan - Web Developer</title>
@@ -8,8 +8,8 @@
 
 		<script type="text/javascript" src="files/js/jquery-3.3.1.min.js"></script>
 		<script type="text/javascript" src="files/js/anime.min.js"></script>
+		<script type="text/javascript" src="files/js/slickscroll.js"></script>
 		<script type="text/javascript" src="files/js/main.min.js"></script>
-		<script type="text/javascript" src="files/js/m.js"></script>
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-05K7N73SZ8"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
@@ -36,9 +36,9 @@
 		<svg style="width: 0; height: 0"> 
 			<filter id="waveTurbulance" >
 				<feTurbulence baseFrequency="0.002" numOctaves="1">
-				<animate attributeName="baseFrequency" dur="20s" values="0.01; 0.02; 0.01" repeatCount="indefinite"/>
+				<animate attributeName="baseFrequency" dur="30s" values="0.01; 0.02; 0.01" repeatCount="indefinite"/>
 				</feTurbulence>
-				<feDisplacementMap scale="30" in="SourceGraphic"/>
+				<feDisplacementMap scale="25" in="SourceGraphic"/>
 			</filter>
 		</svg>
 
@@ -46,38 +46,40 @@
 		<div id="listing-container">
 			<div class="left-marker"></div>
 			<div class="work-close-btn clickable">&times;</div>
-			<div class="content-container">
-				<div class="section">
-					<div class="inline-wrapper">
-						<img class="primary-image-container" src="">
-						<div class="details-wrapper">
-							<p class="num f-index"><span></span></p>
-							<h1 class="main-title f-title"></h1>
-							<p class="info-paragraph f-description"></p>
-							<div class="links">
+			<div class="scroll-wrapper">
+				<div class="content-container">
+					<div class="section entry-section">
+						<div class="inline-wrapper">
+							<img class="primary-image-container" src="">
+							<div class="details-wrapper">
+								<p class="num f-index"><span></span></p>
+								<h1 class="main-title f-title"></h1>
+								<p class="info-paragraph f-description"></p>
+								<div class="links">
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="section second">
-					<div class="inline-wrapper">
-						<div class="stats-wrapper">
-							<div class="stats-section">
-								<span class="label">DATE:</span>
-								<h2 class="date f-date"></h2>
+					<div class="section second scroll-section">
+						<div class="inline-wrapper">
+							<div class="stats-wrapper">
+								<div class="stats-section">
+									<span class="label">DATE:</span>
+									<h2 class="date f-date"></h2>
+								</div>
+								<div class="stats-section">
+									<span class="label">ROLES:</span>
+									<ul class="roles">
+									</ul>
+								</div>
 							</div>
-							<div class="stats-section">
-								<span class="label">ROLES:</span>
-								<ul class="roles">
-								</ul>
+							<div class="details-wrapper">
+								<h1 class="main-title f-subtitle"></h1>
+								<p class="info-paragraph f-s-description"></p>
 							</div>
-						</div>
-						<div class="details-wrapper">
-							<h1 class="main-title f-subtitle"></h1>
-							<p class="info-paragraph f-s-description"></p>
-						</div>
-						<div class="secondary-image-wrapper">
-							<img src="">
+							<div class="secondary-image-wrapper">
+								<img src="">
+							</div>
 						</div>
 					</div>
 				</div>
@@ -116,12 +118,12 @@
 
 
 		<!-- Page Content -->
-		<div class="fixed-scroll">
+		<div class="document-ease">
 
 			<!-- Home Page -->
 			<div id="content-container" style="padding-top: 23vh">
 				<div class="load">
-					<div class="loader">Loading</div>
+					<div class="loader">0%</div>
 				</div>
 				<div class="content-wrapper">
 					<div class="text-content">
@@ -148,14 +150,14 @@
 							<!-- Work items render here -->
 						</ul>
 					</div>
-					<div class="notice-text subheader">Hold to Scroll</div>
+					<div class="notice-text subheader hold-text">Hold to Scroll</div>
 				</div>
 			</div>
 
 
 			<!-- About Page -->
 			<div id="content-container" class="about" style="margin-top:20vh;">
-				<div class="profile-image a-animate">
+				<div class="profile-image">
 					<img data-lazysrc="files/imgs/profile-photo.jpg" alt="Musab's Face" class="profile-pic">
 				</div>
 				<div class="content-wrapper" style="margin-top:5vh; box-sizing: border-box;">

@@ -29,7 +29,7 @@
 
 body {
   background-color: #F4F6F8;
-  overflow-x: hidden;
+  overflow: hidden;
   transition: background-color 0.5s ease;
   -webkit-transition: background-color 0.5s ease;
 }
@@ -44,17 +44,27 @@ body .back-fill {
   z-index: -10;
 }
 
+.document-ease {
+  top: -2.5vh !important;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden !important;
+}
+
 .hover-container {
   position: fixed;
   top: 0;
   left: 0;
   mix-blend-mode: exclusion;
+  pointer-events: none;
   z-index: 100;
 }
 
 .hover-container .hover-circle {
   width: 0;
   height: 0;
+  margin: 50px;
   border-radius: 50%;
   background-color: white;
   transition: width 0.5s ease, height 0.5s ease;
@@ -199,10 +209,11 @@ body .back-fill {
 
 .nav-wrapper .hb-button.close .hb span {
   background-color: white;
+  top: 0.5vh;
 }
 
 .nav-wrapper .hb-button.close .hb span:nth-child(1) {
-  transform: translateY(0.9vh) rotate(-45deg);
+  transform: translateY(100%) rotate(-45deg);
 }
 
 .nav-wrapper .hb-button.close .hb span:nth-child(2) {
@@ -210,11 +221,11 @@ body .back-fill {
 }
 
 .nav-wrapper .hb-button.close .hb span:nth-child(3) {
-  transform: translateY(-0.9vh) rotate(45deg);
+  transform: translateY(-100%) rotate(45deg);
 }
 
 .m-nav-wrapper {
-  background-color: #151b20;
+  background-color: #1e282e;
   position: fixed;
   top: 0;
   left: 0;
@@ -225,7 +236,7 @@ body .back-fill {
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
-  transition: width 1s cubic-bezier(0.86, 0, 0.07, 1);
+  transition: width 1.2s cubic-bezier(0.86, 0, 0.07, 1);
 }
 
 .m-nav-wrapper .background-wrapper {
@@ -260,7 +271,7 @@ body .back-fill {
 .m-nav-wrapper .list-container {
   width: 45%;
   height: 100%;
-  background-color: #212B36;
+  background-color: #161c20;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -276,7 +287,7 @@ body .back-fill {
 
 .m-nav-wrapper .list-container ul li {
   font-family: "Nexa Bold", sans-serif;
-  font-size: 6.5vh;
+  font-size: 6vh;
   font-weight: normal;
   line-height: 170%;
   cursor: pointer;
@@ -285,14 +296,20 @@ body .back-fill {
   padding-top: 2vh;
 }
 
+.m-nav-wrapper .list-container ul li.visible::after {
+  width: 100% !important;
+}
+
 .m-nav-wrapper .list-container ul li::after {
   content: "";
   position: absolute;
   left: 0;
   bottom: 0;
   height: 1px;
-  width: 100%;
+  width: 0%;
   background-color: white;
+  transition: width 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+  -webkit-transition: width 1s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .m-nav-wrapper .list-container ul li a {
@@ -330,18 +347,27 @@ body .back-fill {
   bottom: 0;
   left: 0;
   width: 0;
+  height: 100vh;
   z-index: 10;
   background-color: #1F2124;
   position: fixed;
+  overflow: hidden;
+}
+
+#listing-container .scroll-wrapper {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
   overflow-x: hidden;
-  overflow-y: scroll !important;
 }
 
 #listing-container .left-marker {
   position: absolute;
   left: 0;
   top: 0;
-  height: 200%;
+  height: 100%;
   width: 30%;
   background-color: #161616;
   z-index: -1;
@@ -549,8 +575,11 @@ body .back-fill {
 }
 
 #content-container .load {
-  width: 100%;
-  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -559,10 +588,6 @@ body .back-fill {
 
 #content-container .load .loader {
   width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   text-align: center;
   font-family: "Nexa Bold", sans-serif;
   font-size: 3vh;
@@ -1004,7 +1029,7 @@ body .back-fill {
 #content-container.about .profile-image {
   position: absolute;
   right: 10vw;
-  bottom: 10vh;
+  bottom: 50vh;
   width: 45vw;
   height: 60vh;
   border-radius: 1.5vh;
