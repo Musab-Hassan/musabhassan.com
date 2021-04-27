@@ -1,6 +1,28 @@
 [
   {
     "id": 1,
+    "title": "SlickScroll",
+    "details": {
+      "description": "SlickScroll is a JavaScript library that allows developers to add smooth scrolling effects to their webpages.",
+      "subtitle": "The Side Project",
+      "description2": "Since slickScroll was a personal project, I decided to share some of my collected code with the world and allow my own work to grow through open source contributions."
+    },
+    "date": "March 2021",
+    "summary": "Personal Project",
+    "roles": [
+      "Maintainer",
+      "Developer"
+    ],
+    "links": [
+      {
+        "type": "web",
+        "text": "View on Github",
+        "link": "https://github.com/Musab-Hassan/slickscroll"
+      }
+    ]
+  },
+  {
+    "id": 2,
     "title": "Grillzzy Foods",
     "details": {
       "description": "Grillzzy Foods is a food manufacturing company that manufactures and distributes packaged meat products. The Grillzzy website captures their brand identity as connoisseurs of Authentic South Asian Food.",
@@ -23,7 +45,7 @@
     ]
   },
   {
-    "id": 2,
+    "id": 3,
     "title": "Kelowna Wholesale Auto",
     "details": {
       "description": "Kelowna Wholesale Auto is a automobile retailer that sell second hand vehicles at affordable prices. Using modern web technologies, I created a website with a complete listing management solution creating their digital presence.",
@@ -45,7 +67,7 @@
     ]
   },
   {
-    "id": 3,
+    "id": 4,
     "title": "Fay's Salon",
     "details": {
       "description": "Fay’s Salon is a hair salon that makes the ordinary stylish. Working with them, I created a booking and customer management system that automated the tedious in thier business.",
@@ -67,7 +89,7 @@
     ]
   },
   {
-    "id": 4,
+    "id": 5,
     "title": "Kelowna Islamic Center",
     "details": {
       "description": "Kelowna Islamic Center is a Muslim community in Kelowna BC that hopes to connect Muslims with one another. I worked with KIC to create a digital platform for all their community to connect and created a scalable and reliable platform.",
