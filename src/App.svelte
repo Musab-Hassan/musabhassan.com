@@ -12,7 +12,7 @@
 	
 \:global(body)
 	background-color: #2A2A2C
-	overflow: hidden
+	overflow-x: hidden
 	color: white
 
 \:global(*)
