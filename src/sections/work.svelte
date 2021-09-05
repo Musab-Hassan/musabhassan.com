@@ -29,7 +29,6 @@
             {/await}
         </ul>
     </div>
-    <div class="notice-text subheader hold-text">Hold to Scroll</div>
 </div>
 </div>
 
@@ -126,11 +125,6 @@
                         letter-spacing: 0.1vw
                         text-transform: lowercase
 
-                    .item-summary
-                        font-size: 1.2vw
-                        letter-spacing: 0.4vw
-                        text-transform: uppercase
-
                 .text-wrapper
                     box-sizing: border-box
                     position: absolute
@@ -184,8 +178,6 @@
 
                         .item-title
                             font-size: 4vw
-                        .item-summary
-                            font-size: 2vw
 
             @media only screen and (max-width: 650px)
                 .list-item
@@ -199,7 +191,5 @@
 
                         .item-title
                             font-size: 6vw
-                        .item-summary
-                            font-size: 3vw
 
 </style>
