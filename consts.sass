@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css?family=Questrial')
+@import url("https://use.typekit.net/wff2qhs.css")
+
+$c_light: #F4F6F8
+$c_dark_grey: #212B36
+$titleFont: "retiro-std-24pt", sans-serif
+$font: "Questrial", sans-serif
+
+@font-face
+	font-family: "Nexa Bold"
+	src: url(./assets/fonts/NexaBold.woff)
+
+@font-face
+	font-family: "Nexa Light"
+	src: url(./assets/fonts/NexaLight.woff)
+
+@font-face
+	font-family: "Autography"
+	src: url(./assets/fonts/Autography.woff)
+
+
+@mixin textStyles()
+	
+	@media only screen and (max-width: 750px)
+		.title
+			font-size: 9vw
+
+		.subtitle
+			font-size: 4vw
+			letter-spacing: 0.7vw
+
+		.subheader
+			font-size: 3vw
+			letter-spacing: 0.7vw
+
+	@media only screen and (min-width: 750px)
+		.title
+			font-size: 19vh
+
+		.subtitle
+			font-size: 3vh
+			letter-spacing: 1vh
+
+		.subheader
+			font-size: 2vh
+			letter-spacing: 1vh
+
+	@media only screen and (min-width: 950px)
+		.paragraph
+			font-size: 2.3vh
+			line-height: 150%
+			width: 60%
+			letter-spacing: 0.05vw
+
+	@media only screen and (max-width: 950px)
+		.paragraph
+			font-size: 3vw
+			letter-spacing: 0
+			width: 100%
+
+	.title
+		color: white
+		font-weight: 700
+		font-style: normal
+		font-family: $titleFont
+		text-transform: lowercase
+		line-height: 80%
+
+	.subtitle, .subheader
+		color: white
+		font-weight: 700
+		font-style: normal
+		font-family: $titleFont
+		text-transform: lowercase
+
+	.paragraph
+		font-family: $font
+		color: white
+
+	.button
+		font-family: $font
+		text-transform: lowercase
+		color: white
+		display: inline-block
+		position: relative
+		cursor: pointer
+
+		a
+			text-decoration: none
+			color: inherit
+
+		&::after
+			content: ""
+			position: absolute
+			width: 100%
+			height: 2px
+			bottom: 0
+			left: 0
+			background-color: white
