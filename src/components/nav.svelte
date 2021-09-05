@@ -21,6 +21,8 @@
 	flex-direction: row
 	justify-content: space-between
 	align-items: center
+	mix-blend-mode: exclusion
+	pointer-events: none
 
 	.logo-icon
 		display: inline-block
