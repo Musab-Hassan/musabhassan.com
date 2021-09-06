@@ -1,0 +1,71 @@
+<script lang="ts">
+</script>
+
+<style lang="sass">
+
+@import "../../consts.sass"
+@include textStyles()
+
+.footer-wrapper
+    width: 100vw
+    background-color: #202022
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    padding: 20vh 15vw
+    margin-top: 25vh
+    box-sizing: border-box
+
+    .inline-flex
+        display: flex
+        flex-direction: row
+        align-items: center
+
+        .logo
+            display: inline-block
+            height: 6vh
+        h6
+            font-family: $font
+            font-size: 3.5vh
+            font-weight: normal
+            margin-left: 0.7vw
+
+    .button-wrapper
+        margin-top: 5vh
+        margin-bottom: 3vh
+
+        .button
+            font-size: 3.5vh
+            margin-right: 1vw
+    
+    .paragraph
+        font-size: 1.5vh
+        white-space: nowrap
+
+    .large
+        font-size: 2.5vh
+
+</style>
+
+<div class="footer-wrapper">
+	<div class="flex-wrapper">
+        <div class="inline-flex">
+            <img src="assets/imgs/logo.svg" alt="mh logo" class="logo">
+            <h6>© 2021</h6>
+        </div>
+        <div class="button-wrapper">
+            <span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
+		    <span class="button"><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
+        </div>
+        <p class="paragraph">
+            designed and developed by musab hassan<br>
+            this webste is open source on github
+        </p>
+    </div>
+    <div class="flex-wrapper">
+        <p class="large">
+            i am currently accepting freelance work,<br> you may reach me on my email.
+        </p><br><br>
+        <p class="button large">musabhassan04@gmail.com</p>
+    </div>
+</div>

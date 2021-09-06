@@ -4,6 +4,7 @@
 	import WorkSection from "./sections/work.svelte";
 	import AboutSection from "./sections/about.svelte";
 	import NavComponent from "./components/nav.svelte"
+	import Footer from "./components/footer.svelte";
 
 </script>
 
@@ -14,10 +15,12 @@
 	background-color: #2A2A2C
 	overflow-x: hidden
 	color: white
+	margin: 0
+	padding: 0
 
 \:global(*)
 	margin: 0
-	paddding: 0
+	padding: 0
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
 	will-change: opacity;
@@ -28,4 +31,5 @@
 <HomeSection></HomeSection>
 <WorkSection></WorkSection>
 <AboutSection></AboutSection>
+<Footer></Footer>
 
