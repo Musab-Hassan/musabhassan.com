@@ -12,11 +12,12 @@
     display: flex
     flex-direction: row
     justify-content: space-between
-    padding: 20vh 15vw
+    padding: 15vh 13vw
     margin-top: 25vh
     box-sizing: border-box
 
     .inline-flex
+        flex-grow: 1
         display: flex
         flex-direction: row
         align-items: center
