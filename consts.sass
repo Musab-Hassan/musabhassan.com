@@ -10,8 +10,11 @@ $font: "Questrial", sans-serif
 @mixin textStyles()
 	
 	@media only screen and (max-width: 750px)
+		.paragraph
+			font-size: 3.6vw !important
+
 		.title
-			font-size: 9vw
+			font-size: 22vw
 
 		.subtitle
 			font-size: 4vw
@@ -42,9 +45,10 @@ $font: "Questrial", sans-serif
 
 	@media only screen and (max-width: 950px)
 		.paragraph
-			font-size: 3vw
+			font-size: 2.5vw
+			line-height: 180% !important
 			letter-spacing: 0
-			width: 100%
+			width: 100% !important
 
 	.title
 		color: white

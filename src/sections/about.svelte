@@ -7,13 +7,17 @@
 		<p class = "paragraph">
 			I'm a web developer from British Columbia, Canada. I love writing beautiful code and creating memorable web experiences. <br><br>I work with organizations and individuals to create taylor-made experiences designed to be beautiful, scalable, and affordable. If you like my work, you can send me an email and we can chat.
 		</p>
+		<div class="social-button-wrapper">
+			<span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
+			<span class="button"><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
+		</div>
 	</div>
 	<div class="profile-image">
 		<img src="assets/imgs/profile-photo.jpg" alt="Musab's Sillouette" class="profile-pic">
 	</div>
 </div>
 <div class="horizontal-flex">
-	<ul class="list" style="margin-left: 8vw;">
+	<ul class="list first">
 		<li class="list-title">techstacks i use</li>
 		<li>
 			<div>Front-end</div>
@@ -43,10 +47,6 @@
 		<li class="list-title">awards</li>
 		<li>1x - Awwwards Honors</li>
 	</ul>
-	<div class="button-wrapper">
-		<span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
-		<span class="button"><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
-	</div>
 </div>
 
 
@@ -93,6 +93,13 @@
 		box-sizing: border-box
 		z-index: 2
 
+		@media only screen and (max-width: 750px)
+			&
+				width: 80%
+
+				h1
+					font-size: 25vw !important
+
 		h1
 			font-size: 20vh
 
@@ -101,6 +108,12 @@
 			margin-left: 13vw
 			position: relative
 			width: 60%
+			line-height: 1.5rem
+
+			@media only screen and (max-width: 750px)
+				&
+					width: 100%
+					margin-left: 5vw
 
 			&::before
 				content: ""
@@ -110,6 +123,20 @@
 				right: 110%
 				top: 15%
 				background-color: white
+
+		.social-button-wrapper
+			font-size: 3vh
+			margin-left: 13vw
+			margin-top: 4vh
+			display: inline-block
+
+			*:not(:last-child)
+				margin-right: 2vw
+
+			@media only screen and (max-width: 750px)
+				&
+					margin-left: 5vw
+
 
 	@media only screen and (max-width: 950px)
 		.right-container
@@ -128,17 +155,22 @@
 	width: 100%
 	box-sizing: border-box
 
-	.button-wrapper
-		font-size: 3vh
-		text-align: right
-		margin-top: 4vh
-
-		.button:not(:last-child)
-			margin-right: 2vw
+	@media only screen and (max-width: 1080px)
+		flex-direction: column
+		padding: 0 8vw
 
 	.list
 		list-style-type: none
 		text-align: left
+
+		@media only screen and (max-width: 1080px)
+			margin-top: 10vh
+
+		&.first
+			margin-left: 8vw
+
+			@media only screen and (max-width: 1080px)
+				margin-left: 0
 		
 		.flex-item
 			margin-left: 5vw

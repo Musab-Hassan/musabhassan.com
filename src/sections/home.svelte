@@ -100,12 +100,20 @@
 		box-shadow: 3px 9px 18px rgba(0, 0, 0, 0.2)
 		overflow: hidden
 		box-sizing: border-box
-
 		-webkit-touch-callout: none
 		-webkit-user-select: none
 		-moz-user-select: none
 		-ms-user-select: none
 		user-select: none
+		opacity: 1
+
+		@media only screen and (max-width: 1250px)
+			&
+				opacity: 0.7
+
+		@media only screen and (max-width: 750px)
+			&
+				opacity: 0.3
 
 		img
 			height: 100%
