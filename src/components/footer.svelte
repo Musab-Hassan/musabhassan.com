@@ -8,13 +8,20 @@
 
 .footer-wrapper
     width: 100vw
-    background-color: #202022
+    background-color: #131314
     display: flex
     flex-direction: row
     justify-content: space-between
     padding: 15vh 13vw
     margin-top: 25vh
     box-sizing: border-box
+
+    @media only screen and (max-width: 950px)
+        flex-direction: column-reverse
+
+        .flex-wrapper:not(:first-child)
+            margin-bottom: 15vh
+
 
     .inline-flex
         flex-grow: 1
@@ -39,12 +46,16 @@
             font-size: 3.5vh
             margin-right: 1vw
     
-    .paragraph
+    .credits
         font-size: 1.5vh
         white-space: nowrap
 
     .large
         font-size: 2.5vh
+
+        @media only screen and (max-width: 950px)
+            br
+                display: none
 
 </style>
 
@@ -58,7 +69,7 @@
             <span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
 		    <span class="button"><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
         </div>
-        <p class="paragraph">
+        <p class="credits">
             designed and developed by musab hassan<br>
             this webste is open source on github
         </p>
