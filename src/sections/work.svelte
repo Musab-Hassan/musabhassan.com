@@ -1,6 +1,5 @@
 <script lang="ts">
     let loadData = new Promise(async (resolve: (data: any[]) => void, error) => {
-        if (error) console.error(error);
         resolve(await (await fetch("data.json")).json());
     });
 </script>

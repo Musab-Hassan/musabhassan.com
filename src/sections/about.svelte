@@ -66,7 +66,7 @@
 
 	.profile-image
 		right: 0
-		width: 100%
+		width: 80%
 		height: 85vh
 		padding-top: 10vh
 		overflow: hidden
@@ -85,6 +85,7 @@
 		width: 50%
 		height: 100%
 		margin: 0 2vw
+		padding-right: 4vw
 		display: flex
 		flex-direction: column
 		justify-content: center

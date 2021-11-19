@@ -5,14 +5,14 @@
 	import AboutSection from "./sections/about.svelte";
 	import NavComponent from "./components/nav.svelte"
 	import Footer from "./components/footer.svelte";
-
+	
 </script>
 
 <style lang="sass">
 
 	
 \:global(body)
-	background-color: #2A2A2C
+	background-color: #222224
 	overflow-x: hidden
 	color: white
 	margin: 0
@@ -32,4 +32,3 @@
 <WorkSection></WorkSection>
 <AboutSection></AboutSection>
 <Footer></Footer>
-
