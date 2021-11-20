@@ -1,4 +1,14 @@
 <script lang="ts">
+
+import { onMount } from "svelte";
+import { clickables } from "../store";
+
+let githubLink, emailLink
+
+onMount(() => {
+	clickables.update(value => [...value, githubLink, emailLink]);
+})
+
 </script>
 
 <style lang="sass">
@@ -66,8 +76,8 @@
             <h6>© 2021</h6>
         </div>
         <div class="button-wrapper">
-            <span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
-		    <span class="button"><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
+            <span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
+		    <span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
         </div>
         <p class="credits">
             designed and developed by musab hassan<br>

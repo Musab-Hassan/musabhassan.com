@@ -1,4 +1,12 @@
 <script lang="ts">
+import { onMount } from "svelte";
+import { clickables } from "../store";
+
+let home, work, about, email, logo, mobileMenu;
+
+onMount(() => {
+	clickables.update(value => [...value, home, work, about, email, logo, mobileMenu]);
+})
 </script>
 
 <style lang="sass">
@@ -123,18 +131,18 @@
 
 <div class="nav-wrapper">
 	<div class="flex-wrapper">
-		<img draggable="false" data-name="home" src="assets/imgs/logo.svg" alt="Page Logo" style = "width:7vh;" class = "logo-icon clickable">
+		<img bind:this={logo} draggable="false" data-name="home" src="assets/imgs/logo.svg" alt="Page Logo" style = "width:7vh;" class = "logo-icon clickable">
 	</div>
     
 	<div class="flex-wrapper">
 		<ul class="nav-list">
-			<li>Home</li>
-			<li>Work</li>
-			<li>About</li>
-			<li><a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a></li>
+			<li bind:this={home}>Home</li>
+			<li bind:this={work}>Work</li>
+			<li bind:this={about}>About</li>
+			<li bind:this={email}><a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a></li>
 		</ul>
 
-		<div class="hb-button clickable">
+		<div class="hb-button clickable" bind:this={mobileMenu}>
 			<div class="hb">
 				<span></span>
 				<span></span>

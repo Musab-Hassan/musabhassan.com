@@ -3,7 +3,9 @@ import { onMount } from "svelte";
 import { clickables as clickableStore } from "../store";
 
 onMount(() => {
-
+    clickableStore.subscribe(value => {
+        clickables = value;
+    })
 })
 
 let container;
@@ -73,10 +75,16 @@ export function trackMouse(e) {
 }
 
 // Check if overlapping over a clickable item
+// TODO: Fix broken hovers on scroll
 function isHoveringClickable(e) {
+
+    if (!clickables) return false;
+
     let isHover, hoverElem;
     
     clickables.forEach((ce) => {
+        if (!ce) return;
+
         let elemTop = ce.getBoundingClientRect().top;
         let elemBottom = elemTop + ce.offsetHeight;
         let elemLeft = ce.getBoundingClientRect().left;
@@ -90,7 +98,7 @@ function isHoveringClickable(e) {
                 let y = hoverElem.getBoundingClientRect().top;
                 let topElt = document.elementFromPoint(x,y);
                 if (topElt) {
-                    let overlay = hoverElem.contains(topElt) || topElt.isSameNode(document.querySelector(container));
+                    let overlay = hoverElem.contains(topElt) || topElt.isSameNode(container);
                     
                     if (!overlay) isHover = false;
                 }
@@ -105,12 +113,7 @@ function isHoveringClickable(e) {
 // For Work section to work:
 // $(document).mouseup((e) => {setTimeout(() => {trackMouse(e)}, 50);});
 
-// Get clickable elements from svelte store
 let clickables;
-
-clickableStore.subscribe(value => {
-    clickables = value;
-})
 
 </script>
 

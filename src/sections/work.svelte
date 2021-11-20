@@ -1,7 +1,21 @@
 <script lang="ts">
-    let loadData = new Promise(async (resolve: (data: any[]) => void, error) => {
-        resolve(await (await fetch("data.json")).json());
+
+import { onMount } from "svelte";
+import { clickables } from "../store";
+
+// Add links to clickables svelte store
+let _viewLinks = [];
+
+onMount(() => {
+    loadData.then(() => {
+        clickables.update(values => values.concat(_viewLinks));
     });
+})
+
+// Load work data
+let loadData = new Promise(async (resolve: (data: any[]) => void, error) => {
+    resolve(await (await fetch("data.json")).json());
+});
 </script>
 
 <div id="content-container" class="work-click-area" style = "margin-top:20vh;">
@@ -10,7 +24,7 @@
         <ul>
             <!-- Work items render here -->
             {#await loadData then items}
-                {#each items as item}
+                {#each items as item, i}
                     <li class="list-item clickable passive" data-id="{item.id}">
                         <div class="img-wrapper">
                             <img draggable="false" src="assets/imgs/work-back/{item.id}/cover.jpg" alt="{item.title} Background Image">
@@ -21,7 +35,7 @@
                         </div>
                         <div class="text-wrapper">
                             <h1 class="item-title">{item.title}</h1>
-                            <div class="button">view</div>
+                            <div class="button" bind:this={_viewLinks[i]}>view</div>
                         </div>
                     </li>
                 {/each}

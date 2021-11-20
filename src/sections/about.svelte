@@ -1,4 +1,14 @@
 <script lang="ts">
+
+import { onMount } from "svelte";
+import { clickables } from "../store";
+
+let githubLink, emailLink
+
+onMount(() => {
+	clickables.update(value => [...value, githubLink, emailLink]);
+});
+
 </script>
 
 <div id="content-container" class="about">
@@ -8,8 +18,8 @@
 			I'm a web developer from British Columbia, Canada. I love writing beautiful code and creating memorable web experiences. <br><br>I work with organizations and individuals to create taylor-made experiences designed to be beautiful, scalable, and affordable. If you like my work, you can send me an email and we can chat.
 		</p>
 		<div class="social-button-wrapper">
-			<span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
-			<span class="button"><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
+			<span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
+			<span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
 		</div>
 	</div>
 	<div class="profile-image">

@@ -1,5 +1,14 @@
 <script lang="ts">
 
+import { onMount } from "svelte";
+import { clickables } from "../store";
+
+let githubLink, linkedinLink, workLink;
+
+onMount(() => {
+	clickables.update(value => [...value, githubLink, linkedinLink, workLink]);
+})
+
 </script>
 
 <div id="content-container" style="padding-top: 23vh">
@@ -13,9 +22,9 @@
 				<h1 class = "title">Musab<br> Hassan</h1>
 				<p class = "paragraph occupation">front-end web developer from BC Canada</p>
 				<div class="wrapper">
-					<div class="button primary">view work</div>
-					<div class="button"><a href="https://github.com/Musab-Hassan" target="_blank">github</a></div>
-					<div class="button"><a href="https://www.linkedin.com/in/musab-hassan/" target="_blank">linkedin</a></div>
+					<div class="button primary" bind:this={workLink}>view work</div>
+					<div class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank">github</a></div>
+					<div class="button" bind:this={linkedinLink}><a href="https://www.linkedin.com/in/musab-hassan/" target="_blank">linkedin</a></div>
 				</div>
 			</div>
 
