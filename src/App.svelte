@@ -5,7 +5,10 @@
 	import AboutSection from "./sections/about.svelte";
 	import NavComponent from "./components/nav.svelte"
 	import Footer from "./components/footer.svelte";
+	import CursorDot from "./components/cursor-dot.svelte"
 	
+	let trackedDot;
+
 </script>
 
 <style lang="sass">
@@ -27,8 +30,13 @@
 
 </style>
 
-<NavComponent></NavComponent>
-<HomeSection></HomeSection>
-<WorkSection></WorkSection>
-<AboutSection></AboutSection>
-<Footer></Footer>
+<div 
+	on:mousemove = {(e) => trackedDot.trackMouse(e)}
+	>
+	<NavComponent></NavComponent>
+	<HomeSection></HomeSection>
+	<WorkSection></WorkSection>
+	<AboutSection></AboutSection>
+	<Footer></Footer>
+	<CursorDot bind:this={trackedDot}></CursorDot>
+</div>
