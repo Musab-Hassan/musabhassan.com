@@ -3,11 +3,26 @@
 import { onMount } from "svelte";
 import { clickables } from "../store";
 
+// Links
 let githubLink, linkedinLink, workLink;
+// Offsets
+let backgroundOffset;
 
 onMount(() => {
-	clickables.update(value => [...value, githubLink, linkedinLink, workLink]);
+	clickables.update(value => [...value, githubLink, linkedinLink, workLink]); // All links to clickables store
+
+	// Add scroll offsets to slickScroll
+	// slickScroll.then((value) => {
+	// 	console.log(value);
+	// 	value.addOffset({
+	// 		element: backgroundOffset,
+	// 		speedY: 0.8
+	// 	})
+	// })
 })
+
+// Get slickScroll promise from App.svelte
+export let slickScroll;
 
 </script>
 
@@ -28,7 +43,7 @@ onMount(() => {
 				</div>
 			</div>
 
-			<div class="parallax-wrapper home-back">
+			<div class="parallax-wrapper home-back" bind:this={backgroundOffset}>
 				<img draggable="false" alt="Home Background" src="assets/imgs/home-back.jpg" style="width:100%; height: 100%; object-fit: cover;">
 			</div>
 		</div>

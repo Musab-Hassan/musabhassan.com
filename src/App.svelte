@@ -6,17 +6,38 @@
 	import NavComponent from "./components/nav.svelte"
 	import Footer from "./components/footer.svelte";
 	import CursorDot from "./components/cursor-dot.svelte"
+	import slickScroll from "slickscrolljs";
+	import { onMount } from "svelte";
 	
-	let trackedDot;
+	let trackedDot; // Mosue following dot
+	let scrollContainer;
+	let scrollResolve;
+
+	// Promise for slickScroll access from within components
+	let scrollPromise = new Promise((r) => {
+		scrollResolve = r;
+	});
+
+	onMount(async () => {
+		// Resolve slickScroll promise and pass momentumScroll's value
+		let slick = (new slickScroll).momentumScroll({
+			root: scrollContainer
+		});
+		scrollResolve(slick);
+
+		// Remove horizontal scrolling
+		await scrollPromise;
+		scrollContainer.style.overflowX = "hidden";
+	});
 
 </script>
 
-<style lang="sass">
 
+<style lang="sass">
 	
 \:global(body)
 	background-color: #222224
-	overflow-x: hidden
+	overflow: hidden
 	color: white
 	margin: 0
 	padding: 0
@@ -28,15 +49,29 @@
 	-webkit-font-smoothing: antialiased;
 	will-change: opacity;
 
+#scroll-frame
+	height: 100%
+	top: 0
+	left: 0
+	positon: relative
+	width: 100%
+	overflow-y: auto
+	overflow-x: hidden
+
+
 </style>
 
-<div 
-	on:mousemove = {(e) => trackedDot.trackMouse(e)}
-	>
-	<NavComponent></NavComponent>
-	<HomeSection></HomeSection>
+
+<svelte:body on:mousemove = {(e) => trackedDot.trackMouse(e)}/>
+<CursorDot bind:this={trackedDot}></CursorDot>
+<NavComponent></NavComponent>
+
+<div id="scroll-frame" bind:this={scrollContainer}>
+	<HomeSection bind:slickScroll={scrollPromise}></HomeSection>
 	<WorkSection></WorkSection>
 	<AboutSection></AboutSection>
 	<Footer></Footer>
-	<CursorDot bind:this={trackedDot}></CursorDot>
 </div>
+
+
+
