@@ -4,10 +4,20 @@ import { onMount } from "svelte";
 import { clickables } from "../store";
 
 let githubLink, emailLink
+let profilePic;
 
 onMount(() => {
 	clickables.update(value => [...value, githubLink, emailLink]);
+
+	slickScroll.then((value) => {
+		value.addOffset({
+			element: profilePic,
+			speedY: 0.8
+		})
+	})
 });
+
+export let slickScroll;
 
 </script>
 
@@ -22,7 +32,7 @@ onMount(() => {
 			<span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
 		</div>
 	</div>
-	<div class="profile-image">
+	<div class="profile-image" bind:this={profilePic}>
 		<img src="assets/imgs/profile-photo.jpg" alt="Musab's Sillouette" class="profile-pic">
 	</div>
 </div>
@@ -78,10 +88,10 @@ onMount(() => {
 		right: 0
 		width: 80%
 		height: 85vh
-		padding-top: 10vh
+		padding-top: 0
 		overflow: hidden
 		display: flex
-		margin-top: 15vh
+		margin-top: -15vh
 
 		img
 			width: 100%

@@ -9,9 +9,10 @@
 	import slickScroll from "slickscrolljs";
 	import { onMount } from "svelte";
 	
-	let trackedDot; // Mosue following dot
+	let trackedDot; // Mouse following dot
 	let scrollContainer;
 	let scrollResolve;
+	let navBar;
 
 	// Promise for slickScroll access from within components
 	let scrollPromise = new Promise((r) => {
@@ -21,7 +22,11 @@
 	onMount(async () => {
 		// Resolve slickScroll promise and pass momentumScroll's value
 		let slick = (new slickScroll).momentumScroll({
-			root: scrollContainer
+			root: scrollContainer,
+			duration: 800,
+			fixedOffsets: [
+				navBar
+			]
 		});
 		scrollResolve(slick);
 
@@ -58,18 +63,24 @@
 	overflow-y: auto
 	overflow-x: hidden
 
+#nav-bar
+	position: fixed
+	top: 10vh
+	z-index: 100
 
 </style>
 
 
 <svelte:body on:mousemove = {(e) => trackedDot.trackMouse(e)}/>
 <CursorDot bind:this={trackedDot}></CursorDot>
-<NavComponent></NavComponent>
 
 <div id="scroll-frame" bind:this={scrollContainer}>
+	<div id="nav-bar" bind:this={navBar}>
+		<NavComponent></NavComponent>
+	</div>
 	<HomeSection bind:slickScroll={scrollPromise}></HomeSection>
 	<WorkSection></WorkSection>
-	<AboutSection></AboutSection>
+	<AboutSection bind:slickScroll={scrollPromise}></AboutSection>
 	<Footer></Footer>
 </div>
 

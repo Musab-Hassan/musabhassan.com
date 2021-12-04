@@ -2,42 +2,39 @@
 import { onMount } from "svelte";
 import { clickables } from "../store";
 
-let home, work, about, email, logo, mobileMenu;
+let home, work, about, email, logo, mobileMenu, navBar;
 
 onMount(() => {
 	clickables.update(value => [...value, home, work, about, email, logo, mobileMenu]);
-})
+});
+
 </script>
 
 <style lang="sass">
 
 @import "../../consts.sass"
-    
-.nav-wrapper #nav-container, #content-container .year
-	display: none !important
 
 .nav-wrapper
 	width: 100vw
-	position: fixed
 	margin: 0 auto
-	top: 10vh
 	padding: 0 7vw
 	box-sizing: border-box
 	display: block
-	z-index: 30
+	z-index: 100
 	display: flex
 	flex-direction: row
 	justify-content: space-between
 	align-items: center
-	mix-blend-mode: exclusion
-	pointer-events: none
 
 	.logo-icon
 		display: inline-block
 		height: 4vh
+		width: 7vh
+		mix-blend-mode: exclusion
 
 	ul.nav-list
 		list-style-type: none
+		mix-blend-mode: exclusion
 
 		li
 			font-family: $font
@@ -129,9 +126,15 @@ onMount(() => {
 		display: none
 </style>
 
-<div class="nav-wrapper">
+<div class="nav-wrapper" bind:this={navBar}>
 	<div class="flex-wrapper">
-		<img bind:this={logo} draggable="false" data-name="home" src="assets/imgs/logo.svg" alt="Page Logo" style = "width:7vh;" class = "logo-icon clickable">
+		<img 
+			bind:this={logo} 
+			src="assets/imgs/logo.svg"
+			class = "logo-icon clickable"
+			alt="Logo"
+			draggable="false"
+		>
 	</div>
     
 	<div class="flex-wrapper">

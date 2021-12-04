@@ -12,13 +12,12 @@ onMount(() => {
 	clickables.update(value => [...value, githubLink, linkedinLink, workLink]); // All links to clickables store
 
 	// Add scroll offsets to slickScroll
-	// slickScroll.then((value) => {
-	// 	console.log(value);
-	// 	value.addOffset({
-	// 		element: backgroundOffset,
-	// 		speedY: 0.8
-	// 	})
-	// })
+	slickScroll.then((value) => {
+		value.addOffset({
+			element: backgroundOffset,
+			speedY: 0.8
+		})
+	})
 })
 
 // Get slickScroll promise from App.svelte
