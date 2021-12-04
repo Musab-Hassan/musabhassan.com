@@ -152,13 +152,13 @@ let clickables;
 
 	&.active
 		.hover-circle
-			width: 5vh
-			height: 5vh
+			width: 4vh
+			height: 4vh
 
 	&.scroll
 		.hover-circle
-			width: 4vh !important
-			height: 4vh !important
+			width: 3vh !important
+			height: 3vh !important
 
 			&:before, &:after
 				width: 1vh
