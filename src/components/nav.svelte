@@ -42,6 +42,10 @@ onMount(() => {
 			font-size: 2.5vh
 			display: inline-block
 
+			div 
+				display: inline-block
+				cursor: pointer
+
 			a
 				color: white
 				text-decoration: none
@@ -139,9 +143,9 @@ onMount(() => {
     
 	<div class="flex-wrapper">
 		<ul class="nav-list">
-			<li bind:this={home}>Home</li>
-			<li bind:this={work}>Work</li>
-			<li bind:this={about}>About</li>
+			<li><div bind:this={home}>Home</div></li>
+			<li><div bind:this={work}>Work</div></li>
+			<li><div bind:this={about}>About</div></li>
 			<li bind:this={email}><a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a></li>
 		</ul>
 
