@@ -72,7 +72,7 @@ onMount(() => {
 <div class="footer-wrapper">
 	<div class="flex-wrapper">
         <div class="inline-flex">
-            <img src="assets/imgs/logo.svg" alt="mh logo" class="logo">
+            <img src="assets/imgs/footer-logo.svg" alt="mh logo" class="logo">
             <h6>© 2021</h6>
         </div>
         <div class="button-wrapper">

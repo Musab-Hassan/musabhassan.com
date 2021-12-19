@@ -28,9 +28,10 @@ onMount(() => {
 
 	.logo-icon
 		display: inline-block
-		height: 4vh
+		height: 6vh
 		width: 7vh
 		mix-blend-mode: exclusion
+		cursor: pointer
 
 	ul.nav-list
 		list-style-type: none
