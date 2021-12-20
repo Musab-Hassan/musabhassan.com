@@ -12,7 +12,6 @@ let x = 0, y = 0;
 
 // Track the mouse with easing and handle hover effects
 export function trackMouse(e) {
-	if (disabled) return;
 
 	let active, t = 0;
 
