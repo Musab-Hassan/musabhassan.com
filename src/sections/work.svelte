@@ -13,12 +13,14 @@ onMount(() => {
     loadData.then(() => {
         clickables.update(values => values.concat(_viewLinks));
     });
+
+    loop();
 })
 
 
 
 // Load work data
-let loadData = new Promise(async (resolve: (data: any[]) => void, error) => {
+let loadData = new Promise(async (resolve: (data: any[]) => void) => {
     resolve(await (await fetch("data.json")).json());
 });
 
@@ -31,7 +33,8 @@ let maxSpeed = 5000;
 let isWorkActive = false;
 let isClick = false;
 let initPosition = 0;
-let initMousePosX; 
+let activeMousePoxX = 0;
+let initMousePosX = 0; 
 
 isWorkScroll.subscribe(v => {
     isClick = v;
@@ -56,21 +59,29 @@ function cancelScrollHold() {
     isWorkScroll.set(false);
 }
 
+function updatePosition(e) {
+    activeMousePoxX = e.clientX;
+}
 
-function handleScroll(e) {
-    if (isWorkActive || !isClick) return;
-	
+
+function loop() {
+    if (isWorkActive || !isClick) {
+        requestAnimationFrame(loop);
+        return;
+    }
+
     let endPoint = scrollElem.offsetWidth - document.body.clientWidth 
     if (endPoint < 0) endPoint = scrollElem.offsetWidth;
 
-    let secondPosX = e.clientX;
-    let diff = (secondPosX - initMousePosX) * -1;
+    let diff = (activeMousePoxX - initMousePosX) * -1;
     let calcPosition = initPosition - (maxSpeed * (diff / document.body.clientWidth));
     
     if (calcPosition > 0) calcPosition = 0;
     if (calcPosition <= (endPoint * -1)) calcPosition = endPoint*-1;
 
     scrollElem.style.transform = `translateX(${calcPosition}px)`;
+
+    requestAnimationFrame(loop);
 }
 
 
@@ -83,7 +94,7 @@ function handleScroll(e) {
         on:mousedown={enableScrollHold}
         on:mouseup={cancelScrollHold}
         on:mouseleave={cancelScrollHold}
-        on:mousemove|preventDefault={handleScroll}
+        on:mousemove|preventDefault={updatePosition}
     >
     <ul class="work-list" bind:this={scrollElem} class:isClick>
         <!-- Work items render here -->
@@ -91,7 +102,7 @@ function handleScroll(e) {
             {#each items as item, i}
                 <li class="list-item clickable passive" data-id="{item.id}">
                     <div class="img-wrapper">
-                        <img draggable="false" src="assets/imgs/work-back/{item.id}/cover.jpg" alt="{item.title} Background Image">
+                        <img on:dragstart|preventDefault draggable="false" src="assets/imgs/work-back/{item.id}/cover.jpg" alt="{item.title} Background Image">
                     </div>
                     <div class="text-top-wrapper">
                         <p class="item-date">{item.date}</p>
@@ -119,6 +130,13 @@ function handleScroll(e) {
     display: flex
     flex-direction: column
     cursor: grab
+
+    *
+        -webkit-touch-callout: none
+        -webkit-user-select: none
+        -moz-user-select: none
+        -ms-user-select: none
+        user-select: none
 
     ul.work-list
         margin-top: auto

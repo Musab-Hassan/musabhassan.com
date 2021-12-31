@@ -116,7 +116,7 @@ clickableStore.subscribe(value => {
 	z-index: 1000
 	mix-blend-mode: exclusion
 	pointer-events: none
-	will-change: width, height, transform
+	will-change: width, height
 
 	.dot
 		position: relative
