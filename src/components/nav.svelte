@@ -2,10 +2,11 @@
 import { onMount } from "svelte";
 import { clickables } from "../store";
 
-let home, work, about, email, logo, mobileMenu, navBar;
+let home, work, about, email, logo, github, mobileMenu;
+let mobileActive;
 
 onMount(() => {
-	clickables.update(value => [...value, home, work, about, email, logo, mobileMenu]);
+	clickables.update(value => [...value, home, work, about, email, logo, github, mobileMenu]);
 });
 
 </script>
@@ -33,28 +34,78 @@ onMount(() => {
 		mix-blend-mode: exclusion
 		cursor: pointer
 
-	ul.nav-list
-		list-style-type: none
-		mix-blend-mode: exclusion
+	@media only screen and (min-width: 950px)
+		ul.nav-list
+			list-style-type: none
+			mix-blend-mode: exclusion
 
-		li
-			font-family: $font
-			text-transform: lowercase
-			font-size: 2.5vh
-			display: inline-block
+			li
+				font-family: $font
+				text-transform: lowercase
+				font-size: 2.5vh
+				display: inline-block
 
-			div 
+				&.mobile
+					display: none
+
+				div 
+					display: inline-block
+					cursor: pointer
+
+				a
+					color: white
+					text-decoration: none
+
+				&:not(.mobile):not(:last-child)::after
+					margin-right: 0.3vw
+					margin-left: 0.5vw
+					content: "-"
+
+	@media only screen and (max-width: 950px)
+		ul.nav-list
+			list-style-type: none
+			position: fixed
+			top: -10vh
+			left: 0
+			height: 100vh
+			width: 0vw
+			background-color: #18181a
+			transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
+			-webkit-transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
+			-moz-transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
+			overflow: hidden !important
+
+			.wrapper
+				display: flex
+				flex-direction: column
+				position: relative
+				justify-content: center
+				height: 100%
+				width: 100%
+				box-sizing: border-box
+				padding: 0 10vw
+				padding-top: 10vh
+
+			&.mobileActive
+				width: 100vw
+
+			li
+				font-family: $font
+				font-weight: bolder
+				text-transform: lowercase
+				font-size: 9vw
 				display: inline-block
 				cursor: pointer
+				padding: 2vh 0
+				box-sizing: border-box
+				border-bottom: 1px solid white
 
-			a
-				color: white
-				text-decoration: none
+				div 
+					display: inline-block
 
-			&:not(:last-child)::after
-				margin-right: 0.3vw
-				margin-left: 0.5vw
-				content: "-"
+				a
+					color: white
+					text-decoration: none
 
 	.hb-button
 		cursor: pointer
@@ -64,6 +115,9 @@ onMount(() => {
 		*
 			display: inline-block
 			vertical-align: middle
+			user-select: none
+			-ms-user-select: none
+			-moz-user-select: none
 
 		.text
 			font-family: $font
@@ -76,9 +130,9 @@ onMount(() => {
 			margin-right: 1.5vh
 
 			span
-				transition: 0.8s ease
-				-webkit-transition: 0.8s ease
-				-moz-transition: 0.8s ease
+				transition: 1s ease
+				-webkit-transition: 1s ease
+				-moz-transition: 1s ease
 				display: block
 				position: relative
 				top: 0
@@ -96,7 +150,7 @@ onMount(() => {
 				&:nth-child(3)
 					top: 1.1vh
 
-		&.close
+		&.mobileActive
 			.text
 				color: white
 
@@ -120,19 +174,14 @@ onMount(() => {
 	.hb-button
 		display: none
 
-	.nav-list
-		display: block
-
 @media only screen and (max-width: 950px)
 	.hb-button
 		display: block
 
-	.nav-list
-		display: none
 </style>
 
-<div class="nav-wrapper" bind:this={navBar}>
-	<div class="flex-wrapper">
+<div class="nav-wrapper" style="transform: translate(0px);">
+	<div class="flex-wrapper" style="z-index: 21;">
 		<img 
 			bind:this={logo} 
 			src="assets/imgs/logo.svg"
@@ -141,16 +190,23 @@ onMount(() => {
 			draggable="false"
 		>
 	</div>
-    
+	
 	<div class="flex-wrapper">
-		<ul class="nav-list">
-			<li><div bind:this={home}>Home</div></li>
-			<li><div bind:this={work}>Work</div></li>
-			<li><div bind:this={about}>About</div></li>
-			<li bind:this={email}><a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a></li>
+		<ul class="nav-list" class:mobileActive>
+			<div class="wrapper">
+				<li><div bind:this={home}>Home</div></li>
+				<li><div bind:this={work}>Work</div></li>
+				<li><div bind:this={about}>About</div></li>
+				<li class="mobile" bind:this={email}><a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a></li>
+				<li bind:this={github}><a href="https://github.com/Musab-Hassan" target="_blank">Github</a></li>
+			</div>
 		</ul>
 
-		<div class="hb-button clickable" bind:this={mobileMenu}>
+		<div class="hb-button clickable" 
+			bind:this={mobileMenu} 
+			on:click={() => mobileActive = !mobileActive} 
+			class:mobileActive>
+
 			<div class="hb">
 				<span></span>
 				<span></span>
