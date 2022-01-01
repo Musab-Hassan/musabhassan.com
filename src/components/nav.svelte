@@ -1,12 +1,29 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { clickables } from "../store";
+import { clickables, waitTime } from "../store";
+import anime from "animejs";
 
 let home, work, about, email, logo, github, mobileMenu;
+let homeAnim, workAnim, aboutAnim;
 let mobileActive;
 
 onMount(() => {
 	clickables.update(value => [...value, home, work, about, email, logo, github, mobileMenu]);
+
+	let targets = [logo, mobileMenu, homeAnim, workAnim, aboutAnim, github];
+
+	targets.forEach(e => {
+		e.style.transform = "translateY(120%) rotate(10deg)"
+	})
+
+	anime({
+		targets: targets,
+		rotate: 0,
+		translateY: "0%",
+		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
+		duration: 1500,
+		delay: anime.stagger(50, {start: waitTime + 3000})
+	});
 });
 
 </script>
@@ -27,17 +44,24 @@ onMount(() => {
 	justify-content: space-between
 	align-items: center
 
-	.logo-icon
-		display: inline-block
+	.flex-wrapper.ico
+		overflow: hidden
 		height: 6vh
 		width: 7vh
 		mix-blend-mode: exclusion
 		cursor: pointer
 
+		.logo-icon
+			position: relative
+			display: inline-block
+			height: 100%
+			width: 100%
+
 	@media only screen and (min-width: 950px)
 		ul.nav-list
 			list-style-type: none
 			mix-blend-mode: exclusion
+			overflow: hidden
 
 			li
 				font-family: $font
@@ -181,7 +205,7 @@ onMount(() => {
 </style>
 
 <div class="nav-wrapper" style="transform: translate(0px);">
-	<div class="flex-wrapper" style="z-index: 21;">
+	<div class="flex-wrapper ico" style="z-index: 21;">
 		<img 
 			bind:this={logo} 
 			src="assets/imgs/logo.svg"
@@ -194,9 +218,9 @@ onMount(() => {
 	<div class="flex-wrapper">
 		<ul class="nav-list" class:mobileActive>
 			<div class="wrapper">
-				<li><div bind:this={home}>Home</div></li>
-				<li><div bind:this={work}>Work</div></li>
-				<li><div bind:this={about}>About</div></li>
+				<li bind:this={homeAnim}><div bind:this={home}>Home</div></li>
+				<li bind:this={workAnim}><div bind:this={work}>Work</div></li>
+				<li bind:this={aboutAnim}><div bind:this={about}>About</div></li>
 				<li class="mobile" bind:this={email}><a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a></li>
 				<li bind:this={github}><a href="https://github.com/Musab-Hassan" target="_blank">Github</a></li>
 			</div>
