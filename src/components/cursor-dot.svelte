@@ -7,11 +7,14 @@ let clickables;
 // class binds
 let hover: boolean = false;
 let disabled: boolean = false;
+let introDisabled: boolean = true;
 
 let x = 0, y = 0;
 
 // Track the mouse with easing and handle hover effects
 export function trackMouse(e) {
+
+	if (introDisabled) setTimeout(() => introDisabled = false, 500);
 
 	let active, t = 0;
 
@@ -134,7 +137,7 @@ clickableStore.subscribe(value => {
 		width: 4vh
 		height: 4vh
 
-	&.disabled .dot
+	&.disabled .dot, &.introDisabled .dot
 		width: 0 !important
 		height: 0 !important
 
@@ -150,6 +153,7 @@ clickableStore.subscribe(value => {
 <div class="hover-container active" 
 	bind:this={container}
 	class:hover
-	class:disabled>
+	class:disabled
+	class:introDisabled>
 	<div class="dot"></div>
 </div>

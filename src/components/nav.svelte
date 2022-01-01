@@ -16,6 +16,7 @@ onMount(() => {
 		e.style.transform = "translateY(120%) rotate(10deg)"
 	})
 
+	// Intro animation on page load
 	anime({
 		targets: targets,
 		rotate: 0,
@@ -131,6 +132,9 @@ onMount(() => {
 					color: white
 					text-decoration: none
 
+	.mask
+		overflow: hidden
+
 	.hb-button
 		cursor: pointer
 		position: relative
@@ -226,17 +230,19 @@ onMount(() => {
 			</div>
 		</ul>
 
-		<div class="hb-button clickable" 
-			bind:this={mobileMenu} 
-			on:click={() => mobileActive = !mobileActive} 
-			class:mobileActive>
+		<div class="mask">
+			<div class="hb-button clickable" 
+				bind:this={mobileMenu} 
+				on:click={() => mobileActive = !mobileActive} 
+				class:mobileActive>
 
-			<div class="hb">
-				<span></span>
-				<span></span>
-				<span></span>
+				<div class="hb">
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<div class="text">Menu</div>
 			</div>
-			<div class="text">Menu</div>
 		</div>
 	</div>
 </div>

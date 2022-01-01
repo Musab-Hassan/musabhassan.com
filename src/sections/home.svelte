@@ -6,7 +6,8 @@ import anime from "animejs";
 
 // Offsets
 let backgroundOffset, backgroundOffsetImage;
-let path1, path2, path3, path4
+let path1, path2, path3, path4;
+let titleWord1, titleWord2, shortDetails, callToAction;
 
 onMount(() => {
 
@@ -53,20 +54,18 @@ function introAnimation() {
 		fill: 'forwards' 
 	});
 
-	// Set initial values for background
+
+	// Animate background image
 	Object.assign(backgroundOffset.style, {
-		opacity: "0",
 		height: "0",
 		transform: "scale(1.3)",
 	});
-	backgroundOffsetImage.style.transform = "translateY(100%) scale(1.4)"
+	backgroundOffsetImage.style.transform = "translateY(100%) scale(1.4)";
 
-	// Animate background image
 	anime({
 		targets: backgroundOffset,
 		height: "100%",
 		scale: 1,
-		opacity:1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
 		delay: 3000 + waitTime
@@ -78,7 +77,22 @@ function introAnimation() {
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
 		delay: 3000 + waitTime
+	});
+
+
+	// Animate title
+	let titleElems = [titleWord1, titleWord2, shortDetails, callToAction];
+	titleElems.forEach(e => {
+		e.style.transform = "translateY(-150%) rotate(-8deg)";
 	})
+	anime({
+		targets: titleElems,
+		rotate: "0",
+		translateY: "0%",
+		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
+		duration: 1400,
+		delay: anime.stagger(70, {start: 3500 + waitTime})
+	});
 }
 
 // Get slickScroll promise from App.svelte
@@ -119,10 +133,21 @@ export let slickScroll;
 			</div>
 			
 			<div class="flex-container" style="margin-right: 5vw; justify-content: flex-end">
-				<h1 class = "title">Musab<br> Hassan</h1>
-				<p class = "paragraph occupation">front-end web developer from BC Canada</p>
-				<div class="wrapper">
-					<div class="primary">
+				<h1 class = "title">
+					<div class="title-mask">
+						<div class="word" bind:this={titleWord1}>Musab</div>
+					</div><br> 
+					<div class="title-mask">
+						<div class="word" bind:this={titleWord2}>Hassan</div>
+					</div>
+				</h1>
+				<div class="occupation mask">
+					<p class = "paragraph" bind:this={shortDetails}>
+						front-end web developer from BC Canada
+					</p>
+				</div>
+				<div class="wrapper action-mask">
+					<div class="action" bind:this={callToAction}>
 						<div class="mask">
 							<img src="assets/imgs/scroll_arrow.png" alt="">
 						</div>
@@ -175,6 +200,13 @@ export let slickScroll;
 			flex-direction: column
 			justify-content: center
 
+			.title-mask
+				overflow: hidden
+				display: inline-flex
+
+			.mask
+				overflow: hidden
+
 			.h-signature
 				width: 35vh
 				margin-left: -6vh
@@ -183,42 +215,31 @@ export let slickScroll;
 				position: relative
 				margin-top: 8vh
 
-				&::before
-					content: ""
-					position: absolute
-					top: 50%
-					right: 110%
-					height: 2px
-					width: 20%
-					background-color: white
-
-			.button
-				font-size: 2.5vh
-
-				&:not(:last-child)
-					margin-right: 1vw
-
-			.primary
-				font-size: 2vh
-				letter-spacing: 0.5vh
-				font-family: $font
-				text-transform: uppercase
-				color: white
-				position: relative
+			.action-mask
 				margin-top: 10vh
 				margin-right: 7vw
 				display: inline-flex
-				flex-direction: row
-				align-items: center
+				overflow: hidden
 
-				.mask
-					overflow: hidden
-					height: 2vh
+				.action
+					font-size: 2vh
+					letter-spacing: 0.5vh
+					font-family: $font
+					text-transform: uppercase
+					color: white
+					position: relative
+					display: inline-flex
+					flex-direction: row
+					align-items: center
 
-					img
-						height: 2.3vh
-						margin-right: 1.5vh
-						animation: scrollArrowLoop 3s ease infinite
+					.mask
+						overflow: hidden
+						height: 2vh
+
+						img
+							height: 2.3vh
+							margin-right: 1.5vh
+							animation: scrollArrowLoop 3s ease infinite
 
 				
 
