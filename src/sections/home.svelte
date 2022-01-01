@@ -1,17 +1,14 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { clickables, waitTime } from "../store";
+import { waitTime } from "../store";
 import anime from "animejs";
 
-// Links
-let githubLink, workLink;
 // Offsets
 let backgroundOffset, backgroundOffsetImage;
 let path1, path2, path3, path4
 
 onMount(() => {
-	clickables.update(value => [...value, githubLink, workLink]); // All links to clickables store
 
 	// Add scroll offsets to slickScroll
 	slickScroll.then((value) => {
@@ -133,8 +130,6 @@ export let slickScroll;
 							scroll
 						</div>
 					</div>
-					<div class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank">github</a></div>
-					<div class="button" bind:this={workLink}>Work</div>
 				</div>
 			</div>
 
