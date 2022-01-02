@@ -60,7 +60,7 @@ function introAnimation() {
 		height: "0",
 		transform: "scale(1.3)",
 	});
-	backgroundOffsetImage.style.transform = "translateY(100%) scale(1.4)";
+	backgroundOffsetImage.style.transform = "translateY(80%) scale(1.4)";
 
 	anime({
 		targets: backgroundOffset,
@@ -68,7 +68,10 @@ function introAnimation() {
 		scale: 1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
-		delay: 3000 + waitTime
+		delay: 3000 + waitTime,
+		complete: () => {
+			backgroundOffset.style.boxShadow = "3px 9px 18px rgba(0, 0, 0, 0.2)";
+		}
 	});
 	anime({
 		targets: backgroundOffsetImage,
@@ -91,7 +94,7 @@ function introAnimation() {
 		translateY: "0%",
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1400,
-		delay: anime.stagger(70, {start: 3500 + waitTime})
+		delay: anime.stagger(80, {start: 3500 + waitTime})
 	});
 }
 
@@ -251,7 +254,6 @@ export let slickScroll;
 		height: 100%
 		margin-left: 5%
 		border-radius: 1.5vh
-		box-shadow: 3px 9px 18px rgba(0, 0, 0, 0.2)
 		overflow: hidden
 		box-sizing: border-box
 		-webkit-touch-callout: none
@@ -259,6 +261,8 @@ export let slickScroll;
 		-moz-user-select: none
 		-ms-user-select: none
 		user-select: none
+		transition: box-shadow 0.6s ease
+		-webkit-transition: box-shadow 0.6s ease
 
 		@media only screen and (max-width: 1250px)
 			&
@@ -272,6 +276,7 @@ export let slickScroll;
 			height: 100%
 			width: 100%
 			object-fit: cover
+			border-radius: 1.5vh
 
 @media only screen and (min-width: 1250px)
 	.h-signature

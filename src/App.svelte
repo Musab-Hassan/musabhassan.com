@@ -32,7 +32,13 @@
 
 		// Remove horizontal scrolling
 		await scrollPromise;
+		scrollContainer.style.overflowY = "hidden";
 		scrollContainer.style.overflowX = "hidden";
+
+		// Enable scrolling once all intro animations are over
+		setTimeout(() => {
+			scrollContainer.style.overflowY = "auto";
+		}, 6000);
 	});
 
 </script>
