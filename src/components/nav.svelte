@@ -31,7 +31,7 @@ onMount(() => {
 
 <style lang="sass">
 
-@import "../../consts.sass"
+@import "../consts.sass"
 
 .nav-wrapper
 	width: 100vw
