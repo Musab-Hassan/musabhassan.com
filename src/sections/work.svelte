@@ -123,7 +123,7 @@ function loop() {
 
 <style lang="sass">
 
-@import "../../consts.sass"
+@import "../consts.sass"
 @include textStyles()
 
 #content-container.work-click-area .content-wrapper
