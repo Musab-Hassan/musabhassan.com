@@ -11,6 +11,9 @@ This website is built with
 - [Svelte (Frontend Framework)](https://svelte.dev/)
 - [SlickscrollJS (Scrolling)](https://github.com/Musab-Hassan/slickscrolljs)
 - [AnimeJS (Animations)](https://animejs.com/)
+- [ThreeJS (3D Effects)](https://)
+Also uses
+- [split-distortion-scroll-effect (WebGL shaders)](https://github.com/conorbailey90/rgb-split-distortion-scroll-effect/tree/main/js/shaders)
 
 This is the source for version 2+. Version 1.0, the one built with jQuery is available in Releases.
 
