@@ -28,6 +28,7 @@
     "animejs": "^3.2.1",
     "node-sass": "^7.0.1",
     "sirv-cli": "^2.0.1",
-    "slickscrolljs": "^1.3.0"
+    "slickscrolljs": "^1.3.0",
+    "three": "^0.136.0"
   }
 }
