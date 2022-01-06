@@ -4,98 +4,90 @@ import { onMount } from "svelte";
 import { clickables, isWorkScroll, workScrollPosition } from "../store";
 import { SliderEffect } from "../effects/work-slider/renderer";
 
-// Add links to clickables svelte store
-let _viewLinks = [];
-let container;
-let images = [];
+let isHold = false; // is user holding click
+let _viewLinks = []; // Array of clickable Links
+let container, listContainer; // Binds to containers
+let images = []; // Array of images to be passed to WebGL Shader
 
-onMount(() => {
-	scrollElem.style.transform = "translateX(0px)";
-
-	loadData.then(() => {
-		clickables.update(values => values.concat(_viewLinks));
-	});
-
-	loop();
-	// ThreeJS warping effect
-	setTimeout(() => {new SliderEffect(container, images)}, 3000);
-})
-
-
-
-// Load work data
-let loadData = new Promise(async (resolve: (data: any[]) => void) => {
-	resolve(await (await fetch("data.json")).json());
+isWorkScroll.subscribe(v => {
+	isHold = v;
 });
 
 
+// Slider calculations and rendering
+let currentMouseX = 0, initialMouseX = 0;
+let currentPosition = 0, initialPosition = 0;
+let offsetSpeed = 4000, lerpSpeed = 0.075;
 
-// Work Scrolling Handlers
-let scrollElem;
+class WorkSlider {
 
-let maxSpeed = 5000;
-let isClick = false;
-let initPosition = 0;
-let activeMousePoxX = 0;
-let initMousePosX = 0;
-let currentPosition = 0;
+    onInitHold(e) {
+        if (isHold) return;
 
-isWorkScroll.subscribe(v => {
-	isClick = v;
-})
+        initialMouseX = e.clientX;
+        isWorkScroll.set(true);
 
+        if (isHold) {
+            let style = window.getComputedStyle(listContainer);
+            let matrix = new WebKitCSSMatrix(style.transform);
+            initialPosition = matrix.m41;
+        }
+    }
 
-function enableScrollHold(e) {
-	if (isClick) return;
+    onRelease() {
+        isWorkScroll.set(false);
+    }
 
-	initMousePosX = e.clientX;
-	isWorkScroll.set(true);
+    onMouseMove(e) {
+        if (isHold) currentMouseX = e.clientX;
+    }
 
-	if (isClick) {
-		let style = window.getComputedStyle(scrollElem);
-		let matrix = new WebKitCSSMatrix(style.transform);
-		initPosition = matrix.m41;
-	}
+    animate() {
+        let endPoint = listContainer.offsetWidth - document.body.clientWidth
+        if (endPoint < 0) endPoint = listContainer.offsetWidth;
+
+        let diff = (currentMouseX - initialMouseX) * -1;
+		let targetPosition = initialPosition - (offsetSpeed * (diff / document.body.clientWidth));
+
+        // Checks for disabling overscrolling
+        if (targetPosition > 0) targetPosition = 0;
+        if (targetPosition <= (endPoint * -1)) targetPosition = -endPoint;
+
+        // Lerp easing
+        currentPosition = lerp(currentPosition, targetPosition, lerpSpeed);
+        // Svelte store value for the Canvas effect to read from
+        workScrollPosition.set(currentPosition - targetPosition);
+
+        listContainer.style.transform = `translateX(${currentPosition}px)`;
+
+        requestAnimationFrame(this.animate.bind(this));
+    }
 }
 
-
-function cancelScrollHold() {
-	isWorkScroll.set(false);
-}
-
-function updatePosition(e) {
-	if (isClick) activeMousePoxX = e.clientX;
-}
-
-
-function loop() {
-
-	// if (!isClick) {
-	// 	requestAnimationFrame(loop);
-	// 	return;
-	// }
-
-	let endPoint = scrollElem.offsetWidth - document.body.clientWidth 
-	if (endPoint < 0) endPoint = scrollElem.offsetWidth;
-
-	let diff = (activeMousePoxX - initMousePosX) * -1;
-	let calcPosition = initPosition - (maxSpeed * (diff / document.body.clientWidth));
-	
-	if (calcPosition > 0) calcPosition = 0;
-	if (calcPosition <= (endPoint * -1)) calcPosition = endPoint*-1;
-
-	workScrollPosition.set(calcPosition);
-
-	currentPosition = lerp(currentPosition, calcPosition, 0.075);
-	scrollElem.style.transform = `translateX(${currentPosition}px)`;
-
-	requestAnimationFrame(loop);
-}
-
-function lerp(start, end, t){
+function lerp(start, end, t) {
     return start * (1 - t) + end * t;
 }
 
+
+
+
+// Fetch work data
+const workItemsFetch = new Promise(async (resolve: (data: any[]) => void) => {
+	resolve(await (await fetch("data.json")).json());
+});
+
+const slider = new WorkSlider();
+
+onMount(async () => {
+	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
+	
+	await workItemsFetch; // Wait for workItems to load
+
+	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
+
+	slider.animate(); // Begin slider calculations
+	new SliderEffect(container, images); // ThreeJS warping effect
+});
 
 </script>
 
@@ -103,15 +95,15 @@ function lerp(start, end, t){
 
 <div id="content-container" class="work-click-area" style = "margin-top:20vh;">
 	<div class="content-wrapper" 
-		on:mousedown={enableScrollHold}
-		on:mouseup={cancelScrollHold}
-		on:mouseleave={cancelScrollHold}
-		on:mousemove|preventDefault={updatePosition}
+		on:mousedown={slider.onInitHold}
+		on:mouseup={slider.onRelease}
+		on:mouseleave={slider.onRelease}
+		on:mousemove|preventDefault={slider.onMouseMove}
 		bind:this={container}
 	>
-		<ul class="work-list" bind:this={scrollElem} class:isClick>
+		<ul class="work-list" bind:this={listContainer} class:isHold>
 			<!-- Work items render here -->
-			{#await loadData then items}
+			{#await workItemsFetch then items}
 				{#each items as item, i}
 					<li class="list-item clickable passive" data-id="{item.id}">
 						<div class="img-wrapper">
@@ -173,7 +165,7 @@ function lerp(start, end, t){
 		height: 70vh
 		min-width: min-content
 
-		&.isClick
+		&.isHold
 			.list-item
 				height: 60vh !important
 			
