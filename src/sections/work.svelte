@@ -1,7 +1,7 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { clickables, isWorkScroll, workScrollPosition } from "../store";
+import { clickables, isWorkScroll, workScrollSpeed } from "../store";
 import { SliderEffect } from "../effects/work-slider/renderer";
 
 let isHold = false; // is user holding click
@@ -55,8 +55,9 @@ class WorkSlider {
 
         // Lerp easing
         currentPosition = lerp(currentPosition, targetPosition, lerpSpeed);
-        // Svelte store value for the Canvas effect to read from
-        workScrollPosition.set(currentPosition - targetPosition);
+		
+        // Svelte store value for the Canvas effect
+        workScrollSpeed.set(currentPosition - targetPosition);
 
         listContainer.style.transform = `translateX(${currentPosition}px)`;
 
@@ -198,7 +199,6 @@ onMount(async () => {
 				width: 85%
 				border-radius: 0.2vh
 				box-shadow: 3px 9px 18px rgba(0, 0, 0, 0.2)
-				visibility: hidden
 				
 				img
 					height: 110%

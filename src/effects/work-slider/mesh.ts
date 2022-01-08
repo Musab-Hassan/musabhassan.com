@@ -1,26 +1,21 @@
 
 import * as THREE from "three";
-import { workScrollPosition } from "../../store";
+import { workScrollSpeed } from "../../store";
 import { fragmentShader, vertexShader } from "./shaders";
 
 export class MeshItem {
 
     // TODO: Fix for ultrawide screens
+    // TODO: Disable for mobile devices
 
-    // Mesh and geometry
-    element; scene; offset; sizes; geometry; uniforms; material; mesh;
-    // Speed of workScroller
-    speed: number;
+    element; imageTexture; scene; offset; sizes; geometry; uniforms; material; mesh; 
+    speed: number; // Speed of workScroller
 
     // Asyncronous image loading
     resolveImagePromise;
     imageLoadPromise = new Promise(r => {
         this.resolveImagePromise = r;
     });
-
-    // Texture data
-    image: HTMLImageElement;
-    imageTexture: THREE.CanvasTexture;
 
     // Pass in the scene as we will be adding meshes to this scene.
     constructor(element, scene) {
@@ -30,7 +25,7 @@ export class MeshItem {
         this.sizes = new THREE.Vector2(0, 0); // Size of mesh on screen. Will be updated below.
         
         // Get current workScroller position through svelte stores
-        workScrollPosition.subscribe(val => {
+        workScrollSpeed.subscribe(val => {
             this.speed = val;
         });
         
@@ -43,7 +38,10 @@ export class MeshItem {
         this.offset.set(left - width * 1.5, 0);
     }
 
-    async createMesh() {
+    createMesh() {
+        // Hide Element
+        this.element.parentElement.style.visibility = "hidden";
+
         this.geometry = new THREE.PlaneBufferGeometry(1, 1, 15, 15);
 
         this.imageTexture = new THREE.TextureLoader().load(this.element.src, (t) => {
@@ -95,10 +93,9 @@ export class MeshItem {
         this.setDimensions();
         this.mesh.position.set(this.offset.x, this.offset.y, 0);
         this.mesh.scale.set(this.sizes.x, this.sizes.y, 1);
-        // Warping and Distortion effect
-        this.uniforms.uOffset.value.set(this.speed * -0.0003, this.speed * -0.00003); 
-        // Object-fit cover effect
-        this.uniforms.uMeshSize.value.set(this.sizes.x, this.sizes.y);
+        
+        this.uniforms.uOffset.value.set(this.speed * -0.0003, Math.abs(this.speed * 0.00005)); // Warping and Distortion effect
+        this.uniforms.uMeshSize.value.set(this.sizes.x, this.sizes.y); // Object-fit cover effect
     }
 }
 
