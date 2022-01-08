@@ -1,7 +1,5 @@
-// Shaders for work sliding effect
-
-// Taken from https://github.com/conorbailey90/rgb-split-distortion-scroll-effect
-// I couldnt figure out how to use glsl files directly so this is my ugly way
+// GLSL shaders for work scroller warping effect
+// Modified versions of the shaders from https://github.com/conorbailey90/rgb-split-distortion-scroll-effect
 
 export var vertexShader = `
 
