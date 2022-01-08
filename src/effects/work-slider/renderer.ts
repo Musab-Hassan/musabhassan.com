@@ -35,7 +35,7 @@ export class SliderEffect {
         this.camera.position.set(0, 0, 1000); // Camera position on the z axis.
 
         // Set Renderer
-        this.renderer = new THREE.WebGL1Renderer({ antialias: true, alpha: true });
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         this.renderer.setSize(this.dimensions.width, this.dimensions.height); // Set canvas size
         this.renderer.setPixelRatio(window.devicePixelRatio); // Ensures image textures are not blurred.
         this.container.appendChild(this.renderer.domElement); // Append canvas to container
@@ -60,9 +60,9 @@ export class SliderEffect {
     render() {
 
         // run render() on each meshItem instance
-        this.meshItems.forEach(i => {
-            i.render();
-        })
+        for (let i = 0; i < this.meshItems.length; i++) {
+            this.meshItems[i].render();
+        }
 
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.render.bind(this));
