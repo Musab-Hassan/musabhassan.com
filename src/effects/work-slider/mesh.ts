@@ -6,7 +6,6 @@ import { fragmentShader, vertexShader } from "./shaders";
 export class MeshItem {
 
     // TODO: Fix for ultrawide screens
-    // TODO: Disable for mobile devices
 
     element; imageTexture; scene; offset; sizes; geometry; uniforms; material; mesh; 
     speed: number; // Speed of workScroller
@@ -39,8 +38,6 @@ export class MeshItem {
     }
 
     createMesh() {
-        // Hide Element
-        this.element.parentElement.style.visibility = "hidden";
 
         this.geometry = new THREE.PlaneBufferGeometry(1, 1, 15, 15);
 
@@ -56,13 +53,13 @@ export class MeshItem {
         const imgBoundBox = this.element.getBoundingClientRect();
 
         this.uniforms = {
-            uTexture: { //Texture
+            uTexture: { // Texture
                 value: this.imageTexture
             },
-            uMeshSize: {
+            uMeshSize: { // Mesh (Mask) Dimensions
                 value: new THREE.Vector2(this.sizes.x, this.sizes.y)
             },
-            uImgSize: {
+            uImgSize: { // Image (to be masked) dimensions
                 value: new THREE.Vector2(imgBoundBox.width, imgBoundBox.height)
             },
             uOffset: { //Distortion strength
@@ -85,6 +82,9 @@ export class MeshItem {
         this.mesh.scale.set(this.sizes.x, this.sizes.y, 1);
 
         this.scene.add(this.mesh);
+
+        // Hide Parent element once mesh loads
+        this.element.parentElement.style.visibility = "hidden";
     }
 
     async render() {

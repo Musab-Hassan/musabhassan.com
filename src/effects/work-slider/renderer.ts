@@ -1,6 +1,7 @@
 
 import * as THREE from "three"
 import { MeshItem } from "./mesh";
+import { isUnsupportedClient } from "../../utils";
 
 export class SliderEffect {
 
@@ -8,7 +9,9 @@ export class SliderEffect {
     container; images;
     meshItems; scene; camera; renderer;
 
-    constructor(container, images: any[]) { 
+    constructor(container, images: any[]) {
+        if (isUnsupportedClient()) return;
+
         this.container = container;
         this.images = images;
         this.meshItems = [];
