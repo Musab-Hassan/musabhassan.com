@@ -55,13 +55,15 @@ export class SliderEffect {
     }
 
     windowResize() {
-        this.camera.aspect = this.dimensions.aspectRatio; // Readjust aspect ratio.
+        // Readjust aspect ratio and fov
+        this.camera.aspect = this.dimensions.aspectRatio;
+        this.camera.fov = (180 * (2 * Math.atan(this.dimensions.height / 2 / 1000))) / Math.PI;
+        
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(this.dimensions.width, this.dimensions.height);
     }
 
     render() {
-
         // run render() on each meshItem instance
         for (let i = 0; i < this.meshItems.length; i++) {
             this.meshItems[i].render();
