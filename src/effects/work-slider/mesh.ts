@@ -5,11 +5,8 @@ import { fragmentShader, vertexShader } from "./shaders";
 
 export class MeshItem {
 
-    element; material; imageTexture; scene; offset; sizes; geometry; uniforms; mesh; activeFragmentShader; imageAspect;
+    element; material; scene; offset; sizes; geometry; uniforms; mesh; activeFragmentShader;
     speed: number; // slider sliding speed
-    resolveImagePromise; imageLoadPromise = new Promise(r => { // Asyncronous image loading
-        this.resolveImagePromise = r;
-    });
 
     constructor(element, scene) {
         this.element = element;
@@ -31,56 +28,45 @@ export class MeshItem {
     }
 
     createMesh() {
+        this.setDimensions();
         this.geometry = new THREE.PlaneBufferGeometry(1, 1, 15, 15);
 
-        this.setDimensions();
-        
-        this.imageTexture = new THREE.TextureLoader().load(this.element.src, (t) => {
-            t.wrapS = THREE.MirrorRepeating;
-            t.wrapT = THREE.MirrorRepeating;
+        const { width, height } = this.element.getBoundingClientRect();
 
-            this.imageAspect = t.image.width / t.image.height; // Set aspect ratio of image for object-fit calculation
-            const { width, height } = this.element.getBoundingClientRect();
+        this.uniforms = {
+            uTexture: { // Texture
+                value: new THREE.TextureLoader().load(this.element.src)
+            },
+            uMeshSize: { // Mesh (Mask) Dimensions
+                value: new THREE.Vector2(this.sizes.x, this.sizes.y)
+            },
+            uImgSize: { // Image (to be masked) dimensions
+                value: new THREE.Vector2(width, height)
+            },
+            uOffset: { //Distortion strength
+                value: new THREE.Vector2(0.0, 0.0)
+            },
+            uAlpha: { // Opacity
+                value: 0.7
+            }
+        };
 
-            this.uniforms = {
-                uTexture: { // Texture
-                    value: this.imageTexture
-                },
-                uMeshSize: { // Mesh (Mask) Dimensions
-                    value: new THREE.Vector2(this.sizes.x, this.sizes.y)
-                },
-                uImgSize: { // Image (to be masked) dimensions
-                    value: new THREE.Vector2(width, height)
-                },
-                uOffset: { //Distortion strength
-                    value: new THREE.Vector2(0.0, 0.0)
-                },
-                uAlpha: { // Opacity
-                    value: 0.7
-                }
-            };
+        this.activeFragmentShader = this.loadFragmentShader;
+        this.mesh = new THREE.Mesh(this.geometry, new THREE.ShaderMaterial({
+            uniforms: this.uniforms,
+            vertexShader: vertexShader,
+            fragmentShader: this.activeFragmentShader,
+            transparent: true
+        }));
 
-            this.activeFragmentShader = this.loadFragmentShader;
-            this.mesh = new THREE.Mesh(this.geometry, new THREE.ShaderMaterial({
-                uniforms: this.uniforms,
-                vertexShader: vertexShader,
-                fragmentShader: this.activeFragmentShader,
-                transparent: true
-            }));
-
-            this.mesh.position.set(this.offset.x, this.offset.y, 0);
-            this.mesh.scale.set(this.sizes.x, this.sizes.y, 1);
-            this.scene.add(this.mesh);
-            
-            this.resolveImagePromise(); // Allow render to run
-        });
+        this.mesh.position.set(this.offset.x, this.offset.y, 0);
+        this.mesh.scale.set(this.sizes.x, this.sizes.y, 1);
+        this.scene.add(this.mesh);
 
         this.element.parentElement.style.visibility = "hidden"; // Hide original image element
     }
 
-    async render() {
-        await this.imageLoadPromise;
-
+    render() {
         this.setDimensions();
         this.checkShader();
         
@@ -108,8 +94,7 @@ export class MeshItem {
 
     // Loads correct fragment shader based on aspect ratio
     get loadFragmentShader() {
-        // TODO: Fix aspect ratio problem
-        if ((this.sizes.x / this.sizes.y) < this.imageAspect) {
+        if ((this.sizes.x / this.sizes.y) < 1) {
             return fragmentShader().horizontal;
         } else {
             return fragmentShader().vertical;
