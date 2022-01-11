@@ -2,7 +2,7 @@
 
 import { onMount } from "svelte";
 import { clickables, isWorkScroll, workScrollSpeed } from "../store";
-import { SliderEffect } from "../effects/work-slider/renderer";
+import { ImageRenderer } from "../effects/work-slider/renderer";
 
 let isHold = false; // is user holding click
 let _viewLinks = []; // Array of clickable Links
@@ -87,7 +87,7 @@ onMount(async () => {
 	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
 
 	slider.animate(); // Begin slider calculations
-	new SliderEffect(container, images); // ThreeJS warping effect
+	new ImageRenderer(container, images); // ThreeJS warping effect
 });
 
 </script>
@@ -137,7 +137,7 @@ onMount(async () => {
 	position: absolute
 	top: 0
 	left: 0
-	z-index: -10
+	z-index: -1
 
 @import "../consts.sass"
 @include textStyles()

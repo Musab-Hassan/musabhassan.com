@@ -1,8 +1,8 @@
 
-import { MeshRenderer } from "../templates/renderer";
+import { MeshRenderer } from "../defaults/renderer";
 import { SliderImageMesh } from "./item";
 
-export class SliderEffect extends MeshRenderer {
+export class ImageRenderer extends MeshRenderer {
 
     images; meshItems;
 

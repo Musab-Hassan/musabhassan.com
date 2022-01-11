@@ -1,7 +1,7 @@
 
 import * as THREE from "three";
 import { workScrollSpeed } from "../../store";
-import { ImageMesh } from "../templates/image-mesh";
+import { ImageMesh } from "../defaults/image-mesh";
 import { fragmentShader, vertexShader } from "./shaders";
 
 export class SliderImageMesh extends ImageMesh {
