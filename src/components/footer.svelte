@@ -13,7 +13,7 @@ onMount(() => {
 
 <style lang="sass">
 
-@import "../../consts.sass"
+@import "../consts.sass"
 @include textStyles()
 
 .footer-wrapper
