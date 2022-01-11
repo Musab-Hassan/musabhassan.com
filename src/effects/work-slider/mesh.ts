@@ -7,6 +7,7 @@ export class MeshItem {
 
     element; material; scene; offset; sizes; geometry; uniforms; mesh; activeFragmentShader;
     speed: number; // slider sliding speed
+    clock = new THREE.Clock();
 
     constructor(element, scene) {
         this.element = element;
@@ -36,6 +37,9 @@ export class MeshItem {
         this.uniforms = {
             uTexture: { // Texture
                 value: new THREE.TextureLoader().load(this.element.src)
+            },
+            uTime: {
+                value: 0.0
             },
             uMeshSize: { // Mesh (Mask) Dimensions
                 value: new THREE.Vector2(this.sizes.x, this.sizes.y)
@@ -77,6 +81,7 @@ export class MeshItem {
         this.uniforms.uImgSize.value.set(width, height);
         this.uniforms.uMeshSize.value.set(this.sizes.x, this.sizes.y);
         this.uniforms.uOffset.value.set(this.speed * -0.0003, Math.abs(this.speed * 0.00005)); // Warping and Distortion effect
+        this.uniforms.uTime.value = this.clock.getElapsedTime() * 0.8;
     }
 
     // Updates vertexShader
