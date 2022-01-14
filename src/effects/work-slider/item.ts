@@ -30,7 +30,7 @@ export class SliderImageMesh extends ImageMesh {
             }
         }
 
-        super(element, scene, shaders, uniforms);
+        super(element, scene, shaders, element.parentElement, uniforms);
 
         this.clock = new THREE.Clock();
         workScrollSpeed.subscribe(val => { // Get current slider speed from svelte stores

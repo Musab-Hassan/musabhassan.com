@@ -3,17 +3,18 @@ import * as THREE from "three";
 
 export class ImageMesh {
 
-    element; material; scene; offset; sizes; geometry; uniforms; mesh; activeFragmentShader;
+    element; dimensionsNode; material; scene; offset; sizes; geometry; uniforms; mesh; activeFragmentShader;
     shaders: {
         fragment: { vertical: string, horizontal: string },
         vertex: string
     }
 
-    constructor(element, scene, shaders: { fragment: { vertical: string, horizontal: string }, vertex: any}, uniforms?) {
+    constructor(element, scene, shaders: { fragment: { vertical: string, horizontal: string }, vertex: any }, dimensionsNode, uniforms?) {
         this.element = element;
         this.scene = scene;
         this.shaders = shaders;
         this.uniforms = uniforms;
+        this.dimensionsNode = dimensionsNode;
         this.offset = new THREE.Vector2(0, 0); // Mesh Position
         this.sizes = new THREE.Vector2(0, 0); // Mesh Size
 
@@ -21,7 +22,7 @@ export class ImageMesh {
     }
 
     setDimensions(): void {
-        const { width, height, left } = this.element.parentElement.getBoundingClientRect();
+        const { width, height, left } = this.dimensionsNode.getBoundingClientRect();
         this.sizes.set(width, height);
         this.offset.set((left - (window.innerWidth / 2)) + (width / 2), 0);
     }

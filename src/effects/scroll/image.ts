@@ -25,7 +25,7 @@ export class ScrollableImageMesh extends ImageMesh {
             }
         }
 
-        super(element, scene, shaders, uniforms);
+        super(element, scene, shaders, element, uniforms);
         this.container = container;
         this.scrollSpeed = 0;
     }

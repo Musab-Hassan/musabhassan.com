@@ -28,7 +28,7 @@ export class ScrollRenderer extends MeshRenderer {
         super.setup();
 
         // Add canvas as a slickScroll offset
-        if (this.slickScroll) this.slickScroll.addOffset({ element: this.renderer.domElement, speedY: this.scrollOffset });
+        if (this.slickScroll !== null || this.slickScroll !== undefined) this.slickScroll.addOffset({ element: this.renderer.domElement, speedY: this.scrollOffset });
     }
 
     render(): void {
