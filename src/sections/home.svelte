@@ -5,16 +5,16 @@ import { waitTime } from "../store";
 import anime from "animejs";
 
 // Offsets
-let backgroundOffset, backgroundOffsetImage;
+let backgroundContainer, backgroundImage;
 let path1, path2, path3, path4;
 let titleWord1, titleWord2, shortDetails, callToAction;
 
 onMount(() => {
 
 	// Add scroll offsets to slickScroll
-	slickScroll.then((value) => {
-		value.addOffset({
-			element: backgroundOffset,
+	slickScroll.then((slick) => {
+		slick.addOffset({
+			element: backgroundContainer,
 			speedY: 0.8
 		});
 
@@ -56,25 +56,25 @@ function introAnimation() {
 
 
 	// Animate background image
-	Object.assign(backgroundOffset.style, {
+	Object.assign(backgroundContainer.style, {
 		height: "0",
 		transform: "scale(1.3)",
 	});
-	backgroundOffsetImage.style.transform = "translateY(80%) scale(1.4)";
+	backgroundImage.style.transform = "translateY(80%) scale(1.4)";
 
 	anime({
-		targets: backgroundOffset,
+		targets: backgroundContainer,
 		height: "100%",
 		scale: 1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
 		delay: 3000 + waitTime,
 		complete: () => {
-			backgroundOffset.style.boxShadow = "3px 9px 18px rgba(0, 0, 0, 0.2)";
+			backgroundContainer.style.boxShadow = "3px 9px 18px rgba(0, 0, 0, 0.2)";
 		}
 	});
 	anime({
-		targets: backgroundOffsetImage,
+		targets: backgroundImage,
 		translateY: "0",
 		scale: 1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
@@ -161,8 +161,8 @@ export let slickScroll;
 				</div>
 			</div>
 
-			<div class="parallax-wrapper home-back" bind:this={backgroundOffset}>
-				<img bind:this={backgroundOffsetImage} draggable="false" alt="Home Background" src="assets/imgs/home-back.jpg" style="width:100%; height: 100%; object-fit: cover;">
+			<div class="parallax-wrapper home-back" bind:this={backgroundContainer}>
+				<img bind:this={backgroundImage} draggable="false" alt="Home Background" src="assets/imgs/home-back.jpg" style="width:100%; height: 100%; object-fit: cover;">
 			</div>
 		</div>
 	</div>

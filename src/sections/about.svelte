@@ -3,17 +3,19 @@
 import { onMount } from "svelte";
 import { clickables } from "../store";
 
+let canvasContainer;
 let githubLink, emailLink
-let profilePic;
+let profilePic, profilePicContainer;
 
 onMount(() => {
 	clickables.update(value => [...value, githubLink, emailLink]);
 
-	slickScroll.then((value) => {
-		value.addOffset({
-			element: profilePic,
+	slickScroll.then((slick) => {
+
+		slick.addOffset({
+			element: profilePicContainer,
 			speedY: 0.8
-		})
+		});
 	})
 });
 
@@ -21,7 +23,7 @@ export let slickScroll;
 
 </script>
 
-<div id="content-container" class="about">
+<div id="content-container" class="about" bind:this={canvasContainer}>
 	<div class="content-wrapper">
 		<h1 class = "title">The Name's<br>Musab</h1>
 		<p class = "paragraph">
@@ -32,8 +34,8 @@ export let slickScroll;
 			<span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
 		</div>
 	</div>
-	<div class="profile-image" bind:this={profilePic}>
-		<img src="assets/imgs/profile-photo.jpg" alt="Musab's Sillouette" class="profile-pic">
+	<div class="profile-image" bind:this={profilePicContainer}>
+		<img src="assets/imgs/profile-photo.jpg" alt="Musab's Sillouette" class="profile-pic" bind:this={profilePic}>
 	</div>
 </div>
 <div class="horizontal-flex">
@@ -82,23 +84,19 @@ export let slickScroll;
 	overflow: hidden
 	padding: 0 5vw
 	margin-top: 40vh
+	position: relative
 	padding-bottom: 5vh
 
 	.profile-image
-		right: 0
-		width: 80%
-		height: 85vh
-		padding-top: 0
+		width: 70%
 		overflow: hidden
-		display: flex
-		margin-top: -15vh
+		margin-top: -30vh
 
 		img
-			width: 100%
-			height: 100%
+			height: 80%
+			width: 90%
 			border-radius: 0.5vh
 			object-fit: cover
-			box-shadow: 0px 9px 18px rgba(0, 0, 0, 0.2)
 
 	.content-wrapper
 		box-sizing: border-box

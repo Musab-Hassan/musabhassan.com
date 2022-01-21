@@ -23,7 +23,7 @@
 		// Resolve slickScroll promise and pass momentumScroll's value
 		let slick = (new slickScroll).momentumScroll({
 			root: scrollContainer,
-			duration: 800,
+			duration: 1000,
 			fixedOffsets: [
 				navBar
 			]
