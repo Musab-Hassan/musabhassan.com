@@ -123,6 +123,11 @@ function addClickable(node) {
 	}
 }
 
+// Prevent clipping of title with letters with overhand
+function adjustLineHeight(node) {
+	if (/[gyjqp]/g.test(node.innerText)) node.style.lineHeight = "120%";
+}
+
 
 </script>
 
@@ -190,7 +195,7 @@ function addClickable(node) {
 					</div>
 					
 					<div class="mid-align">
-						<h1 class="title" in:textAnimationIn={{ breakWord: false }} out:textAnimationOut>{data[currentActive].title}</h1>
+						<h1 class="title" in:textAnimationIn={{ breakWord: false }} out:textAnimationOut use:adjustLineHeight>{data[currentActive].title}</h1>
 						<div class="button" use:addClickable on:click={() => toggleActiveItem(currentActive)} in:maskAnimationIn out:maskAnimationOut>close</div>
 					</div>
 					
@@ -309,6 +314,7 @@ function addClickable(node) {
 					text-transform: lowercase
 					word-wrap: break-word
 					white-space: normal
+					line-height: 90%
 
 				.button
 					font-size: 1.4vw
