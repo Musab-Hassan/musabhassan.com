@@ -124,6 +124,7 @@ export let slickScroll;
 
 		h1
 			font-size: 20vh
+			font-weight: 400
 
 		.paragraph
 			margin-top: 10vh

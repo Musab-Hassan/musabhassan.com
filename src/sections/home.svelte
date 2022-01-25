@@ -206,6 +206,9 @@ export let slickScroll;
 			flex-direction: column
 			justify-content: center
 
+			h1
+				font-weight: 400
+
 			.title-mask
 				overflow: hidden
 				display: inline-flex
