@@ -196,7 +196,7 @@ function adjustLineHeight(node) {
 					
 					<div class="mid-align">
 						<h1 class="title" in:textAnimationIn={{ breakWord: false }} out:textAnimationOut use:adjustLineHeight>{data[currentActive].title}</h1>
-						<div class="button" use:addClickable on:click={() => toggleActiveItem(currentActive)} in:maskAnimationIn out:maskAnimationOut>close</div>
+						<div class="button" use:addClickable on:click={() => toggleActiveItem(currentActive)} in:maskAnimationIn out:maskAnimationOut>&times; close</div>
 					</div>
 					
 					<div class="bottom-align">
@@ -204,6 +204,12 @@ function adjustLineHeight(node) {
 							<p in:maskAnimationIn out:maskAnimationOut>
 								{data[currentActive].details.description}
 							</p>
+						</div>
+						<div class="links">
+							{#each data[currentActive].links as link}
+								<a in:textAnimationIn out:textAnimationOut use:addClickable href={link.link} target="_blank" class="button no-decor">{link.text}</a><br>
+							{/each}
+							<div class="line" transition:fade></div>
 						</div>
 						<div class="roles">
 							<div class="wrapper">
@@ -214,11 +220,6 @@ function adjustLineHeight(node) {
 									{/each}
 								</ul>
 							</div>
-						</div>
-						<div class="links">
-							{#each data[currentActive].links as link}
-								<a in:maskAnimationIn out:maskAnimationOut use:addClickable href={link.link} target="_blank" class="button">{link.text}</a><br>
-							{/each}
 						</div>
 					</div>
 				</div>
@@ -327,7 +328,7 @@ function adjustLineHeight(node) {
 				display: flex
 				flex-direction: row
 				justify-content: space-between
-				align-items: flex-start
+				align-items: center
 
 				*
 					flex-grow: 1
@@ -336,6 +337,9 @@ function adjustLineHeight(node) {
 				.paragraph
 					font-size: 0.8vw
 					text-transform: uppercase
+
+					p
+						width: 60%
 
 				.roles 
 					display: flex
@@ -363,11 +367,25 @@ function adjustLineHeight(node) {
 
 				.links
 					position: relative
+					display: flex
+					flex-direction: column
+					align-items: center
+						
+					div.line
+						content: ""
+						position: absolute
+						top: 150%
+						left: 50%
+						width: 1.2px
+						background-color: white
+						height: 5vh
 
 					.button
-						font-size: 1.2vw
+						font-size: 1.3vw
+						letter-spacing: 0.2vw
 						text-transform: uppercase
 						text-decoration: none
+						line-height: 160%
 
 	ul.work-list
 		margin-top: auto
