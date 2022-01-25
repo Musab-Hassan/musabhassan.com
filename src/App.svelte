@@ -1,45 +1,45 @@
 <script lang="ts">
 	
-	import HomeSection from "./sections/home.svelte";
-	import WorkSection from "./sections/work.svelte";
-	import AboutSection from "./sections/about.svelte";
-	import NavComponent from "./components/nav.svelte"
-	import Footer from "./components/footer.svelte";
-	import CursorDot from "./components/cursor-dot.svelte"
-	import slickScroll from "slickscrolljs";
-	import { onMount } from "svelte";
-	
-	let trackedDot; // Mouse following dot
-	let scrollContainer;
-	let scrollResolve;
-	let navBar;
+import HomeSection from "./sections/home.svelte";
+import WorkSection from "./sections/work.svelte";
+import AboutSection from "./sections/about.svelte";
+import NavComponent from "./components/nav.svelte"
+import Footer from "./components/footer.svelte";
+import CursorDot from "./components/cursor-dot.svelte"
+import slickScroll from "slickscrolljs";
+import { onMount } from "svelte";
 
-	// Promise for slickScroll access from within components
-	let scrollPromise = new Promise((r) => {
-		scrollResolve = r;
+let trackedDot; // Mouse following dot
+let scrollContainer;
+let scrollResolve;
+let navBar;
+
+// Promise for slickScroll access from within components
+let scrollPromise = new Promise((r) => {
+	scrollResolve = r;
+});
+
+onMount(async () => {
+	// Resolve slickScroll promise and pass momentumScroll's value
+	let slick = (new slickScroll).momentumScroll({
+		root: scrollContainer,
+		duration: 1000,
+		fixedOffsets: [
+			navBar
+		]
 	});
+	scrollResolve(slick);
 
-	onMount(async () => {
-		// Resolve slickScroll promise and pass momentumScroll's value
-		let slick = (new slickScroll).momentumScroll({
-			root: scrollContainer,
-			duration: 1000,
-			fixedOffsets: [
-				navBar
-			]
-		});
-		scrollResolve(slick);
+	// Remove horizontal scrolling
+	await scrollPromise;
+	scrollContainer.style.overflowY = "hidden";
+	scrollContainer.style.overflowX = "hidden";
 
-		// Remove horizontal scrolling
-		await scrollPromise;
-		scrollContainer.style.overflowY = "hidden";
-		scrollContainer.style.overflowX = "hidden";
-
-		// Enable scrolling once all intro animations are over
-		setTimeout(() => {
-			scrollContainer.style.overflowY = "auto";
-		}, 6000);
-	});
+	// Enable scrolling once all intro animations are over
+	setTimeout(() => {
+		scrollContainer.style.overflowY = "auto";
+	}, 6000);
+});
 
 </script>
 
@@ -81,7 +81,7 @@
 
 <div id="scroll-frame" bind:this={scrollContainer}>
 	<div id="nav-bar" bind:this={navBar}>
-		<NavComponent></NavComponent>
+		<NavComponent scrollContainer={scrollContainer}></NavComponent>
 	</div>
 	<HomeSection bind:slickScroll={scrollPromise}></HomeSection>
 	<WorkSection></WorkSection>

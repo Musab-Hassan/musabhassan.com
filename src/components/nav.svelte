@@ -1,16 +1,17 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { clickables, waitTime } from "../store";
+import { aboutPosition, clickables, homePosition, waitTime, workPosition } from "../store";
 import anime from "animejs";
 
 let home, work, about, email, logo, github, mobileMenu;
-let homeAnim, workAnim, aboutAnim;
+let homeLink, workLink, aboutLink;
 let mobileActive;
+export let scrollContainer;
 
 onMount(() => {
 	clickables.update(value => [...value, home, work, about, email, logo, github, mobileMenu]);
 
-	let targets = [logo, mobileMenu, homeAnim, workAnim, aboutAnim, github];
+	let targets = [logo, mobileMenu, homeLink, workLink, aboutLink, github];
 
 	targets.forEach(e => {
 		e.style.transform = "translateY(120%) rotate(10deg)"
@@ -27,7 +28,68 @@ onMount(() => {
 	});
 });
 
+
+// Scroll positions fetched from svelte store that are updated by each component itself
+let positions = { home: 0, work: 0, about: 0 }
+homePosition.subscribe(val => positions.home = val);
+workPosition.subscribe(val => positions.work = val);
+aboutPosition.subscribe(val => positions.about = val);
+
+const navigate = pos => { scrollContainer.scrollTo(0, pos); mobileActive = false; };
+
 </script>
+
+
+
+<div class="nav-wrapper" style="transform: translate(0px);">
+	<div class="flex-wrapper ico" style="z-index: 21;">
+		<img 
+			bind:this={logo} 
+			src="assets/imgs/logo.svg"
+			class = "logo-icon clickable"
+			alt="Logo"
+			draggable="false">
+	</div>
+	
+	<div class="flex-wrapper">
+		<ul class="nav-list" class:mobileActive>
+			<div class="wrapper">
+				<li bind:this={homeLink}>
+					<div bind:this={home} on:click={() => navigate(positions.home)}>Home</div>
+				</li>
+				<li bind:this={workLink}>
+					<div bind:this={work} on:click={() => navigate(positions.work)}>Work</div>
+				</li>
+				<li bind:this={aboutLink}>
+					<div bind:this={about} on:click={() => navigate(positions.about)}>About</div>
+				</li>
+				<li class="mobile" bind:this={email}>
+					<a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a>
+				</li>
+				<li bind:this={github}>
+					<a href="https://github.com/Musab-Hassan" target="_blank">Github</a>
+				</li>
+			</div>
+		</ul>
+
+		<div class="mask">
+			<div class="hb-button clickable" 
+				bind:this={mobileMenu} 
+				on:click={() => mobileActive = !mobileActive} 
+				class:mobileActive>
+
+				<div class="hb">
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
+				<div class="text">Menu</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 
 <style lang="sass">
 
@@ -66,8 +128,9 @@ onMount(() => {
 
 			li
 				font-family: $font
-				text-transform: lowercase
-				font-size: 2.5vh
+				text-transform: uppercase
+				font-size: 2vh
+				letter-spacing: 0.2vh
 				display: inline-block
 
 				&.mobile
@@ -207,42 +270,3 @@ onMount(() => {
 		display: block
 
 </style>
-
-<div class="nav-wrapper" style="transform: translate(0px);">
-	<div class="flex-wrapper ico" style="z-index: 21;">
-		<img 
-			bind:this={logo} 
-			src="assets/imgs/logo.svg"
-			class = "logo-icon clickable"
-			alt="Logo"
-			draggable="false"
-		>
-	</div>
-	
-	<div class="flex-wrapper">
-		<ul class="nav-list" class:mobileActive>
-			<div class="wrapper">
-				<li bind:this={homeAnim}><div bind:this={home}>Home</div></li>
-				<li bind:this={workAnim}><div bind:this={work}>Work</div></li>
-				<li bind:this={aboutAnim}><div bind:this={about}>About</div></li>
-				<li class="mobile" bind:this={email}><a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a></li>
-				<li bind:this={github}><a href="https://github.com/Musab-Hassan" target="_blank">Github</a></li>
-			</div>
-		</ul>
-
-		<div class="mask">
-			<div class="hb-button clickable" 
-				bind:this={mobileMenu} 
-				on:click={() => mobileActive = !mobileActive} 
-				class:mobileActive>
-
-				<div class="hb">
-					<span></span>
-					<span></span>
-					<span></span>
-				</div>
-				<div class="text">Menu</div>
-			</div>
-		</div>
-	</div>
-</div>

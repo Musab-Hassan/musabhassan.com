@@ -1,7 +1,7 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { clickables, isWorkScroll, workScrollSpeed } from "../store";
+import { clickables, isWorkScroll, workPosition, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
 import { letterSlide, maskSlide } from "../utils";
 import { fade } from "svelte/transition";
@@ -64,12 +64,15 @@ class WorkSlider {
 }
 
 
-let isMouseDown = false; // is user holding click
-let _viewLinks = []; // Array of clickable Links
-let container, listContainer; // Binds to containers
+let workContainer;
+let container, listContainer; //Containers for Threejs meshes
 let images = []; // Array of images to be passed to WebGL Shader
 let workItems = []; // Array of workItems to be animated
+let _viewLinks = []; // Array of clickable Links
+
+let isMouseDown = false; // is user holding click
 let currentActive = null; // Active work item in the detailsViewer viewed
+
 let data; // JSON Work data fetched from the data.json file
 
 // Animations for work description
@@ -89,6 +92,9 @@ const workItemsFetch = new Promise(async (resolve: (data: any[]) => void) => {
 });
 
 onMount(async () => {
+	$workPosition = workContainer.offsetTop; // Update current height for nav scrolling
+	window.onresize = () => $workPosition = workContainer.offsetTop; // Update current height for nav scrolling
+
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 	
 	await workItemsFetch; // Wait for workItems to load
@@ -122,7 +128,7 @@ function addClickable(node) {
 
 
 
-<div id="content-container" class="work-click-area" style = "margin-top: 30vh;">
+<div id="content-container" class="work-click-area" style = "margin-top: 30vh;" bind:this="{workContainer}">
 	<div class="content-wrapper" 
 		on:mousedown|preventDefault={slider.onHold}
 		on:mouseup={slider.onRelease}

@@ -1,13 +1,17 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { clickables } from "../store";
+import { aboutPosition, clickables } from "../store";
 
-let canvasContainer;
+let aboutContainer;
 let githubLink, emailLink
-let profilePic, profilePicContainer;
+let profilePicContainer;
 
 onMount(() => {
+
+	$aboutPosition = aboutContainer.offsetTop; // Update current height for nav scrolling
+	window.onresize = () => $aboutPosition = aboutContainer.offsetTop; // Update current height for nav scrolling
+
 	clickables.update(value => [...value, githubLink, emailLink]);
 
 	slickScroll.then((slick) => {
@@ -23,7 +27,7 @@ export let slickScroll;
 
 </script>
 
-<div id="content-container" class="about" bind:this={canvasContainer}>
+<div id="content-container" class="about" bind:this={aboutContainer}>
 	<div class="content-wrapper">
 		<h1 class = "title">The Name's<br>Musab</h1>
 		<p class = "paragraph">
@@ -35,7 +39,7 @@ export let slickScroll;
 		</div>
 	</div>
 	<div class="profile-image" bind:this={profilePicContainer}>
-		<img src="assets/imgs/profile-photo.jpg" alt="Musab's Sillouette" class="profile-pic" bind:this={profilePic}>
+		<img src="assets/imgs/profile-photo.jpg" alt="Musab's Sillouette" class="profile-pic">
 	</div>
 </div>
 <div class="horizontal-flex">

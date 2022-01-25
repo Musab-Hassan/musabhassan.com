@@ -1,15 +1,18 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { waitTime } from "../store";
+import { homePosition, waitTime } from "../store";
 import anime from "animejs";
 
-// Offsets
-let backgroundContainer, backgroundImage;
-let path1, path2, path3, path4;
-let titleWord1, titleWord2, shortDetails, callToAction;
+let homeContainer; // Container
+let backgroundContainer, backgroundImage; // Offsets
+let path1, path2, path3, path4; // SVG Paths
+let titleWord1, titleWord2, shortDetails, callToAction; // Elements for animations
 
 onMount(() => {
+
+	$homePosition = homeContainer.offsetTop; // Update current height for nav scrolling
+	window.onresize = () => $homePosition = homeContainer.offsetTop; // Update current height for nav scrolling
 
 	// Add scroll offsets to slickScroll
 	slickScroll.then((slick) => {
@@ -103,7 +106,7 @@ export let slickScroll;
 
 </script>
 
-<div id="content-container" style="padding-top: 23vh">
+<div id="content-container" style="padding-top: 23vh" bind:this={homeContainer}>
 	<div class="content-wrapper">
 		<div class="flex">
 			<div class="flex-container">
