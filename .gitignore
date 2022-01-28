@@ -2,5 +2,7 @@
 /public/build/
 .vscode/
 
+*.cache
+
 
 .DS_Store
