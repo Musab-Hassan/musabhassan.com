@@ -1,5 +1,6 @@
 <script lang="ts">
 import { clickables as clickableStore, isWorkScroll } from "../store";
+import { isUnsupportedClient } from "../utils";
 
 let container;
 let clickables;
@@ -13,6 +14,8 @@ let x = 0, y = 0;
 
 // Track the mouse with easing and handle hover effects
 export function trackMouse(e) {
+
+	if (isUnsupportedClient()) return;
 
 	if (introDisabled) setTimeout(() => introDisabled = false, 500);
 
