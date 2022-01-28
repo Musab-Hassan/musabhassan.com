@@ -313,6 +313,7 @@ function adjustLineHeight(node) {
 					font-family: $titleFont
 					font-size: 7vw
 					text-transform: lowercase
+					font-weight: normal
 					word-wrap: break-word
 					white-space: normal
 					line-height: 90%
