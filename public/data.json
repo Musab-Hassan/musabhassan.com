@@ -3,13 +3,13 @@
     "id": 1,
     "title": "SlickScroll",
     "details": {
-      "description": "SlickScroll is a JavaScript library that allows developers to add smooth scrolling effects to their webpages.",
-      "summary": "Personal Project"
+      "description": "An open-source library for developers to easily add smooth scrolling effects to their webpages",
+      "summary": "Opensource Library"
     },
     "date": "March 2021",
     "roles": [
-      "Maintainer",
-      "Developer"
+      "Repo Maintainer",
+      "Contributor"
     ],
     "links": [
       {
@@ -23,14 +23,14 @@
     "id": 2,
     "title": "Grillzzy Foods",
     "details": {
-      "description": "Grillzzy Foods is a food manufacturing company that manufactures and distributes packaged meat products. The Grillzzy website captures their brand identity as connoisseurs of Authentic South Asian Food.",
+      "description": "Iconography, branding, and website for a Canadian meat and manufacturing processing start-up",
       "summary": "Brand Website"
     },
     "date": "Nov 2020",
     "roles": [
       "Brand Designer",
       "Web Designer",
-      "Front-End Developer"
+      "Front-End Web Developer"
     ],
     "links": [
       {
@@ -44,13 +44,13 @@
     "id": 3,
     "title": "Kelowna Wholesale Auto",
     "details": {
-      "description": "Kelowna Wholesale Auto is a automobile retailer that sell second hand vehicles at affordable prices. Using modern web technologies, I created a website with a complete listing management solution creating their digital presence.",
+      "description": "A web app with inventory management and a website for a second-hand vehicle dealership",
       "summary": "Brand Website"
     },
     "date": "Jan 2020",
     "roles": [
-      "Web Designer",
-      "Full-Stack Developer"
+      "Website Designer",
+      "Full-Stack Web Developer"
     ],
     "links": [
       {
@@ -64,19 +64,19 @@
     "id": 4,
     "title": "Fay's Salon",
     "details": {
-      "description": "Fay’s Salon is a hair salon that makes the ordinary stylish. Working with them, I created a booking and customer management system that automated the tedious in thier business.",
-      "summary": "Brand Website"
+      "description": "A customer management web app and website for a hair salon shop",
+      "summary": "Web App"
     },
     "date": "Oct 2019",
     "roles": [
       "Website Designer",
-      "Full Stack Developer"
+      "Full-Stack Web Developer"
     ],
     "links": [
       {
         "type": "web",
-        "text": "Visit Site",
-        "link": "https://www.faysalon.com"
+        "text": "Site Unavailable",
+        "link": "#"
       }
     ]
   },
@@ -84,15 +84,15 @@
     "id": 5,
     "title": "Kelowna Islamic Center",
     "details": {
-      "description": "Kelowna Islamic Center is a Muslim community in Kelowna BC that hopes to connect Muslims with one another. I worked with KIC to create a digital platform for all their community to connect and created a scalable and reliable platform.",
-      "summary": "Branding & Platform Solutions"
+      "description": "Mobile apps, web app, and server-side solutions for the Muslim community of Kelowna, BC",
+      "summary": "Platform Solutions"
     },
     "date": "July 2019",
     "roles": [
       "UI/UX Designer",
       "Android Developer",
       "iOS Developer",
-      "Full-Stack Developer"
+      "Full-Stack Web Developer"
     ],
     "links": [
       {
