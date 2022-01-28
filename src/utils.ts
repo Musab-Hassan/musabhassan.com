@@ -42,12 +42,12 @@ export function letterSlide() {
                 e.childNodes.forEach(i => {
                     asyncAnimation((params.delay * index), () => {
                         i.style.transform = `translateX(${(150 + (-eased * 150)).toFixed(2)}%)`;
-                    }, eased);
+                    }, () => eased >= 1);
                 });
 
                 asyncAnimation((params.delay * index), () => {
                     e.style.transform = `translateX(${(80 + (-eased * 80)).toFixed(2)}%)`;
-                }, eased);
+                }, () => eased >= 1);
             });
 
             return {
@@ -185,7 +185,7 @@ export function maskSlide() {
 
 
 
-async function asyncAnimation(delay, onLoop, clock: number) {
+async function asyncAnimation(delay, onLoop, condition) {
     let target = Date.now() + delay;
 
     await new Promise((resolve) => {
@@ -200,7 +200,7 @@ async function asyncAnimation(delay, onLoop, clock: number) {
     });
 
     let loop = () => {
-        if (clock >= 1) return
+        if (condition()) return;
         onLoop();
         requestAnimationFrame(loop);
     }
