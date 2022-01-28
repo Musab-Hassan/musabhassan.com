@@ -124,7 +124,7 @@ export const vertexShader = `
 
 		vec3 pos = position;
 		vec3 noisePosition = vec3(pos.x * 2.5 + uTime, pos.y, pos.z);
-		pos.z += snoise(noisePosition) * 0.1;
+		pos.z += snoise(noisePosition) * 0.05;
 		vWave = pos.z * 0.2;
 
 		gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );

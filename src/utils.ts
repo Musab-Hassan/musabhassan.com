@@ -33,25 +33,28 @@ export function letterSlide() {
                 e.style.overflow = "hidden";
             });
 
+            let eased = 0; // t value with easing applied
+
+            // Async animations for better performance
+            masks.forEach((e, i) => {
+                let index = Array.from(e.parentNode.children).indexOf(e) + 1;
+
+                e.childNodes.forEach(i => {
+                    asyncAnimation((params.delay * index), () => {
+                        i.style.transform = `translateX(${(150 + (-eased * 150)).toFixed(2)}%)`;
+                    }, eased);
+                });
+
+                asyncAnimation((params.delay * index), () => {
+                    e.style.transform = `translateX(${(80 + (-eased * 80)).toFixed(2)}%)`;
+                }, eased);
+            });
+
             return {
                 delay: params.initDelay,
                 duration: params.duration,
                 tick: t => {
-                    let eased = BezierEasing(.2, .58, .43, 1)(t);
-
-                    masks.forEach((e) => {
-                        let index = Array.from(e.parentNode.children).indexOf(e) + 1;
-
-                        e.childNodes.forEach(i => {
-                            setTimeout(() => {
-                                i.style.transform = `translateX(${(150 + (-eased * 150)).toFixed(2)}%)`;
-                            }, params.delay * index);
-                        });
-
-                        setTimeout(() => {
-                            e.style.transform = `translateX(${(80 + (-eased * 80)).toFixed(2)}%)`;
-                        }, params.delay * index);
-                    });
+                    eased = BezierEasing(.2, .58, .43, 1)(t); // t value with easing applied
                 }
             }
         },
@@ -178,4 +181,28 @@ export function maskSlide() {
             }
         }
     }
+}
+
+
+
+async function asyncAnimation(delay, onLoop, clock: number) {
+    let target = Date.now() + delay;
+
+    await new Promise((resolve) => {
+        function loop() {
+            if (Date.now() >= target) {
+                resolve(true);
+                return;
+            }
+            requestAnimationFrame(loop);
+        }
+        loop();
+    });
+
+    let loop = () => {
+        if (clock >= 1) return
+        onLoop();
+        requestAnimationFrame(loop);
+    }
+    loop();
 }
