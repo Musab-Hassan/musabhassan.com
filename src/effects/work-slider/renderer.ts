@@ -1,4 +1,5 @@
 
+import { isUnsupportedClient } from "../../utils";
 import { MeshRenderer } from "../defaults/renderer";
 import { SliderImageMesh } from "./item";
 
@@ -15,6 +16,8 @@ export class ImageRenderer extends MeshRenderer {
     }
 
     setup(): void {
+        if (isUnsupportedClient()) return;
+
         // Assign meshItem instances to each image
         this.images.forEach(i => {
             let meshItem = new SliderImageMesh(i, this.scene);
