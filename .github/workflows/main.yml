@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Deploy to Firebase
 
 # Controls when the workflow will run
 on:
