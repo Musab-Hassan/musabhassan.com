@@ -250,8 +250,6 @@ export let slickScroll;
 							margin-right: 1.5vh
 							animation: scrollArrowLoop 3s ease infinite
 
-				
-
 	.parallax-wrapper
 		position: absolute
 		left: 0
@@ -288,6 +286,9 @@ export let slickScroll;
 	.h-signature
 		display: block
 
+	.occupation
+		width: 100%
+
 	#content-container .flex *
 		text-align: left
 
@@ -298,9 +299,16 @@ export let slickScroll;
 	.h-signature
 		display: none
 
+	.occupation
+		width: 70%
+
 	#content-container .flex .bottom
 		text-align: left
 		left: 5vw
+
+	.parallax-wrapper
+		width: 100% !important
+		margin-left: 0 !important
 
 
 #signature

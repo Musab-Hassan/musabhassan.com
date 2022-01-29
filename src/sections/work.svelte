@@ -3,7 +3,7 @@
 import { onMount } from "svelte";
 import { clickables, isWorkScroll, workPosition, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
-import { letterSlide, maskSlide } from "../utils";
+import { isUnsupportedClient, letterSlide, maskSlide } from "../utils";
 import { fade } from "svelte/transition";
 
 // Slider calculations and rendering
@@ -101,7 +101,7 @@ onMount(async () => {
 
 	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
 
-	slider.animate(); // Begin slider calculations
+	if (!isUnsupportedClient()) slider.animate(); // Begin slider animations if device is not a phone
 	new ImageRenderer(container, images); // ThreeJS warping effect
 });
 
@@ -142,40 +142,40 @@ function adjustLineHeight(node) {
 		bind:this={container}
 		class:disabled={currentActive !== null}
 	>
-		<ul class="work-list" bind:this={listContainer} class:hold={isMouseDown}>
-			<!-- Work items render here -->
-			{#await workItemsFetch then items}
-				{#each items as item, i}
-					<li class="list-item clickable passive" 
-						class:ambient="{currentActive !== i && currentActive !== null}" 
-						class:active="{currentActive === i}" 
-						bind:this={workItems[i]}>
+		<div class:mobile={isUnsupportedClient()}>
+			<ul class="work-list" bind:this={listContainer} class:hold={isMouseDown}>
+				<!-- Work items render here -->
+				{#await workItemsFetch then items}
+					{#each items as item, i}
+						<li class="list-item clickable passive" 
+							class:ambient="{currentActive !== i && currentActive !== null}" 
+							class:active="{currentActive === i}" 
+							bind:this={workItems[i]}>
 
-						<div class="img-wrapper">
-							<img bind:this={images[i]}
-								on:dragstart|preventDefault 
-								draggable="false" 
-								src="assets/imgs/work-back/{item.id}/cover.jpg" 
-								alt="{item.title} Background">
-						</div>
-						<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
-							<p class="item-date">{item.date}</p>
-							<!-- <p class="item-summary">{item.summary}</p> -->
-						</div>
-						<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
-							<h1 class="item-title">{item.title}</h1>
-							<div class="button" bind:this={_viewLinks[i]} on:click={() => toggleActiveItem(i)}>view</div>
-						</div>
-					</li>
-				{/each}
-			{/await}
-		</ul>
+							<div class="img-wrapper">
+								<img bind:this={images[i]}
+									on:dragstart|preventDefault 
+									draggable="false" 
+									src="assets/imgs/work-back/{item.id}/cover.jpg" 
+									alt="{item.title} Background">
+							</div>
+							<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
+								<p class="item-date">{item.date}</p>
+							</div>
+							<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
+								<h1 class="item-title">{item.title}</h1>
+								<div class="button item-link" bind:this={_viewLinks[i]} on:click={() => toggleActiveItem(i)}>view</div>
+							</div>
+						</li>
+					{/each}
+				{/await}
+			</ul>
+		</div>
 
 		<!-- Active item details (When a work item is clicked) -->
 		{#if currentActive !== null}
 			<div class="details-container">
 				<div class="wrapper">
-
 					<div class="top-align">
 						<div class="wrapper">
 							<div class="index">
@@ -200,14 +200,17 @@ function adjustLineHeight(node) {
 					</div>
 					
 					<div class="bottom-align">
-						<div class = "paragraph">
-							<p in:maskAnimationIn out:maskAnimationOut>
+						<div>
+							<p class="paragraph" in:textAnimationIn out:textAnimationOut>
 								{data[currentActive].details.description}
 							</p>
 						</div>
 						<div class="links">
 							{#each data[currentActive].links as link}
-								<a in:textAnimationIn out:textAnimationOut use:addClickable href={link.link} target="_blank" class="button no-decor">{link.text}</a><br>
+								<div style="position: relative">
+									<a in:textAnimationIn out:textAnimationOut use:addClickable href={link.link} target="_blank" class="button no-decor">{link.text}</a>
+									<div class="underline" transition:fade></div>
+								</div><br>
 							{/each}
 							<div class="line" transition:fade></div>
 						</div>
@@ -245,9 +248,18 @@ function adjustLineHeight(node) {
 	flex-direction: column
 	cursor: grab
 	position: relative
+	overflow: hidden
 
 	&.disabled
 		cursor: default !important
+
+		.mobile ul.work-list
+			opacity: 0
+
+	.mobile
+		width: 100%
+		height: 100%
+		overflow-x: auto
 	
 	*
 		-webkit-touch-callout: none
@@ -324,6 +336,18 @@ function adjustLineHeight(node) {
 					margin-top: 2vh
 					text-transform: uppercase
 
+			@media only screen and (max-width: 750px)
+				.mid-align
+					flex-direction: column
+					justify-content: flex-start
+					align-items: flex-start
+
+					h1.title
+						font-size: 16.5vw
+
+					.button
+						font-size: 2vh
+
 			
 			.bottom-align
 				display: flex
@@ -335,12 +359,10 @@ function adjustLineHeight(node) {
 					flex-grow: 1
 					flex-basis: 0
 
-				.paragraph
-					font-size: 0.8vw
+				p
+					font-size: 1.4vh
 					text-transform: uppercase
-
-					p
-						width: 60%
+					width: 60%
 
 				.roles 
 					display: flex
@@ -388,6 +410,38 @@ function adjustLineHeight(node) {
 						text-decoration: none
 						line-height: 160%
 
+					.underline
+						display: none
+
+			@media only screen and (max-width: 750px)
+				.bottom-align
+					flex-direction: column
+					justify-content: flex-start
+					align-items: flex-start
+
+					p
+						font-size: 1.6vh !important
+
+					.links
+						margin: 2vh 0
+						align-items: flex-start
+						
+						.button
+							font-size: 2vh
+							position: relative
+
+						.underline
+							display: inline-block
+							position: absolute
+							width: 100%
+							height: 2px
+							bottom: 0
+							left: 0
+							background-color: white
+
+						div.line
+							display: none
+
 	ul.work-list
 		margin-top: auto
 		margin: auto 0
@@ -398,6 +452,9 @@ function adjustLineHeight(node) {
 		align-items: center
 		height: 70vh
 		min-width: min-content
+		opacity: 1
+		transition: opacity 0.5s ease
+		-webkit-transition: opacity 0.5s ease
 
 		&.hold
 			.list-item
@@ -460,7 +517,6 @@ function adjustLineHeight(node) {
 				position: absolute
 				top: 6vh
 				right: 0
-				font-family: $font
 				z-index: 2
 				word-wrap: break-word
 				white-space: normal
@@ -470,6 +526,7 @@ function adjustLineHeight(node) {
 					font-size: 1vw
 					letter-spacing: 0.1vw
 					text-transform: uppercase
+					font-family: $font
 
 			.text-wrapper
 				box-sizing: border-box
@@ -516,10 +573,11 @@ function adjustLineHeight(node) {
 
 		@media only screen and (max-width: 1110px)
 			.list-item
-				width: 30vw
+				width: 35vw
 
-				.item-date
-					font-size: 2vw
+				.text-top-wrapper
+					.item-date
+						font-size: 2vh
 
 				.text-wrapper
 					width: calc(55vw - 10vh)
@@ -527,17 +585,17 @@ function adjustLineHeight(node) {
 					.item-title
 						font-size: 4vw
 
+					.item-link
+						font-size: 2vh
+
 		@media only screen and (max-width: 650px)
 			.list-item
-				width: 40vw
-
-				.item-date
-					font-size: 3vw
+				width: 60vw
 
 				.text-wrapper
 					width: calc(70vw - 10vh)
 
 					.item-title
-						font-size: 6vw
+						font-size: 3vh
 
 </style>
