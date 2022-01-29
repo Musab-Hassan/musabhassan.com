@@ -1,0 +1,8 @@
+/node_modules/
+/public/build/
+.vscode/
+
+*.cache
+
+
+.DS_Store
