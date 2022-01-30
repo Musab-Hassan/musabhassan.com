@@ -3,7 +3,8 @@
 import { onMount } from "svelte";
 import { clickables, isWorkScroll, workPosition, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
-import { isUnsupportedClient, letterSlide, maskSlide } from "../utils";
+import { isUnsupportedClient } from "../utils";
+import { letterSlide, maskSlide } from "../animations"
 import { fade } from "svelte/transition";
 
 // Slider calculations and rendering
