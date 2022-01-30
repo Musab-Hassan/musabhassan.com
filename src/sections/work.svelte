@@ -4,7 +4,7 @@ import { onMount } from "svelte";
 import { clickables, isWorkScroll, workPosition, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
 import { isUnsupportedClient } from "../utils";
-import { animationClock, letterSlide, maskSlide, workItemIntro } from "../animations"
+import { letterSlide, maskSlide, workItemIntro } from "../animations"
 import { fade } from "svelte/transition";
 
 // Slider calculations and rendering
@@ -96,8 +96,6 @@ let observer = new IntersectionObserver((entries) => {
 	root: null,
 	threshold: 0.4
 });
-
-animationClock(t => console.log(t), 2500);
 
 // Svelte Store subscriptions
 isWorkScroll.subscribe(val => isMouseDown = val);
