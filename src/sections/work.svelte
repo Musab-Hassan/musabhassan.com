@@ -4,7 +4,7 @@ import { onMount } from "svelte";
 import { clickables, isWorkScroll, workPosition, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
 import { isUnsupportedClient } from "../utils";
-import { letterSlide, maskSlide } from "../animations"
+import { animationClock, letterSlide, maskSlide, workItemIntro } from "../animations"
 import { fade } from "svelte/transition";
 
 // Slider calculations and rendering
@@ -82,15 +82,22 @@ let textAnimationOut = letterSlide().out;
 let maskAnimationIn = maskSlide().in;
 let maskAnimationOut = maskSlide().out;
 
-// Intersection observer to enable scroll activated animations
-let inView: boolean = false;
-let observer = new IntersectionObserver(() => { 
-	inView = true;
-	observer.disconnect();
+// Intersection observer and promise to enable scroll activated animations
+let inViewResolve;
+let inView = new Promise((resolve) => inViewResolve = resolve);
+let observer = new IntersectionObserver((entries) => { 
+	entries.forEach(entry => {
+		if (entry.isIntersecting) {
+			inViewResolve();
+			observer.disconnect();
+		}
+	});
 }, {
 	root: null,
-	threshold: 0.25
+	threshold: 0.4
 });
+
+animationClock(t => console.log(t), 2500);
 
 // Svelte Store subscriptions
 isWorkScroll.subscribe(val => isMouseDown = val);
@@ -160,9 +167,10 @@ function adjustLineHeight(node) {
 				{#await workItemsFetch then items}
 					{#each items as item, i}
 						<li class="list-item clickable passive" 
-							class:ambient="{currentActive !== i && currentActive !== null}" 
-							class:active="{currentActive === i}" 
-							bind:this={workItems[i]}>
+							class:ambient="{ currentActive !== i && currentActive !== null }" 
+							class:active="{ currentActive === i }" 
+							bind:this={ workItems[i] }
+							use:workItemIntro={{ promise: inView, delay: (80 * i) + 100 }}>
 
 							<div class="img-wrapper">
 								<img bind:this={images[i]}

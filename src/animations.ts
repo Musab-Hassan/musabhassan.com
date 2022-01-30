@@ -1,5 +1,6 @@
 import BezierEasing from "bezier-easing";
 import { asyncAnimation } from "./utils";
+import anime from "animejs";
 
 // Letter reveal animation used with the 'in:' and 'out:' svelte directives
 export function letterSlide() {
@@ -171,4 +172,50 @@ export function maskSlide() {
             }
         }
     }
+}
+
+// Animation for workItems when workContainer is scrolled into view
+export function workItemIntro(node, params: { promise, delay?: number }) {
+    if (!params.delay) params.delay = 0;
+
+    node.style.height = "0vh";
+    node.style.opacity = "0"
+    node.style.transition = "none"
+
+    params.promise.then(() => {
+        anime({
+            targets: node,
+            height: "60vh",
+            opacity: "1",
+            easing: "cubicBezier(.24,.25,.12,1.01)",
+            duration: 1000,
+            delay: params.delay,
+            complete: () => {
+                node.style.opacity = null;
+                node.style.height = null;
+                node.style.transition = null
+            }
+        });
+    });
+}
+
+// Run svelte transitions, declared above, programmatically 
+export function animationClock(animateFunc: (t) => void, duration: number, reverse: boolean = false) {
+    let start;
+
+    function step(timestamp) {
+        if (start === undefined) start = timestamp;
+        const elapsed = timestamp - start;
+
+        let t = elapsed / duration;
+        t = reverse ? 1 - t : t;
+
+        if (t > 1 || t < 0) t = Math.abs(Math.round(t));
+
+        animateFunc(Math.round(t * 1000) / 1000);
+
+        if (elapsed < duration) window.requestAnimationFrame(step);
+    }
+
+    window.requestAnimationFrame(step);
 }
