@@ -70,8 +70,8 @@ let images = []; // Array of images to be passed to WebGL Shader
 let workItems = []; // Array of workItems to be animated
 let _viewLinks = []; // Array of clickable Links
 
-let isMouseDown = false; // is user holding click
-let currentActive = null; // Active work item in the detailsViewer viewed
+let isMouseDown: boolean = false; // is user holding click
+let currentActive: number = null; // Active work item in the detailsViewer viewed
 
 let data; // JSON Work data fetched from the data.json file
 
@@ -80,6 +80,16 @@ let textAnimationIn = letterSlide().in;
 let textAnimationOut = letterSlide().out;
 let maskAnimationIn = maskSlide().in;
 let maskAnimationOut = maskSlide().out;
+
+// Intersection observer to enable scroll activated animations
+let inView: boolean = false;
+let observer = new IntersectionObserver(() => { 
+	inView = true;
+	observer.disconnect();
+}, {
+	root: null,
+	threshold: 0.25
+});
 
 // Svelte Store subscriptions
 isWorkScroll.subscribe(val => isMouseDown = val);
@@ -98,6 +108,7 @@ onMount(async () => {
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 	
 	await workItemsFetch; // Wait for workItems to load
+	observer.observe(workContainer); // Intersection observer for scroll animations
 
 	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
 
@@ -248,7 +259,6 @@ function adjustLineHeight(node) {
 	flex-direction: column
 	cursor: grab
 	position: relative
-	overflow: hidden
 
 	&.disabled
 		cursor: default !important
@@ -450,7 +460,7 @@ function adjustLineHeight(node) {
 		display: flex
 		flex-direction: row
 		align-items: center
-		height: 70vh
+		height: 75vh
 		min-width: min-content
 		opacity: 1
 		transition: opacity 0.5s ease
@@ -464,7 +474,7 @@ function adjustLineHeight(node) {
 			display: inline-flex
 			overflow: hidden
 			height: 60vh
-			width: 20vw
+			width: 25vw
 			box-sizing: border-box
 			position: relative
 			overflow: hidden
@@ -545,7 +555,7 @@ function adjustLineHeight(node) {
 				.item-title
 					font-family: $font
 					font-weight: normal
-					font-size: 2.3vw
+					font-size: 2.8vw
 					z-index: 0
 					opacity: 1
 					letter-spacing: 0.1vw
@@ -573,7 +583,7 @@ function adjustLineHeight(node) {
 
 		@media only screen and (max-width: 1110px)
 			.list-item
-				width: 35vw
+				width: 40vw
 
 				.text-top-wrapper
 					.item-date
@@ -583,19 +593,19 @@ function adjustLineHeight(node) {
 					width: calc(55vw - 10vh)
 
 					.item-title
-						font-size: 4vw
+						font-size: 5vw
 
 					.item-link
 						font-size: 2vh
 
 		@media only screen and (max-width: 650px)
 			.list-item
-				width: 60vw
+				width: 75vw
 
 				.text-wrapper
 					width: calc(70vw - 10vh)
 
 					.item-title
-						font-size: 3vh
+						font-size: 4.5vh
 
 </style>

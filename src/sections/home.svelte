@@ -109,7 +109,7 @@ export let slickScroll;
 <div id="content-container" style="padding-top: 23vh" bind:this={homeContainer}>
 	<div class="content-wrapper">
 		<div class="flex">
-			<div class="flex-container">
+			<div class="flex-wrapper first">
 
 				<svg id="signature" class="h-signature" viewBox="0 0 190 277" >
 					<g>
@@ -138,7 +138,7 @@ export let slickScroll;
 
 			</div>
 			
-			<div class="flex-container" style="margin-right: 5vw; justify-content: flex-end">
+			<div class="flex-wrapper second">
 				<h1 class = "title">
 					<div class="title-mask">
 						<div class="word" bind:this={titleWord1}>Musab</div>
@@ -199,12 +199,16 @@ export let slickScroll;
 		position: relative
 		box-sizing: border-box
 
-		.flex-container
+		.flex-wrapper
 			position: relative
 			height: 100%
 			display: flex
 			flex-direction: column
 			justify-content: center
+
+			&.second
+				margin-right: 5vw 
+				justify-content: flex-end
 
 			h1
 				font-weight: 400
@@ -296,11 +300,17 @@ export let slickScroll;
 	#content-container .flex *
 		text-align: left
 
-	.h-signature
-		display: none
+	.flex
+		justify-content: center !important
+		width: 100% !important
 
-	.occupation
-		width: 70%
+		.flex-wrapper 
+			&.first
+				display: none !important
+
+			&.second
+				justify-content: center !important
+				margin: 0
 
 	#content-container .flex .bottom
 		text-align: left
@@ -309,6 +319,10 @@ export let slickScroll;
 	.parallax-wrapper
 		width: 100% !important
 		margin-left: 0 !important
+
+@media only screen and (max-width: 750px)
+	.occupation
+		width: 70%
 
 
 #signature
