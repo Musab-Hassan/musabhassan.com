@@ -92,8 +92,8 @@ const workItemsFetch = new Promise(async (resolve: (data: any[]) => void) => {
 });
 
 onMount(async () => {
-	$workPosition = workContainer.offsetTop; // Update current height for nav scrolling
-	window.onresize = () => $workPosition = workContainer.offsetTop; // Update current height for nav scrolling
+	$workPosition = workContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
+	window.onresize = () => $workPosition = workContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
 
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 	

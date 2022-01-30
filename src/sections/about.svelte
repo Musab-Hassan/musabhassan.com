@@ -9,8 +9,8 @@ let profilePicContainer;
 
 onMount(() => {
 
-	$aboutPosition = aboutContainer.offsetTop; // Update current height for nav scrolling
-	window.onresize = () => $aboutPosition = aboutContainer.offsetTop; // Update current height for nav scrolling
+	$aboutPosition = aboutContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
+	window.onresize = () => $aboutPosition = aboutContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
 
 	clickables.update(value => [...value, githubLink, emailLink]);
 

@@ -48,7 +48,9 @@ const navigate = pos => { scrollContainer.scrollTo(0, pos); mobileActive = false
 			src="assets/imgs/logo.svg"
 			class = "logo-icon clickable"
 			alt="Logo"
-			draggable="false">
+			draggable="false"
+			on:click={() => navigate(positions.home)}
+		>
 	</div>
 	
 	<div class="flex-wrapper">
