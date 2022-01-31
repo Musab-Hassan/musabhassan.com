@@ -1,6 +1,5 @@
 
 import * as THREE from "three"
-import { isUnsupportedClient } from "../../utils";
 
 export class MeshRenderer {
 
@@ -8,7 +7,6 @@ export class MeshRenderer {
     container; scene; camera; renderer;
 
     constructor(container) {
-        if (isUnsupportedClient()) return;
 
         this.container = container;
         this.scene = new THREE.Scene();

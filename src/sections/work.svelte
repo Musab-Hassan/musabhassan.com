@@ -1,11 +1,11 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { clickables, isWorkScroll, workPosition, workScrollSpeed } from "../store";
+import { clickables, isMobile, isWorkScroll, workPosition, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
-import { isUnsupportedClient } from "../utils";
 import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations"
 import { fade } from "svelte/transition";
+import { getGPUTier } from 'detect-gpu';
 
 // Slider calculations and rendering
 class WorkSlider {
@@ -100,7 +100,7 @@ let animationObserver = new IntersectionObserver((entries) => {
 // Svelte Store subscriptions
 isWorkScroll.subscribe(val => isMouseDown = val);
 
-const slider = new WorkSlider(); // Slider effects
+const slider = new WorkSlider(); // workItems slider functionality
 
 const workItemsFetch = new Promise(async (resolve: (data: any[]) => void) => {
 	data = await (await fetch("data.json")).json(); // Fetch work data
@@ -110,15 +110,17 @@ const workItemsFetch = new Promise(async (resolve: (data: any[]) => void) => {
 onMount(async () => {
 	$workPosition = workContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
 	window.onresize = () => $workPosition = workContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
-
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
-	
+
+	const gpuTier = await getGPUTier(); // GPU Tier to decide if effects should be enabled
+	$isMobile = gpuTier.isMobile;
+
 	await workItemsFetch; // Wait for workItems to load
 
 	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
 
-	if (!isUnsupportedClient()) slider.animate(); // Begin slider animations if device is not a phone
-	new ImageRenderer(container, images); // ThreeJS warping effect
+	if (!gpuTier.isMobile) slider.animate(); // Begin slider animations if device is not a phone
+	if (gpuTier.tier >= 2 && !gpuTier.isMobile && gpuTier.fps >= 30) new ImageRenderer(container, images); // ThreeJS warping effect if device can handle it
 
 	animationObserver.observe(workContainer); // Intersection observer for scroll animations
 });
@@ -160,7 +162,7 @@ function adjustLineHeight(node) {
 		bind:this={container}
 		class:disabled={currentActive !== null}
 	>
-		<div class:mobile={isUnsupportedClient()}>
+		<div class:mobile={$isMobile}>
 			<ul class="work-list" bind:this={listContainer} class:hold={isMouseDown}>
 				<!-- Work items render here -->
 				{#await workItemsFetch then items}
