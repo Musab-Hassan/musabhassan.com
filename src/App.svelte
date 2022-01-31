@@ -32,6 +32,7 @@ onMount(async () => {
 
 	// Remove horizontal scrolling
 	await scrollPromise;
+	scrollContainer.scrollTo(0, 0);
 	scrollContainer.style.overflowY = "hidden";
 	scrollContainer.style.overflowX = "hidden";
 
