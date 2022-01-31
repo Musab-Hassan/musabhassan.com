@@ -120,7 +120,7 @@ onMount(async () => {
 	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
 
 	if (!gpuTier.isMobile) slider.animate(); // Begin slider animations if device is not a phone
-	if (gpuTier.tier >= 2 && !gpuTier.isMobile) new ImageRenderer(container, images); // ThreeJS warping effect if device can handle it
+	if (gpuTier.tier >= 2 && !gpuTier.isMobile && gpuTier.fps >= 30) new ImageRenderer(container, images); // ThreeJS warping effect if device can handle it
 
 	animationObserver.observe(workContainer); // Intersection observer for scroll animations
 });
