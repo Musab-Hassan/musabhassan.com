@@ -5,12 +5,13 @@ import anime from "animejs";
 // Letter reveal animation used with the 'in:' and 'out:' svelte directives
 export function letterSlide() {
     return {
-        in: (node, params: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean }) => {
+        in: (node, params: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean, useAnime?: boolean }) => {
 
             if (!params.delay) params.delay = 35;
             if (!params.initDelay) params.initDelay = 0;
             if (!params.duration) params.duration = 600;
             if (params.breakWord === undefined) params.breakWord = true;
+            if (params.useAnime === undefined) params.useAnime = false;
 
             let masks = wordWrapHandler(node, params.breakWord);
 
@@ -24,28 +25,42 @@ export function letterSlide() {
                 e.style.overflow = "hidden";
             });
 
-            let eased = 0; // t value with easing applied
+            let eased = 0, animeTargets = []; // t value with easing applied
 
-            // Async animations for better performance
-            masks.forEach((e, i) => {
-                let index = Array.from(e.parentNode.children).indexOf(e) + 1;
+            masks.forEach((element) => {
+                let index = Array.from(element.parentNode.children).indexOf(element) + 1;
+                
+                if (params.useAnime) { // Register children for use with anime
+                    animeTargets = [...animeTargets, element, ...element.childNodes];
+                } else {
+                    // Async animations for better performance in svetle tick only
+                    element.childNodes.forEach(e => {
+                        asyncAnimation((params.delay * index), () => {
+                            e.style.transform = `translateX(${(150 + (-eased * 150)).toFixed(2)}%)`;
+                        }, () => eased >= 1);
+                    });
 
-                e.childNodes.forEach(i => {
                     asyncAnimation((params.delay * index), () => {
-                        i.style.transform = `translateX(${(150 + (-eased * 150)).toFixed(2)}%)`;
+                        element.style.transform = `translateX(${(80 + (-eased * 80)).toFixed(2)}%)`;
                     }, () => eased >= 1);
-                });
-
-                asyncAnimation((params.delay * index), () => {
-                    e.style.transform = `translateX(${(80 + (-eased * 80)).toFixed(2)}%)`;
-                }, () => eased >= 1);
+                }
             });
 
             return {
                 delay: params.initDelay,
                 duration: params.duration,
-                tick: t => {
+                tick: t => { // Svelte transitions
                     eased = BezierEasing(.2, .58, .43, 1)(t); // t value with easing applied
+                },
+                anime: (easing?) => { // Call animation outside of svelte blocks programmatically with animejs
+                    if (!params.useAnime) return;
+                    anime({
+                        targets: animeTargets,
+                        translateX: "0%",
+                        easing: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
+                        duration: params.duration,
+                        delay: anime.stagger(params.delay, {start: params.initDelay})
+                    })
                 }
             }
         },
@@ -76,7 +91,6 @@ export function letterSlide() {
         }
     }
 
-
     // Wrap each word with a mask and return masks
     function wordWrapHandler(node, breakWord: boolean) {
 
@@ -91,7 +105,8 @@ export function letterSlide() {
             let words = node.querySelectorAll(".a-word");
             words.forEach(element => {
                 element.style.display = "inline-block";
-                element.style.marginRight = "0.4vw"
+                element.style.marginRight = "0.5vw"
+                element.style.whiteSpace = "nowrap"
             });
         }
 
@@ -123,12 +138,12 @@ export function letterSlide() {
 // Mask reveal animation used with the 'in:' and 'out:' svelte directives
 export function maskSlide() {
     return {
-        in: (node, params: { duration?: number, delay?: number }) => {
+        in: (node, params: { duration?: number, delay?: number, maskStyles?: { property: string, value: string }[] }) => {
 
             if (!params.delay) params.delay = 20;
             if (!params.duration) params.duration = 700;
 
-            addMask();
+            let mask = addMask();
 
             return {
                 delay: params.delay,
@@ -136,7 +151,17 @@ export function maskSlide() {
                 tick: t => {
                     let eased = BezierEasing(.2, .58, .43, 1)(t);
 
-                    node.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
+                    mask.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
+                    node.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                },
+                anime: (easing?) => {
+                    anime({
+                        targets: [mask, node],
+                        translateX: "0%",
+                        easing: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
+                        duration: params.duration,
+                        delay: params.delay
+                    })
                 }
             }
 
@@ -150,9 +175,17 @@ export function maskSlide() {
                 mask.insertBefore(node, mask.children[0]);
                 mask.style.display = "inline-block";
                 mask.style.overflow = "hidden";
+                if (params.maskStyles) {
+                    params.maskStyles.forEach(element => {
+                        mask.style[element.property] = element.value;
+                    });
+                }
+
                 parent.insertBefore(mask, parent.children[index]);
 
-                node.style.transform = "translateX(100%)";
+                mask.style.transform = "translateX(100%)";
+                node.style.transform = "translateX(-100%)"
+                return mask;
             }
         },
 
@@ -197,25 +230,4 @@ export function workItemIntro(node, params: { promise, delay?: number }) {
             }
         });
     });
-}
-
-// Run svelte transitions, declared above, programmatically 
-export function animationClock(animateFunc: (t) => void, duration: number, reverse: boolean = false) {
-    let start;
-
-    function step(timestamp) {
-        if (start === undefined) start = timestamp;
-        const elapsed = timestamp - start;
-
-        let t = elapsed / duration;
-        t = reverse ? 1 - t : t;
-
-        if (t > 1 || t < 0) t = Math.abs(Math.round(t));
-
-        animateFunc(Math.round(t * 1000) / 1000);
-
-        if (elapsed < duration) window.requestAnimationFrame(step);
-    }
-
-    window.requestAnimationFrame(step);
 }
