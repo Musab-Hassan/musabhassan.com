@@ -1,26 +1,56 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
+import { letterSlide, maskSlide } from "../animations";
 import { aboutPosition, clickables } from "../store";
 
 let aboutContainer;
 let githubLink, emailLink
 let profilePicContainer;
 
+// Animation elements
+let title, paragraph, image, links;
+
 onMount(() => {
 
-	$aboutPosition = aboutContainer.offsetTop; // Update current height for nav scrolling
-	window.onresize = () => $aboutPosition = aboutContainer.offsetTop; // Update current height for nav scrolling
+	$aboutPosition = aboutContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
+	window.onresize = () => $aboutPosition = aboutContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
 
 	clickables.update(value => [...value, githubLink, emailLink]);
 
 	slickScroll.then((slick) => {
-
 		slick.addOffset({
 			element: profilePicContainer,
 			speedY: 0.8
 		});
 	})
+
+	// Scroll activated animations using anime instead of svelte transitions
+	const titleAnimate = letterSlide().in(title, { useAnime: true, delay: 15 });
+	const paragraphAnimate = letterSlide().in(paragraph, { useAnime: true, delay: 2 });
+	const linkAnimate = maskSlide().in(links, { delay: 500 });
+	const imageAnimate = maskSlide().in(image, {
+		duration: 1200,
+		maskStyles: [
+			{ property: "width", value: "100%"},
+			{ property: "height", value: "100%"}
+		]
+	});
+
+	let observer = new IntersectionObserver((entries) => { 
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				titleAnimate.anime();
+				paragraphAnimate.anime();
+				linkAnimate.anime();
+				imageAnimate.anime("easeInOutQuint");
+				
+				observer.disconnect();
+			}
+		});
+	}, { root: null, threshold: 0.4 });
+	
+	observer.observe(aboutContainer);
 });
 
 export let slickScroll;
@@ -29,17 +59,19 @@ export let slickScroll;
 
 <div id="content-container" class="about" bind:this={aboutContainer}>
 	<div class="content-wrapper">
-		<h1 class = "title">The Name's<br>Musab</h1>
-		<p class = "paragraph">
+		<h1 class = "title" bind:this={title}>The Name's<br>Musab</h1>
+		<p class = "paragraph" bind:this={paragraph}>
 			I'm a web developer from British Columbia, Canada. I love writing beautiful code and creating memorable web experiences. <br><br>I work with organizations and individuals to create taylor-made experiences designed to be beautiful, scalable, and affordable. If you like my work, you can send me an email and we can chat.
 		</p>
 		<div class="social-button-wrapper">
-			<span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
-			<span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
+			<div bind:this={links}>
+				<span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
+				<span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
+			</div>
 		</div>
 	</div>
 	<div class="profile-image" bind:this={profilePicContainer}>
-		<img src="assets/imgs/profile-photo.jpg" alt="Musab's Sillouette" class="profile-pic">
+		<img bind:this={image} src="assets/imgs/profile-photo.jpg" alt="Musab's Sillouette" class="profile-pic">
 	</div>
 </div>
 <div class="horizontal-flex">
@@ -95,6 +127,7 @@ export let slickScroll;
 		width: 70%
 		overflow: hidden
 		margin-top: -30vh
+		position: relative
 
 		img
 			height: 80%

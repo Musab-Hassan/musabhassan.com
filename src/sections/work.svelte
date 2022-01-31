@@ -3,7 +3,8 @@
 import { onMount } from "svelte";
 import { clickables, isWorkScroll, workPosition, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
-import { isUnsupportedClient, letterSlide, maskSlide } from "../utils";
+import { isUnsupportedClient } from "../utils";
+import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations"
 import { fade } from "svelte/transition";
 
 // Slider calculations and rendering
@@ -70,8 +71,8 @@ let images = []; // Array of images to be passed to WebGL Shader
 let workItems = []; // Array of workItems to be animated
 let _viewLinks = []; // Array of clickable Links
 
-let isMouseDown = false; // is user holding click
-let currentActive = null; // Active work item in the detailsViewer viewed
+let isMouseDown: boolean = false; // is user holding click
+let currentActive: number = null; // Active work item in the detailsViewer viewed
 
 let data; // JSON Work data fetched from the data.json file
 
@@ -80,6 +81,21 @@ let textAnimationIn = letterSlide().in;
 let textAnimationOut = letterSlide().out;
 let maskAnimationIn = maskSlide().in;
 let maskAnimationOut = maskSlide().out;
+
+// Intersection observer and promise to enable scroll activated animations
+let inViewResolve;
+let inView = new Promise((resolve) => inViewResolve = resolve);
+let animationObserver = new IntersectionObserver((entries) => { 
+	entries.forEach(entry => {
+		if (entry.isIntersecting) {
+			inViewResolve();
+			animationObserver.disconnect();
+		}
+	});
+}, {
+	root: null,
+	threshold: 0.4
+});
 
 // Svelte Store subscriptions
 isWorkScroll.subscribe(val => isMouseDown = val);
@@ -92,8 +108,8 @@ const workItemsFetch = new Promise(async (resolve: (data: any[]) => void) => {
 });
 
 onMount(async () => {
-	$workPosition = workContainer.offsetTop; // Update current height for nav scrolling
-	window.onresize = () => $workPosition = workContainer.offsetTop; // Update current height for nav scrolling
+	$workPosition = workContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
+	window.onresize = () => $workPosition = workContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
 
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 	
@@ -103,6 +119,8 @@ onMount(async () => {
 
 	if (!isUnsupportedClient()) slider.animate(); // Begin slider animations if device is not a phone
 	new ImageRenderer(container, images); // ThreeJS warping effect
+
+	animationObserver.observe(workContainer); // Intersection observer for scroll animations
 });
 
 
@@ -148,21 +166,21 @@ function adjustLineHeight(node) {
 				{#await workItemsFetch then items}
 					{#each items as item, i}
 						<li class="list-item clickable passive" 
-							class:ambient="{currentActive !== i && currentActive !== null}" 
-							class:active="{currentActive === i}" 
-							bind:this={workItems[i]}>
+							class:ambient="{ currentActive !== i && currentActive !== null }" 
+							class:active="{ currentActive === i }" 
+							bind:this={ workItems[i] }>
 
-							<div class="img-wrapper">
+							<div class="img-wrapper" use:workImageIntro={{ promise: inView, delay: (120 * i) + 100 }}>
 								<img bind:this={images[i]}
 									on:dragstart|preventDefault 
 									draggable="false" 
 									src="assets/imgs/work-back/{item.id}/cover.jpg" 
 									alt="{item.title} Background">
 							</div>
-							<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
+							<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown} use:workOpacityIntro={{ promise: inView, delay: (120 * i) + 100 }}>
 								<p class="item-date">{item.date}</p>
 							</div>
-							<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
+							<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown} use:workOpacityIntro={{ promise: inView, delay: (120 * i) + 100 }}>
 								<h1 class="item-title">{item.title}</h1>
 								<div class="button item-link" bind:this={_viewLinks[i]} on:click={() => toggleActiveItem(i)}>view</div>
 							</div>
@@ -248,7 +266,6 @@ function adjustLineHeight(node) {
 	flex-direction: column
 	cursor: grab
 	position: relative
-	overflow: hidden
 
 	&.disabled
 		cursor: default !important
@@ -450,7 +467,7 @@ function adjustLineHeight(node) {
 		display: flex
 		flex-direction: row
 		align-items: center
-		height: 70vh
+		height: 75vh
 		min-width: min-content
 		opacity: 1
 		transition: opacity 0.5s ease
@@ -462,9 +479,10 @@ function adjustLineHeight(node) {
 
 		.list-item
 			display: inline-flex
+			justify-content: flex-end
 			overflow: hidden
 			height: 60vh
-			width: 20vw
+			width: 25vw
 			box-sizing: border-box
 			position: relative
 			overflow: hidden
@@ -496,6 +514,7 @@ function adjustLineHeight(node) {
 				z-index: 1
 				position: relative
 				width: 85%
+				margin-right: 15%
 				box-shadow: 3px 9px 18px rgba(0, 0, 0, 0.2)
 				
 				img
@@ -545,7 +564,7 @@ function adjustLineHeight(node) {
 				.item-title
 					font-family: $font
 					font-weight: normal
-					font-size: 2.3vw
+					font-size: 2.8vw
 					z-index: 0
 					opacity: 1
 					letter-spacing: 0.1vw
@@ -573,7 +592,7 @@ function adjustLineHeight(node) {
 
 		@media only screen and (max-width: 1110px)
 			.list-item
-				width: 35vw
+				width: 40vw
 
 				.text-top-wrapper
 					.item-date
@@ -583,19 +602,19 @@ function adjustLineHeight(node) {
 					width: calc(55vw - 10vh)
 
 					.item-title
-						font-size: 4vw
+						font-size: 5vw
 
 					.item-link
 						font-size: 2vh
 
 		@media only screen and (max-width: 650px)
 			.list-item
-				width: 60vw
+				width: 75vw
 
 				.text-wrapper
 					width: calc(70vw - 10vh)
 
 					.item-title
-						font-size: 3vh
+						font-size: 4.5vh
 
 </style>
