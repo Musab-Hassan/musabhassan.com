@@ -23,7 +23,8 @@ onMount(async () => {
 	// Resolve slickScroll promise and pass momentumScroll's value
 	let slick = (new slickScroll).momentumScroll({
 		root: scrollContainer,
-		duration: 1000,
+		easing: "easeOutCirc",
+		duration: 500,
 		fixedOffsets: [
 			navBar
 		]
