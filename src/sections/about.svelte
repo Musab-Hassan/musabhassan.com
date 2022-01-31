@@ -30,7 +30,7 @@ onMount(() => {
 	const paragraphAnimate = letterSlide().in(paragraph, { useAnime: true, delay: 2 });
 	const linkAnimate = maskSlide().in(links, { delay: 500 });
 	const imageAnimate = maskSlide().in(image, {
-		duration: 1000,
+		duration: 1200,
 		maskStyles: [
 			{ property: "width", value: "100%"},
 			{ property: "height", value: "100%"}
@@ -43,7 +43,7 @@ onMount(() => {
 				titleAnimate.anime();
 				paragraphAnimate.anime();
 				linkAnimate.anime();
-				imageAnimate.anime("easeInOutCirc");
+				imageAnimate.anime("easeInOutQuint");
 				
 				observer.disconnect();
 			}
