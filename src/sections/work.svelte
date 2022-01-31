@@ -4,7 +4,7 @@ import { onMount } from "svelte";
 import { clickables, isWorkScroll, workPosition, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
 import { isUnsupportedClient } from "../utils";
-import { letterSlide, maskSlide, workItemIntro } from "../animations"
+import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations"
 import { fade } from "svelte/transition";
 
 // Slider calculations and rendering
@@ -85,11 +85,11 @@ let maskAnimationOut = maskSlide().out;
 // Intersection observer and promise to enable scroll activated animations
 let inViewResolve;
 let inView = new Promise((resolve) => inViewResolve = resolve);
-let observer = new IntersectionObserver((entries) => { 
+let animationObserver = new IntersectionObserver((entries) => { 
 	entries.forEach(entry => {
 		if (entry.isIntersecting) {
 			inViewResolve();
-			observer.disconnect();
+			animationObserver.disconnect();
 		}
 	});
 }, {
@@ -114,12 +114,13 @@ onMount(async () => {
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 	
 	await workItemsFetch; // Wait for workItems to load
-	observer.observe(workContainer); // Intersection observer for scroll animations
 
 	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
 
 	if (!isUnsupportedClient()) slider.animate(); // Begin slider animations if device is not a phone
 	new ImageRenderer(container, images); // ThreeJS warping effect
+
+	animationObserver.observe(workContainer); // Intersection observer for scroll animations
 });
 
 
@@ -167,20 +168,19 @@ function adjustLineHeight(node) {
 						<li class="list-item clickable passive" 
 							class:ambient="{ currentActive !== i && currentActive !== null }" 
 							class:active="{ currentActive === i }" 
-							bind:this={ workItems[i] }
-							use:workItemIntro={{ promise: inView, delay: (80 * i) + 100 }}>
+							bind:this={ workItems[i] }>
 
-							<div class="img-wrapper">
+							<div class="img-wrapper" use:workImageIntro={{ promise: inView, delay: (120 * i) + 100 }}>
 								<img bind:this={images[i]}
 									on:dragstart|preventDefault 
 									draggable="false" 
 									src="assets/imgs/work-back/{item.id}/cover.jpg" 
 									alt="{item.title} Background">
 							</div>
-							<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
+							<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown} use:workOpacityIntro={{ promise: inView, delay: (120 * i) + 100 }}>
 								<p class="item-date">{item.date}</p>
 							</div>
-							<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
+							<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown} use:workOpacityIntro={{ promise: inView, delay: (120 * i) + 100 }}>
 								<h1 class="item-title">{item.title}</h1>
 								<div class="button item-link" bind:this={_viewLinks[i]} on:click={() => toggleActiveItem(i)}>view</div>
 							</div>
@@ -479,6 +479,7 @@ function adjustLineHeight(node) {
 
 		.list-item
 			display: inline-flex
+			justify-content: flex-end
 			overflow: hidden
 			height: 60vh
 			width: 25vw
@@ -513,6 +514,7 @@ function adjustLineHeight(node) {
 				z-index: 1
 				position: relative
 				width: 85%
+				margin-right: 15%
 				box-shadow: 3px 9px 18px rgba(0, 0, 0, 0.2)
 				
 				img

@@ -207,26 +207,52 @@ export function maskSlide() {
     }
 }
 
-// Animation for workItems when workContainer is scrolled into view
-export function workItemIntro(node, params: { promise, delay?: number }) {
+// Animation for workItem image when workContainer is scrolled into view
+export function workImageIntro(node, params: { promise, delay?: number }) {
     if (!params.delay) params.delay = 0;
 
-    node.style.height = "0vh";
+    node.style.width = "0%";
+    node.style.marginRight = "0%";
     node.style.opacity = "0"
     node.style.transition = "none"
 
     params.promise.then(() => {
         anime({
             targets: node,
-            height: "60vh",
+            width: "85%",
+            marginRight: "15%",
             opacity: "1",
-            easing: "cubicBezier(.24,.25,.12,1.01)",
-            duration: 1000,
+            easing: "easeInOutQuint",
+            duration: 1300,
             delay: params.delay,
             complete: () => {
                 node.style.opacity = null;
-                node.style.height = null;
-                node.style.transition = null
+                node.style.width = null;
+                node.style.marginRight = null;
+                node.style.transition = null;
+            }
+        });
+    });
+}
+
+// Opacity animation for workItem when workContainer is scrolled into view
+export function workOpacityIntro(node, params: { promise, delay?: number }) {
+    if (!params.delay) params.delay = 0;
+
+    node.style.transform = "translateX(50%)";
+    node.style.opacity = "0"
+
+    params.promise.then(() => {
+        anime({
+            targets: node,
+            translateX: "0%",
+            opacity: "1",
+            easing: "easeInOutQuint",
+            duration: 1300,
+            delay: params.delay + 100,
+            complete: () => {
+                node.style.opacity = null;
+                node.style.transform = null;
             }
         });
     });
