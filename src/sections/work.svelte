@@ -1,7 +1,7 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { clickables, isMobile, isWorkScroll, workPosition, workScrollSpeed } from "../store";
+import { clickables, isMobile, isWorkScroll, workAnchor, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
 import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations"
 import { fade } from "svelte/transition";
@@ -108,8 +108,7 @@ const workItemsFetch = new Promise(async (resolve: (data: any[]) => void) => {
 });
 
 onMount(async () => {
-	$workPosition = workContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
-	window.onresize = () => $workPosition = workContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
+	$workAnchor = workContainer;
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 
 	const gpuTier = await getGPUTier(); // GPU Tier to decide if effects should be enabled

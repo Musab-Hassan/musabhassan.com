@@ -7,6 +7,6 @@ export let workScrollSpeed = writable(0); // Speed of work slider
 export let waitTime = 50; // Artificial page load time
 export let isMobile = writable(false);
 
-export let homePosition = writable(0);
-export let workPosition = writable(0);
-export let aboutPosition = writable(0);
+export let homeAnchor = writable(null);
+export let workAnchor = writable(null);
+export let aboutAnchor = writable(null);

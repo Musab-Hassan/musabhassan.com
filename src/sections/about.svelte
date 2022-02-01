@@ -2,7 +2,7 @@
 
 import { onMount } from "svelte";
 import { letterSlide, maskSlide } from "../animations";
-import { aboutPosition, clickables } from "../store";
+import { aboutAnchor, clickables } from "../store";
 
 let aboutContainer;
 let githubLink, emailLink
@@ -13,9 +13,8 @@ let title, paragraph, image, links;
 
 onMount(() => {
 
-	$aboutPosition = aboutContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
-	window.onresize = () => $aboutPosition = aboutContainer.offsetTop - (window.innerHeight / 5); // Update current height for nav scrolling
-
+	$aboutAnchor = aboutContainer;
+	
 	clickables.update(value => [...value, githubLink, emailLink]);
 
 	slickScroll.then((slick) => {

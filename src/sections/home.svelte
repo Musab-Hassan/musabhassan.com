@@ -1,7 +1,7 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { homePosition, waitTime } from "../store";
+import { homeAnchor, waitTime } from "../store";
 import anime from "animejs";
 
 let homeContainer; // Container
@@ -11,8 +11,7 @@ let titleWord1, titleWord2, shortDetails, callToAction; // Elements for animatio
 
 onMount(() => {
 
-	$homePosition = homeContainer.offsetTop; // Update current height for nav scrolling
-	window.onresize = () => $homePosition = homeContainer.offsetTop; // Update current height for nav scrolling
+	$homeAnchor = homeContainer;
 
 	// Add scroll offsets to slickScroll
 	slickScroll.then((slick) => {
