@@ -60,7 +60,7 @@ export let slickScroll;
 	<div class="content-wrapper">
 		<h1 class = "title" bind:this={title}>The Name's<br>Musab</h1>
 		<p class = "paragraph" bind:this={paragraph}>
-			I'm a web developer from British Columbia, Canada. I love writing beautiful code and creating memorable web experiences. <br><br>I work with organizations and individuals to create taylor-made experiences designed to be beautiful, scalable, and affordable. If you like my work, you can send me an email and we can chat.
+			I'm a web developer from British Columbia, Canada. I specialize in designing and developing front-end web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
 		</p>
 		<div class="social-button-wrapper">
 			<div bind:this={links}>
