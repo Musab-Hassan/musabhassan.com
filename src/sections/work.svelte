@@ -295,7 +295,6 @@ function adjustLineHeight(node) {
 		width: 100%
 		display: flex
 		flex-direction: row
-		align-item: center
 		justify-content: space-between
 		box-sizing: border-box
 		padding: 0 14vw
@@ -323,7 +322,7 @@ function adjustLineHeight(node) {
 						font-size: 1.9vh
 
 					.index
-						font: $font
+						font-family: $font
 						position: relative
 						font-size: 2.1vh
 
