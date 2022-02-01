@@ -67,7 +67,7 @@ onMount(async () => {
 	height: 100%
 	top: 0
 	left: 0
-	positon: relative
+	position: relative
 	width: 100%
 	overflow-y: auto
 	overflow-x: hidden
