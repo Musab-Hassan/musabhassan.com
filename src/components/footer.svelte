@@ -88,6 +88,6 @@ onMount(() => {
         <p class="large">
             i am currently accepting freelance work,<br> you may reach me on my email.
         </p><br><br>
-        <p class="button large">musabhassan04@gmail.com</p>
+        <a class="button large" href="mailto:musabhassan04@gmail.com" target="_blank">musabhassan04@gmail.com</a>
     </div>
 </div>

@@ -40,7 +40,7 @@ onMount(async () => {
 	// Enable scrolling once all intro animations are over
 	setTimeout(() => {
 		scrollContainer.style.overflowY = "auto";
-	}, 6000);
+	}, 3500);
 });
 
 </script>
@@ -67,7 +67,7 @@ onMount(async () => {
 	height: 100%
 	top: 0
 	left: 0
-	positon: relative
+	position: relative
 	width: 100%
 	overflow-y: auto
 	overflow-x: hidden

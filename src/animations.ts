@@ -105,7 +105,7 @@ export function letterSlide() {
             let words = node.querySelectorAll(".a-word");
             words.forEach(element => {
                 element.style.display = "inline-block";
-                element.style.marginRight = "0.5vw"
+                element.style.marginRight = "0.45vw"
                 element.style.whiteSpace = "nowrap"
             });
         }
@@ -119,14 +119,29 @@ export function letterSlide() {
             let isWord = false;
 
             [...string].forEach((e, i) => {
-                if (e === " " || string[i - 1] === " " || i === 0 || i === string.length) {
-                    isWord = !isWord;
-                    newString += isWord ? "<div class=\"a-word\">" : "</div>";
+                // Tag beginning detection
+                if (e === "<") { 
+                    isTag = true; 
+                    if (isWord) { isWord = false; newString += "</div>"; }
                 }
-                if (e == "<") isTag = true;
-                if (string[i - 1] == ">") isTag = false;
+                // Tag end detection
+                if (string[i - 1] == ">" && e !== "<") {
+                    isTag = false;
+                    if (!isWord) { isWord = true; newString += "<div class=\"a-word\">"; }
+                }
 
-                if (!isTag && e !== " ") newString += startWord + e + endWord;
+                if (isTag) {
+                    // Pass characters belong to tags directly without modifying them
+                    newString += e;
+                } else {
+                    // Detect Words and wrap them with tags
+                    if (e === " " || string[i - 1] === " " || i === 0 || i === string.length) {
+                        isWord = !isWord;
+                        newString += isWord ? "<div class=\"a-word\">" : "</div>";
+                    }
+                    // Add mask to letter and Ignore spaces
+                    if (e !== " ") newString += startWord + e + endWord;
+                }
             });
 
             return newString;

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { aboutPosition, clickables, homePosition, waitTime, workPosition } from "../store";
+import { clickables, waitTime, homeAnchor, workAnchor, aboutAnchor } from "../store";
 import anime from "animejs";
 
 let home, work, about, email, logo, github, mobileMenu;
@@ -30,12 +30,18 @@ onMount(() => {
 
 
 // Scroll positions fetched from svelte store that are updated by each component itself
-let positions = { home: 0, work: 0, about: 0 }
-homePosition.subscribe(val => positions.home = val);
-workPosition.subscribe(val => positions.work = val);
-aboutPosition.subscribe(val => positions.about = val);
+let anchors = { home: 0, work: 0, about: 0 }
+homeAnchor.subscribe(val => anchors.home = val);
+workAnchor.subscribe(val => anchors.work = val);
+aboutAnchor.subscribe(val => anchors.about = val);
 
-const navigate = pos => { scrollContainer.scrollTo(0, pos); mobileActive = false; };
+const navigate = anchor => { 
+	scrollContainer.scrollTo({
+		top: anchor.offsetTop - (window.innerHeight / 5),
+		behavior: "smooth"
+	});
+	mobileActive = false; 
+}
 
 </script>
 
@@ -49,7 +55,7 @@ const navigate = pos => { scrollContainer.scrollTo(0, pos); mobileActive = false
 			class = "logo-icon clickable"
 			alt="Logo"
 			draggable="false"
-			on:click={() => navigate(positions.home)}
+			on:click={() => navigate(anchors.home)}
 		>
 	</div>
 	
@@ -57,13 +63,13 @@ const navigate = pos => { scrollContainer.scrollTo(0, pos); mobileActive = false
 		<ul class="nav-list" class:mobileActive>
 			<div class="wrapper">
 				<li bind:this={homeLink}>
-					<div bind:this={home} on:click={() => navigate(positions.home)}>Home</div>
+					<div bind:this={home} on:click={() => navigate(anchors.home)}>Home</div>
 				</li>
 				<li bind:this={workLink}>
-					<div bind:this={work} on:click={() => navigate(positions.work)}>Work</div>
+					<div bind:this={work} on:click={() => navigate(anchors.work)}>Work</div>
 				</li>
 				<li bind:this={aboutLink}>
-					<div bind:this={about} on:click={() => navigate(positions.about)}>About</div>
+					<div bind:this={about} on:click={() => navigate(anchors.about)}>About</div>
 				</li>
 				<li class="mobile" bind:this={email}>
 					<a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a>
