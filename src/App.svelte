@@ -60,8 +60,8 @@ onMount(async () => {
 \:global(*)
 	margin: 0
 	padding: 0
-	-moz-osx-font-smoothing: grayscale;
-	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale
+	-webkit-font-smoothing: antialiased
 
 #scroll-frame
 	height: 100%

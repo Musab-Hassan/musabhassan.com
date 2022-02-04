@@ -60,8 +60,8 @@ const navigate = anchor => {
 	</div>
 	
 	<div class="flex-wrapper">
-		<ul class="nav-list" class:mobileActive>
-			<div class="wrapper">
+		<div class="wrapper" class:mobileActive>
+			<ul class="nav-list">
 				<li bind:this={homeLink}>
 					<div bind:this={home} on:click={() => navigate(anchors.home)}>Home</div>
 				</li>
@@ -77,8 +77,8 @@ const navigate = anchor => {
 				<li bind:this={github}>
 					<a href="https://github.com/Musab-Hassan" target="_blank">Github</a>
 				</li>
-			</div>
-		</ul>
+			
+		</div>
 
 		<div class="mask">
 			<div class="hb-button clickable" 
@@ -158,8 +158,7 @@ const navigate = anchor => {
 					content: "-"
 
 	@media only screen and (max-width: 950px)
-		ul.nav-list
-			list-style-type: none
+		.wrapper
 			position: fixed
 			top: -10vh
 			left: 0
@@ -171,7 +170,8 @@ const navigate = anchor => {
 			-moz-transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
 			overflow: hidden !important
 
-			.wrapper
+			ul.nav-list
+				list-style-type: none
 				display: flex
 				flex-direction: column
 				position: relative
@@ -181,6 +181,7 @@ const navigate = anchor => {
 				box-sizing: border-box
 				padding: 0 10vw
 				padding-top: 10vh
+				overflow: hidden !important
 
 			&.mobileActive
 				width: 100vw

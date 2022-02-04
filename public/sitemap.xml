@@ -1,0 +1,12 @@
+<urlset>
+    <url>
+        <loc>https://musabhassan.com</loc>
+        <changefreq>monthly</changefreq>
+        <priority>1.00</priority>
+    </url>
+    <url>
+        <loc>https://v1.musabhassan.com</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.80</priority>
+    </url>
+</ulrset>
