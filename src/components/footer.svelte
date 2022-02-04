@@ -42,7 +42,7 @@ onMount(() => {
         .logo
             display: inline-block
             height: 6vh
-        h6
+        p.year
             font-family: $font
             font-size: 3.5vh
             font-weight: normal
@@ -73,7 +73,7 @@ onMount(() => {
 	<div class="flex-wrapper">
         <div class="inline-flex">
             <img src="assets/imgs/footer-logo.svg" alt="mh logo" class="logo">
-            <h6>© 2021</h6>
+            <p class="year">© 2021</p>
         </div>
         <div class="button-wrapper">
             <span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
