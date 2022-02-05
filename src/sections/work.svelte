@@ -1,11 +1,12 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { clickables, isMobile, isWorkScroll, workAnchor, workScrollSpeed } from "../store";
+import { clickables, isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
-import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations"
+import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations";
 import { fade } from "svelte/transition";
 import { getGPUTier } from 'detect-gpu';
+import { loadImage } from "../utils";
 
 // Slider calculations and rendering
 class WorkSlider {
@@ -102,19 +103,16 @@ isWorkScroll.subscribe(val => isMouseDown = val);
 
 const slider = new WorkSlider(); // workItems slider functionality
 
-const workItemsFetch = new Promise(async (resolve: (data: any[]) => void) => {
-	data = await (await fetch("data.json")).json(); // Fetch work data
-	resolve(data);
-});
-
 onMount(async () => {
-	$workAnchor = workContainer;
-	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
-
+	
 	const gpuTier = await getGPUTier(); // GPU Tier to decide if effects should be enabled
 	$isMobile = gpuTier.isMobile;
 
-	await workItemsFetch; // Wait for workItems to load
+	data = await workItemsFetch;
+	await loadPagePromise;
+	$workAnchor = workContainer;
+
+	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 
 	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
 
@@ -172,11 +170,9 @@ function adjustLineHeight(node) {
 							bind:this={ workItems[i] }>
 
 							<div class="img-wrapper" use:workImageIntro={{ promise: inView, delay: (120 * i) + 100 }}>
-								<img bind:this={images[i]}
-									on:dragstart|preventDefault 
-									draggable="false" 
-									src="assets/imgs/work-back/{item.id}/cover.jpg" 
-									alt="{item.title} Background">
+								{#await loadImage(`assets/imgs/work-back/${item.id}/cover.jpg`) then src}
+									<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
+								{/await}
 							</div>
 							<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown} use:workOpacityIntro={{ promise: inView, delay: (120 * i) + 100 }}>
 								<p class="item-date">{item.date}</p>

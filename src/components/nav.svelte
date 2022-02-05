@@ -1,6 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { clickables, waitTime, homeAnchor, workAnchor, aboutAnchor } from "../store";
+import { clickables, homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "../store";
 import anime from "animejs";
 
 let home, work, about, email, logo, github, mobileMenu;
@@ -8,13 +8,15 @@ let homeLink, workLink, aboutLink;
 let mobileActive;
 export let scrollContainer;
 
-onMount(() => {
+onMount(async () => {
+	await loadPagePromise;
+
 	clickables.update(value => [...value, home, work, about, email, logo, github, mobileMenu]);
 
 	let targets = [logo, mobileMenu, homeLink, workLink, aboutLink, github];
 
 	targets.forEach(e => {
-		e.style.transform = "translateY(120%) rotate(10deg)"
+		e.style.transform = "translateY(125%) rotate(10deg)"
 	})
 
 	// Intro animation on page load
@@ -24,7 +26,7 @@ onMount(() => {
 		translateY: "0%",
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
-		delay: anime.stagger(50, {start: waitTime + 3000})
+		delay: anime.stagger(50, {start: + 3000})
 	});
 });
 
@@ -55,8 +57,7 @@ const navigate = anchor => {
 			class = "logo-icon clickable"
 			alt="Logo"
 			draggable="false"
-			on:click={() => navigate(anchors.home)}
-		>
+			on:click={() => navigate(anchors.home)}>
 	</div>
 	
 	<div class="flex-wrapper">
