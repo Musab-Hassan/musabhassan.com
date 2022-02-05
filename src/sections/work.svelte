@@ -3,7 +3,7 @@
 import { onMount } from "svelte";
 import { clickables, isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
-import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations"
+import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations";
 import { fade } from "svelte/transition";
 import { getGPUTier } from 'detect-gpu';
 import { loadImage } from "../utils";
@@ -104,15 +104,15 @@ isWorkScroll.subscribe(val => isMouseDown = val);
 const slider = new WorkSlider(); // workItems slider functionality
 
 onMount(async () => {
+	
+	const gpuTier = await getGPUTier(); // GPU Tier to decide if effects should be enabled
+	$isMobile = gpuTier.isMobile;
 
 	data = await workItemsFetch;
 	await loadPagePromise;
 	$workAnchor = workContainer;
 
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
-
-	const gpuTier = await getGPUTier(); // GPU Tier to decide if effects should be enabled
-	$isMobile = gpuTier.isMobile;
 
 	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
 
