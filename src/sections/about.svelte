@@ -2,7 +2,8 @@
 
 import { onMount } from "svelte";
 import { letterSlide, maskSlide } from "../animations";
-import { aboutAnchor, clickables } from "../store";
+import { aboutAnchor, clickables, loadPagePromise, slickScrollInstance } from "../store";
+import { loadImage } from "../utils";
 
 let aboutContainer;
 let githubLink, emailLink
@@ -11,19 +12,22 @@ let profilePicContainer;
 // Animation elements
 let title, paragraph, image, links;
 
-onMount(() => {
-
+onMount(async () => {
+	await loadPagePromise;
 	$aboutAnchor = aboutContainer;
 	
 	clickables.update(value => [...value, githubLink, emailLink]);
 
-	slickScroll.then((slick) => {
-		slick.addOffset({
-			element: profilePicContainer,
-			speedY: 0.8
-		});
-	})
+	$slickScrollInstance.addOffset({
+		element: profilePicContainer,
+		speedY: 0.8
+	});
 
+	introAnimationHandler();
+});
+
+
+const introAnimationHandler = () => {
 	// Scroll activated animations using anime instead of svelte transitions
 	const titleAnimate = letterSlide().in(title, { useAnime: true, delay: 15 });
 	const paragraphAnimate = letterSlide().in(paragraph, { useAnime: true, delay: 2 });
@@ -50,9 +54,7 @@ onMount(() => {
 	}, { root: null, threshold: 0.4 });
 	
 	observer.observe(aboutContainer);
-});
-
-export let slickScroll;
+}
 
 </script>
 
@@ -70,7 +72,9 @@ export let slickScroll;
 		</div>
 	</div>
 	<div class="profile-image" bind:this={profilePicContainer}>
-		<img bind:this={image} src="assets/imgs/profile-photo.jpg" alt="Musab's Sillouette" class="profile-pic">
+		{#await loadImage("assets/imgs/profile-photo.jpg") then src}
+			<img bind:this={image} src="{src}" alt="Musab's Cover" class="profile-pic">
+		{/await}
 	</div>
 </div>
 <div class="horizontal-flex">

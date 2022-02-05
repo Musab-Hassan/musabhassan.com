@@ -5,23 +5,30 @@ import WorkSection from "./sections/work.svelte";
 import AboutSection from "./sections/about.svelte";
 import NavComponent from "./components/nav.svelte"
 import Footer from "./components/footer.svelte";
+import Loader from "./components/loader.svelte";
 import CursorDot from "./components/cursor-dot.svelte"
 import slickScroll from "slickscrolljs";
 import { onMount } from "svelte";
+import { imgPromises, loadPagePromise, loadPageResolve, slickScrollInstance, workItemsFetch } from "./store";
 
 let trackedDot; // Mouse following dot
 let scrollContainer;
-let scrollResolve;
 let navBar;
-
-// Promise for slickScroll access from within components
-let scrollPromise = new Promise((r) => {
-	scrollResolve = r;
-});
+let loading = true;
 
 onMount(async () => {
+	// Disable scrolling on load
+	scrollContainer.style.overflowY = "hidden";
+	scrollContainer.scrollTo(0, 0);
+	
+	await workItemsFetch; // Wait for work data to load
+	await Promise.all($imgPromises); // Wait for images to load
+
+	loading = false; // Destroy loader component 
+	loadPageResolve(); // Resolve loadPagePromise
+
 	// Resolve slickScroll promise and pass momentumScroll's value
-	let slick = (new slickScroll).momentumScroll({
+	$slickScrollInstance = (new slickScroll).momentumScroll({
 		root: scrollContainer,
 		easing: "easeOutCirc",
 		duration: 500,
@@ -29,12 +36,8 @@ onMount(async () => {
 			navBar
 		]
 	});
-	scrollResolve(slick);
 
 	// Remove horizontal scrolling
-	await scrollPromise;
-	scrollContainer.scrollTo(0, 0);
-	scrollContainer.style.overflowY = "hidden";
 	scrollContainer.style.overflowX = "hidden";
 
 	// Enable scrolling once all intro animations are over
@@ -79,17 +82,18 @@ onMount(async () => {
 
 </style>
 
-
 <svelte:body on:mousemove = {(e) => trackedDot.trackMouse(e)}/>
 <CursorDot bind:this={trackedDot}></CursorDot>
+
+{#if loading} <Loader></Loader> {/if}
 
 <div id="scroll-frame" bind:this={scrollContainer}>
 	<div id="nav-bar" bind:this={navBar}>
 		<NavComponent scrollContainer={scrollContainer}></NavComponent>
 	</div>
-	<HomeSection bind:slickScroll={scrollPromise}></HomeSection>
+	<HomeSection></HomeSection>
 	<WorkSection></WorkSection>
-	<AboutSection bind:slickScroll={scrollPromise}></AboutSection>
+	<AboutSection></AboutSection>
 	<Footer></Footer>
 </div>
 

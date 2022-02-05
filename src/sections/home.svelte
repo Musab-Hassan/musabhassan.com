@@ -1,27 +1,27 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { homeAnchor, waitTime } from "../store";
+import { homeAnchor, loadPagePromise, slickScrollInstance } from "../store";
 import anime from "animejs";
+import { loadImage } from "../utils";
 
 let homeContainer; // Container
 let backgroundContainer, backgroundImage; // Offsets
 let path1, path2, path3, path4; // SVG Paths
 let titleWord1, titleWord2, shortDetails, callToAction; // Elements for animations
 
-onMount(() => {
+onMount(async () => {
 
+	await loadPagePromise;
 	$homeAnchor = homeContainer;
 
 	// Add scroll offsets to slickScroll
-	slickScroll.then((slick) => {
-		slick.addOffset({
-			element: backgroundContainer,
-			speedY: 0.8
-		});
-
-		introAnimation();
+	$slickScrollInstance.addOffset({
+		element: backgroundContainer,
+		speedY: 0.8
 	});
+
+	introAnimation();
 })
 
 
@@ -33,25 +33,25 @@ function introAnimation() {
 	// Signature animation using svg strokDashOffset
 	path1.animate(animation, {
 		duration: 1000,
-		delay: waitTime + 500,
+		delay: 500,
 		easing: 'cubic-bezier(.72,.3,.25,1)',
 		fill: 'forwards' 
 	});
 	path2.animate(animation, {
 		duration: 300,
-		delay: waitTime + 1500,
+		delay: 1500,
 		easing: 'cubic-bezier(.47,.41,.26,1)',
 		fill: 'forwards' 
 	});
 	path3.animate(animation, {
 		duration: 200,
-		delay: waitTime + 1800,
+		delay: 1800,
 		easing: 'cubic-bezier(.47,.41,.26,1)',
 		fill: 'forwards' 
 	});
 	path4.animate(animation, {
 		duration: 1000,
-		delay: waitTime + 2000,
+		delay: 2000,
 		easing: 'cubic-bezier(.47,.41,.26,1)',
 		fill: 'forwards' 
 	});
@@ -70,7 +70,7 @@ function introAnimation() {
 		scale: 1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
-		delay: 3000 + waitTime,
+		delay: 3000,
 		complete: () => {
 			backgroundContainer.style.boxShadow = "3px 9px 18px rgba(0, 0, 0, 0.2)";
 		}
@@ -81,7 +81,7 @@ function introAnimation() {
 		scale: 1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
-		delay: 3000 + waitTime
+		delay: 3000
 	});
 
 
@@ -96,12 +96,9 @@ function introAnimation() {
 		translateY: "0%",
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1400,
-		delay: anime.stagger(80, {start: 3500 + waitTime})
+		delay: anime.stagger(80, {start: 3500})
 	});
 }
-
-// Get slickScroll promise from App.svelte
-export let slickScroll;
 
 </script>
 
@@ -154,7 +151,9 @@ export let slickScroll;
 				<div class="wrapper action-mask">
 					<div class="action" bind:this={callToAction}>
 						<div class="mask">
-							<img src="assets/imgs/scroll_arrow.png" alt="">
+							{#await loadImage("assets/imgs/scroll_arrow.png") then src}
+								<img src="{src}" alt="">
+							{/await}
 						</div>
 						<div>
 							scroll
@@ -164,7 +163,9 @@ export let slickScroll;
 			</div>
 
 			<div class="parallax-wrapper home-back" bind:this={backgroundContainer}>
-				<img bind:this={backgroundImage} draggable="false" alt="Home Background" src="assets/imgs/home-back.jpg" style="width:100%; height: 100%; object-fit: cover;">
+				{#await loadImage("assets/imgs/home-back.jpg") then src}
+					<img src="{src}" bind:this={backgroundImage} draggable="false" alt="Home Background" style="width:100%; height: 100%; object-fit: cover;">
+				{/await}
 			</div>
 		</div>
 	</div>
