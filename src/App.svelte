@@ -5,11 +5,11 @@ import WorkSection from "./sections/work.svelte";
 import AboutSection from "./sections/about.svelte";
 import NavComponent from "./components/nav.svelte"
 import Footer from "./components/footer.svelte";
-import Loader from "./components/loader.svelte";
 import CursorDot from "./components/cursor-dot.svelte"
 import slickScroll from "slickscrolljs";
+import Loader from "./components/loader.svelte";
 import { onMount } from "svelte";
-import { imgPromises, loadPagePromise, loadPageResolve, slickScrollInstance, workItemsFetch } from "./store";
+import { imgPromises, loadPageResolve, slickScrollInstance, workItemsFetch } from "./store";
 
 let trackedDot; // Mouse following dot
 let scrollContainer;
@@ -22,7 +22,7 @@ onMount(async () => {
 	scrollContainer.scrollTo(0, 0);
 	
 	await workItemsFetch; // Wait for work data to load
-	await Promise.all($imgPromises); // Wait for images to load
+	await Promise.allSettled($imgPromises); // Wait for images to load
 
 	loading = false; // Destroy loader component 
 	loadPageResolve(); // Resolve loadPagePromise

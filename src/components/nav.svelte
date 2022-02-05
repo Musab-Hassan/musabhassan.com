@@ -16,7 +16,7 @@ onMount(async () => {
 	let targets = [logo, mobileMenu, homeLink, workLink, aboutLink, github];
 
 	targets.forEach(e => {
-		e.style.transform = "translateY(120%) rotate(10deg)"
+		e.style.transform = "translateY(125%) rotate(10deg)"
 	})
 
 	// Intro animation on page load
