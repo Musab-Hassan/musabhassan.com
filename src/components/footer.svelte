@@ -81,7 +81,7 @@ onMount(() => {
         </div>
         <p class="credits">
             designed and developed by musab hassan<br>
-            this webste is open source on github
+            this website is open source on github
         </p>
     </div>
     <div class="flex-wrapper">
