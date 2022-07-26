@@ -70,7 +70,7 @@ function introAnimation() {
 		scale: 1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
-		delay: 3000,
+		delay: 500,
 		complete: () => {
 			backgroundContainer.style.boxShadow = "3px 9px 18px rgba(0, 0, 0, 0.2)";
 		}
@@ -81,22 +81,22 @@ function introAnimation() {
 		scale: 1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
-		delay: 3000
+		delay: 500
 	});
 
 
 	// Animate title
 	let titleElems = [titleWord1, titleWord2, shortDetails, callToAction];
 	titleElems.forEach(e => {
-		e.style.transform = "translateY(-150%) rotate(-8deg)";
+		e.style.transform = "translateY(130%) rotate(10deg)";
 	})
 	anime({
 		targets: titleElems,
 		rotate: "0",
 		translateY: "0%",
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
-		duration: 1400,
-		delay: anime.stagger(80, {start: 3500})
+		duration: 900,
+		delay: anime.stagger(80, {start: 500})
 	});
 }
 
@@ -212,6 +212,7 @@ function introAnimation() {
 
 			h1
 				font-weight: 400
+				text-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3)
 
 			.title-mask
 				overflow: hidden

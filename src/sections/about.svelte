@@ -79,13 +79,20 @@ const introAnimationHandler = () => {
 </div>
 <div class="horizontal-flex">
 	<ul class="list first">
-		<li class="list-title">stuff I use</li>
+		<li class="list-title">Stuff i use</li>
 		<li>
-			<div>Front-end & Mobile</div>
+			<div>Front-end</div>
 			<div class="flex-item">
 				<img src="assets/imgs/svg-icons/angular.svg" alt="angular">
 				<img src="assets/imgs/svg-icons/svelte.svg" alt="svelte">
+			</div>
+		</li>
+		<li>
+			<div>Mobile</div>
+			<div class="flex-item">
 				<img src="assets/imgs/svg-icons/flutter.svg" alt="flutter">
+				<img src="assets/imgs/svg-icons/android.svg" alt="native android">
+				<img src="assets/imgs/svg-icons/iOS.svg" alt="native ios">
 			</div>
 		</li>
 		<li>

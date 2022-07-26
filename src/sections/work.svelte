@@ -3,7 +3,7 @@
 import { onMount } from "svelte";
 import { clickables, isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
 import { ImageRenderer } from "../effects/work-slider/renderer";
-import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations";
+import { letterSlide, maskSlide, workImageIntro, workListIntro, workSubItemsIntro } from "../animations";
 import { fade } from "svelte/transition";
 import { getGPUTier } from 'detect-gpu';
 import { loadImage } from "../utils";
@@ -158,28 +158,34 @@ function adjustLineHeight(node) {
 		on:mousemove|preventDefault={slider.onMouseMove}
 		bind:this={container}
 		class:disabled={currentActive !== null}
+		use:workListIntro={{ promise: inView }}
 	>
 		<div class:mobile={$isMobile}>
-			<ul class="work-list" bind:this={listContainer} class:hold={isMouseDown}>
+			<ul class="work-list" 
+				bind:this={listContainer} 
+				class:hold={isMouseDown}>
+
 				<!-- Work items render here -->
 				{#await workItemsFetch then items}
 					{#each items as item, i}
-						<li class="list-item clickable passive" 
-							class:ambient="{ currentActive !== i && currentActive !== null }" 
-							class:active="{ currentActive === i }" 
-							bind:this={ workItems[i] }>
+						<li use:workImageIntro={{ promise: inView, delay: i*20 }}>
+							<div class="list-item clickable passive" 
+								class:ambient="{ currentActive !== i && currentActive !== null }" 
+								class:active="{ currentActive === i }" 
+								bind:this={ workItems[i] }>
 
-							<div class="img-wrapper" use:workImageIntro={{ promise: inView, delay: (120 * i) + 100 }}>
-								{#await loadImage(`assets/imgs/work-back/${item.id}/cover.jpg`) then src}
-									<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
-								{/await}
-							</div>
-							<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown} use:workOpacityIntro={{ promise: inView, delay: (120 * i) + 100 }}>
-								<p class="item-date">{item.date}</p>
-							</div>
-							<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown} use:workOpacityIntro={{ promise: inView, delay: (120 * i) + 100 }}>
-								<h1 class="item-title">{item.title}</h1>
-								<div class="button item-link" bind:this={_viewLinks[i]} on:click={() => toggleActiveItem(i)}>view</div>
+								<div class="img-wrapper">
+									{#await loadImage(`assets/imgs/work-back/${item.id}/cover.jpg`) then src}
+										<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
+									{/await}
+								</div>
+								<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown} use:workSubItemsIntro={{ promise: inView, delay: (120 * i) + 100 }}>
+									<p class="item-date">{item.date}</p>
+								</div>
+								<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown} use:workSubItemsIntro={{ promise: inView, delay: (120 * i) + 100 }}>
+									<h1 class="item-title">{item.title}</h1>
+									<div class="button item-link" bind:this={_viewLinks[i]} on:click={() => toggleActiveItem(i)}>view</div>
+								</div>
 							</div>
 						</li>
 					{/each}

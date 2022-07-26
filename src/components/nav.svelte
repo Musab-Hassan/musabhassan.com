@@ -26,7 +26,7 @@ onMount(async () => {
 		translateY: "0%",
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
-		delay: anime.stagger(50, {start: + 3000})
+		delay: anime.stagger(50, {start: + 500})
 	});
 });
 

@@ -73,7 +73,7 @@ onMount(() => {
 	<div class="flex-wrapper">
         <div class="inline-flex">
             <img src="assets/imgs/footer-logo.svg" alt="mh logo" class="logo">
-            <p class="year">© 2021</p>
+            <p class="year">© 2022</p>
         </div>
         <div class="button-wrapper">
             <span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>

@@ -226,23 +226,17 @@ export function maskSlide() {
 export function workImageIntro(node, params: { promise, delay?: number }) {
     if (!params.delay) params.delay = 0;
 
-    node.style.width = "0%";
-    node.style.marginRight = "0%";
-    node.style.opacity = "0"
-    node.style.transition = "none"
+    node.style.transition = "none";
+    node.style.marginRight = "50%"
 
     params.promise.then(() => {
         anime({
             targets: node,
-            width: "85%",
-            marginRight: "15%",
-            opacity: "1",
-            easing: "easeInOutQuint",
-            duration: 1300,
+            marginRight: "0%",
+            easing: "easeOutQuint",
+            duration: 2000,
             delay: params.delay,
             complete: () => {
-                node.style.opacity = null;
-                node.style.width = null;
                 node.style.marginRight = null;
                 node.style.transition = null;
             }
@@ -250,8 +244,30 @@ export function workImageIntro(node, params: { promise, delay?: number }) {
     });
 }
 
-// Opacity animation for workItem when workContainer is scrolled into view
-export function workOpacityIntro(node, params: { promise, delay?: number }) {
+// Animation for workItem image when workContainer is scrolled into view
+export function workListIntro(node, params: { promise, delay?: number }) {
+    if (!params.delay) params.delay = 0;
+
+    node.style.transition = "none";
+    node.style.transform = "translateX(100%)"
+
+    params.promise.then(() => {
+        anime({
+            targets: node,
+            translateX: "0%",
+            easing: "easeOutQuint",
+            duration: 1500,
+            delay: params.delay,
+            complete: () => {
+                node.style.transform = null;
+                node.style.transition = null;
+            }
+        });
+    });
+}
+
+// Opacity animation for workItem texts and links when workContainer is scrolled into view
+export function workSubItemsIntro(node, params: { promise, delay?: number }) {
     if (!params.delay) params.delay = 0;
 
     node.style.transform = "translateX(50%)";
