@@ -9,7 +9,7 @@ import CursorDot from "./components/cursor-dot.svelte"
 import slickScroll from "slickscrolljs";
 import Loader from "./components/loader.svelte";
 import { onMount } from "svelte";
-import { imgPromises, loadPageResolve, slickScrollInstance, workItemsFetch } from "./store";
+import { imgPromises, loaderAnimationPromise, loadPageResolve, slickScrollInstance, workItemsFetch } from "./store";
 
 let trackedDot; // Mouse following dot
 let scrollContainer;
@@ -23,6 +23,7 @@ onMount(async () => {
 	
 	await workItemsFetch; // Wait for work data to load
 	await Promise.allSettled($imgPromises); // Wait for images to load
+	await loaderAnimationPromise; // Wait until loading animation is complete
 
 	loading = false; // Destroy loader component 
 	loadPageResolve(); // Resolve loadPagePromise

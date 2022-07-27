@@ -1,10 +1,12 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import { fade } from "svelte/transition";
-import { imgPromises, workItemsFetch } from "../store";
+import waitForElementTransition from 'wait-for-element-transition';
+import { imgPromises, loaderAnimationResolve, workItemsFetch } from "../store";
 
-let loadPosition = 0;
+let loadingPosition = 0;
 let counter = 0;
+let loader;
+let loadingDone = false;
 
 onMount(async () => {
     await workItemsFetch;
@@ -14,7 +16,17 @@ onMount(async () => {
     $imgPromises.forEach(async (promise) => {
         await promise;
         counter++;
-        loadPosition = Math.round((counter / length) * 100);
+        loadingPosition = Math.round((counter / length) * 100);
+        if (loadingPosition > 99) {
+            waitForElementTransition(loader).then(() => {
+                loadingDone = true;
+                loadingPosition = 0;
+
+                waitForElementTransition(loader).then(() => {
+                    loaderAnimationResolve();
+                });
+            });
+        }
     });
 });
 
@@ -38,13 +50,43 @@ onMount(async () => {
     z-index: 1000
     background-color: #222224
 
-    .subtitle
-        font-family: $font
-        text-transform: lowercase
-        font-weight: normal !important
+    .loader-wrapper
+        position: relative
+        display: block
+        height: 0.1rem
+        width: 20rem
+
+        .loader, .loader-background
+            position: absolute
+            top: 0
+            height: 100%
+
+        .loader-background
+            width: 100%
+            background-color: rgba(255, 255, 255, 0.1)
+
+        .loader 
+            background-color: white
+            transition: width 0.8s ease
+
+        .outro
+            transition: width 0.8s ease
+            right: 0 !important
+            width: 0
+
+
 
 </style>
 
 <div class="wrapper">
-    <p class="subtitle" transition:fade>{loadPosition}%</p>
+    <div class="loader-wrapper">
+        <div 
+            class="loader-background"
+            class:outro={loadingDone}></div>
+        <div 
+            bind:this={loader}
+            class="loader"
+            class:outro={loadingDone}
+            style="width: {loadingPosition}%"></div>
+    </div>
 </div>
