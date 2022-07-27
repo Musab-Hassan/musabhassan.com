@@ -1,10 +1,11 @@
 <script lang="ts">
+
 import { clickables as clickableStore, isMobile, isWorkScroll } from "../store";
 
 let container;
 let clickables;
 
-// class binds
+// Svelte class toggles for hover-container
 let hover: boolean = false;
 let disabled: boolean = false;
 let introDisabled: boolean = true;
@@ -14,15 +15,17 @@ let x = 0, y = 0;
 // Track the mouse with easing and handle hover effects
 export function trackMouse(e) {
 
+	// Dont do anything if its a touch mobile device
 	if ($isMobile) return;
-
+	// Intro animation for cursor dot
 	if (introDisabled) setTimeout(() => introDisabled = false, 500);
 
 	let active, t = 0;
 
-	let clickable = isHoveringClickable(e);
+	let clickable = currentlyHoveredClickable(e);
 	hover = !!clickable;
 
+	// Clickale transition if hovering a clickable
 	if (clickable) {
 		let width = clickable.clientWidth;
 		let height = clickable.clientHeight;
@@ -37,12 +40,14 @@ export function trackMouse(e) {
 			y: clickableMid.y + ((clickableMid.y - e.clientY)*0.15)
 		};
 	} else {
+		// Otherwise, follow the cursor
 		active = {
 			x: e.clientX,
 			y: e.clientY
 		}
 	}
 
+	// Animation loop to follow mouse cursor with a tweened delay
 	(function loop() {
 		x += easeInOutQuad(t) * (active.x - x);
 		y += easeInOutQuad(t) * (active.y - y);
@@ -62,22 +67,24 @@ export function trackMouse(e) {
 	}
 }
 
-// Retuns boolean on if any clickable item is being hovered
-function isHoveringClickable(e) {
+// Checks if a node within the clickables list is being hovered
+function currentlyHoveredClickable(e) {
 
 	if (!clickables) return false;
 
-	let isHover, hoverElem;
+	let isHover, hoveredElem;
 	
+	// Iterate over every clickable to see if it intersects with cursor dot
 	for (let i = 0; i < clickables.length; i++) {
 		
 		if (isHover) break;
 
-		let ce = clickables[i];
-		let boundBox = ce.getBoundingClientRect();
+		let currentClickable = clickables[i];
+		let boundBox = currentClickable.getBoundingClientRect();
 
-		if (!ce) return false;
-
+		if (!currentClickable) return false;
+		
+		// Checks to see if matched hovered elementis in scroll frame
 		isHover = (
 			(e.pageY <= boundBox.bottom) && 
 			(e.pageY >= boundBox.top) && 
@@ -85,21 +92,23 @@ function isHoveringClickable(e) {
 			(e.pageX <= boundBox.right)
 		);
 			
-		hoverElem = ce;
+		hoveredElem = currentClickable;
 
 		let topElt = document.elementFromPoint(boundBox.left, boundBox.top);
 		if (topElt) {
-			let overlay = hoverElem.contains(topElt) || topElt.isSameNode(container);
+			let overlay = hoveredElem.contains(topElt) || topElt.isSameNode(container);
 			
 			if (!overlay) isHover = false;
 		}
 	}
 
-	if (isHover) return hoverElem;
+	if (isHover) return hoveredElem;
 	return false;
 }
 
-// Svelte store subscriptions
+
+/** Svelte store subscriptions **/
+
 isWorkScroll.subscribe(val => {
 	disabled = val;
 })
@@ -111,9 +120,20 @@ clickableStore.subscribe(value => {
 </script>
 
 
+
+<div class="dot-container active" 
+	bind:this={container}
+	class:hover
+	class:disabled
+	class:introDisabled>
+	<div class="dot"></div>
+</div>
+
+
+
 <style lang="sass">
 
-.hover-container
+.dot-container
 	position: fixed
 	display: block
 	top: 0
@@ -148,14 +168,3 @@ clickableStore.subscribe(value => {
 		height: 7.5vh
 
 </style>
-
-
-
-
-<div class="hover-container active" 
-	bind:this={container}
-	class:hover
-	class:disabled
-	class:introDisabled>
-	<div class="dot"></div>
-</div>

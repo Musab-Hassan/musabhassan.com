@@ -1,32 +1,34 @@
 <script lang="ts">
 
+import anime from "animejs";
 import { onMount } from "svelte";
 import { homeAnchor, loadPagePromise, slickScrollInstance } from "../store";
-import anime from "animejs";
 import { loadImage } from "../utils";
 
+// DOM Node Binds for animations
 let homeContainer; // Container
 let backgroundContainer, backgroundImage; // Offsets
 let path1, path2, path3, path4; // SVG Paths
 let titleWord1, titleWord2, shortDetails, callToAction; // Elements for animations
 
 onMount(async () => {
-
+	// Wait for page to load
 	await loadPagePromise;
+	// Set navbar home link's y location to top of homeContainer
 	$homeAnchor = homeContainer;
 
-	// Add scroll offsets to slickScroll
+	// Add parallax scrolling offsets to slickScroll
 	$slickScrollInstance.addOffset({
 		element: backgroundContainer,
 		speedY: 0.8
 	});
 
-	introAnimation();
+	introAnimations();
 })
 
 
 // Page load animations
-function introAnimation() {
+function introAnimations() {
 
 	let animation = [{ strokeDashoffset: '0' }];
 
@@ -102,6 +104,8 @@ function introAnimation() {
 
 </script>
 
+
+
 <div id="content-container" style="padding-top: 23vh" bind:this={homeContainer}>
 	<div class="content-wrapper">
 		<div class="flex">
@@ -170,6 +174,8 @@ function introAnimation() {
 		</div>
 	</div>
 </div>
+
+
 
 <style lang="sass">
 

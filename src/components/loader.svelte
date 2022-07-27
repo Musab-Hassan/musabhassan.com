@@ -3,25 +3,30 @@ import { onMount } from "svelte";
 import waitForElementTransition from 'wait-for-element-transition';
 import { imgPromises, loaderAnimationResolve, workItemsFetch } from "../store";
 
-let loadingPosition = 0;
-let counter = 0;
 let loader;
 let loadingDone = false;
+let loadingPercentage = 0;
 
 onMount(async () => {
+    // Wait for work item loading from JSON file to complete
     await workItemsFetch;
     
+    let counter = 0;
     let length = $imgPromises.length;
 
+    // Calculate percentage by how many images have loaded
     $imgPromises.forEach(async (promise) => {
         await promise;
         counter++;
-        loadingPosition = Math.round((counter / length) * 100);
-        if (loadingPosition > 99) {
+        loadingPercentage = Math.round((counter / length) * 100);
+
+        // If loading is complete, initiate outro animation
+        if (loadingPercentage > 99) {
             waitForElementTransition(loader).then(() => {
                 loadingDone = true;
-                loadingPosition = 0;
+                loadingPercentage = 0;
 
+                // Once outro animation is complete, resolve page loading promise, allowing intro animations to begin
                 waitForElementTransition(loader).then(() => {
                     loaderAnimationResolve();
                 });
@@ -32,12 +37,27 @@ onMount(async () => {
 
 </script>
 
+
+<div class="page-cover">
+    <div class="loader-wrapper">
+        <div 
+            class="loader-background"
+            class:outro={loadingDone}></div>
+        <div 
+            bind:this={loader}
+            class="loader"
+            class:outro={loadingDone}
+            style="width: {loadingPercentage}%"></div>
+    </div>
+</div>
+
+
 <style lang="sass">
 
 @import "../consts.sass"
 @include textStyles()
 
-.wrapper
+.page-cover
     width: 100vw
     height: 100vh
     position: fixed
@@ -74,19 +94,4 @@ onMount(async () => {
             right: 0 !important
             width: 0
 
-
-
 </style>
-
-<div class="wrapper">
-    <div class="loader-wrapper">
-        <div 
-            class="loader-background"
-            class:outro={loadingDone}></div>
-        <div 
-            bind:this={loader}
-            class="loader"
-            class:outro={loadingDone}
-            style="width: {loadingPosition}%"></div>
-    </div>
-</div>

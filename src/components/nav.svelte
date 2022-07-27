@@ -1,25 +1,44 @@
 <script lang="ts">
-import { onMount } from "svelte";
-import { clickables, homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "../store";
-import anime from "animejs";
 
-let home, work, about, email, logo, github, mobileMenu;
-let homeLink, workLink, aboutLink;
-let mobileActive;
+// Scroll container to allow scrolling when anchors are clicked
 export let scrollContainer;
 
+import anime from "animejs";
+import { onMount } from "svelte";
+import { clickables, homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "../store";
+
+let homeElem, workElem, aboutElem, emailElem, logoElem, githubElem;
+let homeWrapperElem, workWrapperElem, aboutWrapperElem, mobileMenuElem;
+
+let mobileActive: boolean;
+
 onMount(async () => {
+	// Wait for page to load
 	await loadPagePromise;
+	// Register all anchors as clickables for the scroll dot
+	clickables.update(value => [...value, homeElem, workElem, aboutElem, emailElem, logoElem, githubElem, mobileMenuElem]);
+	// Initiate intro animations
+	introAnimations();
+});
 
-	clickables.update(value => [...value, home, work, about, email, logo, github, mobileMenu]);
 
-	let targets = [logo, mobileMenu, homeLink, workLink, aboutLink, github];
 
+
+function navigate(anchor) {
+	scrollContainer.scrollTo({
+		top: anchor.offsetTop - (window.innerHeight / 5),
+		behavior: "smooth"
+	});
+	mobileActive = false; 
+}
+
+function introAnimations() {
+	let targets = [logoElem, mobileMenuElem, homeWrapperElem, workWrapperElem, aboutWrapperElem, githubElem];
+	// Set initial state to begin animation from
 	targets.forEach(e => {
 		e.style.transform = "translateY(125%) rotate(10deg)"
 	})
 
-	// Intro animation on page load
 	anime({
 		targets: targets,
 		rotate: 0,
@@ -28,21 +47,6 @@ onMount(async () => {
 		duration: 1500,
 		delay: anime.stagger(50, {start: + 500})
 	});
-});
-
-
-// Scroll positions fetched from svelte store that are updated by each component itself
-let anchors = { home: 0, work: 0, about: 0 }
-homeAnchor.subscribe(val => anchors.home = val);
-workAnchor.subscribe(val => anchors.work = val);
-aboutAnchor.subscribe(val => anchors.about = val);
-
-const navigate = anchor => { 
-	scrollContainer.scrollTo({
-		top: anchor.offsetTop - (window.innerHeight / 5),
-		behavior: "smooth"
-	});
-	mobileActive = false; 
 }
 
 </script>
@@ -50,40 +54,43 @@ const navigate = anchor => {
 
 
 <div class="nav-wrapper" style="transform: translate(0px);">
+	<!-- Logo -->
 	<div class="flex-wrapper ico" style="z-index: 21;">
 		<img 
-			bind:this={logo} 
+			bind:this={logoElem} 
 			src="assets/imgs/logo.svg"
 			class = "logo-icon clickable"
 			alt="Logo"
 			draggable="false"
-			on:click={() => navigate(anchors.home)}>
+			on:click={() => navigate($homeAnchor)}>
 	</div>
 	
 	<div class="flex-wrapper">
+		<!-- Mobile and desktop nav menu -->
 		<div class="wrapper" class:mobileActive>
 			<ul class="nav-list">
-				<li bind:this={homeLink}>
-					<div bind:this={home} on:click={() => navigate(anchors.home)}>Home</div>
+				<li bind:this={homeWrapperElem}>
+					<div bind:this={homeElem} on:click={() => navigate($homeAnchor)}>Home</div>
 				</li>
-				<li bind:this={workLink}>
-					<div bind:this={work} on:click={() => navigate(anchors.work)}>Work</div>
+				<li bind:this={workWrapperElem}>
+					<div bind:this={workElem} on:click={() => navigate($workAnchor)}>Work</div>
 				</li>
-				<li bind:this={aboutLink}>
-					<div bind:this={about} on:click={() => navigate(anchors.about)}>About</div>
+				<li bind:this={aboutWrapperElem}>
+					<div bind:this={aboutElem} on:click={() => navigate($aboutAnchor)}>About</div>
 				</li>
-				<li class="mobile" bind:this={email}>
+				<li class="mobile" bind:this={emailElem}>
 					<a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a>
 				</li>
-				<li bind:this={github}>
+				<li bind:this={githubElem}>
 					<a href="https://github.com/Musab-Hassan" target="_blank">Github</a>
 				</li>
 			
 		</div>
 
+		<!-- Mobile hambuger menu -->
 		<div class="mask">
 			<div class="hb-button clickable" 
-				bind:this={mobileMenu} 
+				bind:this={mobileMenuElem} 
 				on:click={() => mobileActive = !mobileActive} 
 				class:mobileActive>
 

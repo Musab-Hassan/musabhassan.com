@@ -5,33 +5,46 @@ import { letterSlide, maskSlide } from "../animations";
 import { aboutAnchor, clickables, loadPagePromise, slickScrollInstance } from "../store";
 import { loadImage } from "../utils";
 
+// DOM Node binds for animations
 let aboutContainer;
 let githubLink, emailLink
 let profilePicContainer;
-
-// Animation elements
 let title, paragraph, image, links;
 
 onMount(async () => {
+	// Wait for page to load
 	await loadPagePromise;
+	// Set navbar about link's y location to top of aboutContainer
 	$aboutAnchor = aboutContainer;
 	
+	// Register links as clickables for cursor dot
 	clickables.update(value => [...value, githubLink, emailLink]);
 
+	// Add parallax scrolling offsets to slickScroll
 	$slickScrollInstance.addOffset({
 		element: profilePicContainer,
 		speedY: 0.8
 	});
 
-	introAnimationHandler();
+	introAnimations();
 });
 
 
-const introAnimationHandler = () => {
-	// Scroll activated animations using anime instead of svelte transitions
-	const titleAnimate = letterSlide().in(title, { useAnime: true, delay: 15 });
-	const paragraphAnimate = letterSlide().in(paragraph, { useAnime: true, delay: 2 });
-	const linkAnimate = maskSlide().in(links, { delay: 500 });
+
+
+function introAnimations() {
+	// Scroll activated animations powered by anime instead of svelte transitions
+	const titleAnimate = letterSlide().in(title, { 
+		useAnime: true, 
+		delay: 15 
+	});
+	const paragraphAnimate = letterSlide().in(paragraph, { 
+		useAnime: true, 
+		delay: 2 
+	});
+	const linkAnimate = maskSlide().in(links, { 
+		delay: 500 
+	});
 	const imageAnimate = maskSlide().in(image, {
 		duration: 1200,
 		maskStyles: [
@@ -40,9 +53,11 @@ const introAnimationHandler = () => {
 		]
 	});
 
+	// Run animations when intersection obeserver detects aboutcontainer to be in scroll view
 	let observer = new IntersectionObserver((entries) => { 
 		entries.forEach(entry => {
 			if (entry.isIntersecting) {
+
 				titleAnimate.anime();
 				paragraphAnimate.anime();
 				linkAnimate.anime();
