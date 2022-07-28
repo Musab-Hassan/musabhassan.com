@@ -2,7 +2,7 @@ import BezierEasing from "bezier-easing";
 import { asyncAnimation } from "./utils";
 import anime from "animejs";
 
-// Letter reveal animation used with the 'in:' and 'out:' svelte directives
+// Letter reveal animation used with the 'in:' and 'out:' svelte directives aswell as a dynamic animeJS version
 export function letterSlide() {
     return {
         in: (node, params: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean, useAnime?: boolean }) => {
@@ -105,7 +105,7 @@ export function letterSlide() {
             let words = node.querySelectorAll(".a-word");
             words.forEach(element => {
                 element.style.display = "inline-block";
-                element.style.marginRight = "0.45vw"
+                element.style.marginRight = "0.45vh"
                 element.style.whiteSpace = "nowrap"
             });
         }
@@ -166,8 +166,8 @@ export function maskSlide() {
                 tick: t => {
                     let eased = BezierEasing(.2, .58, .43, 1)(t);
 
-                    mask.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
-                    node.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                    mask.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                    node.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
                 },
                 anime: (easing?) => {
                     anime({
@@ -199,7 +199,8 @@ export function maskSlide() {
                 parent.insertBefore(mask, parent.children[index]);
 
                 mask.style.transform = "translateX(100%)";
-                node.style.transform = "translateX(-100%)"
+                node.style.transform = "translateX(-100%)";
+                
                 return mask;
             }
         },
@@ -215,7 +216,11 @@ export function maskSlide() {
                 tick: t => {
                     let eased = BezierEasing(.32, .24, .76, .26)(t);
 
-                    node.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                    let isParentMask = node.parentElement?.classList.contains("a-mask");
+                    if (isParentMask) {
+                        node.parentElement.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                    }
+                    node.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
                 }
             }
         }
@@ -226,23 +231,17 @@ export function maskSlide() {
 export function workImageIntro(node, params: { promise, delay?: number }) {
     if (!params.delay) params.delay = 0;
 
-    node.style.width = "0%";
-    node.style.marginRight = "0%";
-    node.style.opacity = "0"
-    node.style.transition = "none"
+    node.style.transition = "none";
+    node.style.marginRight = "30%";
 
     params.promise.then(() => {
         anime({
             targets: node,
-            width: "85%",
-            marginRight: "15%",
-            opacity: "1",
-            easing: "easeInOutQuint",
-            duration: 1300,
+            marginRight: "0%",
+            easing: "easeOutQuint",
+            duration: 1600,
             delay: params.delay,
             complete: () => {
-                node.style.opacity = null;
-                node.style.width = null;
                 node.style.marginRight = null;
                 node.style.transition = null;
             }
@@ -250,8 +249,30 @@ export function workImageIntro(node, params: { promise, delay?: number }) {
     });
 }
 
-// Opacity animation for workItem when workContainer is scrolled into view
-export function workOpacityIntro(node, params: { promise, delay?: number }) {
+// Animation for workItem image when workContainer is scrolled into view
+export function workListIntro(node, params: { promise, delay?: number }) {
+    if (!params.delay) params.delay = 0;
+
+    node.style.transition = "none";
+    node.style.transform = "translateX(100%)"
+
+    params.promise.then(() => {
+        anime({
+            targets: node, 
+            translateX: "0%",
+            easing: "easeOutQuint",
+            duration: 1500,
+            delay: params.delay,
+            complete: () => {
+                node.style.transform = null;
+                node.style.transition = null;
+            }
+        });
+    });
+}
+
+// Opacity animation for workItem texts and links when workContainer is scrolled into view
+export function workSubItemsIntro(node, params: { promise, delay?: number }) {
     if (!params.delay) params.delay = 0;
 
     node.style.transform = "translateX(50%)";

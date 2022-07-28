@@ -1,19 +1,19 @@
 <script lang="ts">
 
-import { onMount } from "svelte";
-import { clickables, isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
-import { ImageRenderer } from "../effects/work-slider/renderer";
-import { letterSlide, maskSlide, workImageIntro, workOpacityIntro } from "../animations";
-import { fade } from "svelte/transition";
 import { getGPUTier } from 'detect-gpu';
+import { onMount } from "svelte";
+import { fade } from "svelte/transition";
+import { ImageRenderer } from "../effects/work-slider/renderer";
+import { letterSlide, maskSlide, workImageIntro, workListIntro } from "../animations";
+import { clickables, isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
 import { loadImage } from "../utils";
 
-// Slider calculations and rendering
+/* Slider calculations and rendering */
 class WorkSlider {
 	currentMouseX = 0; initialMouseX = 0;
 	currentPosition = 0; targetPosition = 0; initialPosition = 0;
-	offsetSpeed = 4000; 
-	lerpSpeed = 0.075;
+	offsetSpeed = 5000; 
+	lerpSpeed = 0.1;
 
     onHold = e => {
         if (currentActive != null || isMouseDown || e.target.classList.contains("button")) return;
@@ -38,7 +38,7 @@ class WorkSlider {
 		this.currentMouseX = e.clientX;
 
         let diff = (this.currentMouseX - this.initialMouseX) * -1;
-		this.targetPosition = this.initialPosition - (this.offsetSpeed * (diff / document.body.clientWidth));
+		this.targetPosition = Math.round((this.initialPosition - (this.offsetSpeed * (diff / document.body.clientWidth))) * 100) / 100;
     }
 
     animate = () => {
@@ -54,8 +54,8 @@ class WorkSlider {
         // Lerp easing
         this.currentPosition = this.lerp(this.currentPosition, this.targetPosition, this.lerpSpeed);
 		
-        workScrollSpeed.set(this.currentPosition - this.targetPosition); // Set Svelte Store value for the Canvas effect
-        listContainer.style.transform = `translateX(${this.currentPosition}px)`;
+        workScrollSpeed.set(Math.round((this.currentPosition - this.targetPosition) * 100) / 100); // Set Svelte Store value for the Canvas effect
+        listContainer.style.transform = `translateX(${ Math.round(this.currentPosition * 100) / 100 }px)`;
 
         requestAnimationFrame(this.animate);
     }
@@ -67,7 +67,7 @@ class WorkSlider {
 
 
 let workContainer;
-let container, listContainer; //Containers for Threejs meshes
+let container, listContainer; // Containers for Threejs meshes
 let images = []; // Array of images to be passed to WebGL Shader
 let workItems = []; // Array of workItems to be animated
 let _viewLinks = []; // Array of clickable Links
@@ -77,7 +77,7 @@ let currentActive: number = null; // Active work item in the detailsViewer viewe
 
 let data; // JSON Work data fetched from the data.json file
 
-// Animations for work description
+// Animations for active work item description
 let textAnimationIn = letterSlide().in;
 let textAnimationOut = letterSlide().out;
 let maskAnimationIn = maskSlide().in;
@@ -104,8 +104,10 @@ isWorkScroll.subscribe(val => isMouseDown = val);
 const slider = new WorkSlider(); // workItems slider functionality
 
 onMount(async () => {
-	
-	const gpuTier = await getGPUTier(); // GPU Tier to decide if effects should be enabled
+
+	// GPU Tier to decide if effects should be enabled
+	const gpuTier = await getGPUTier();
+	// Svelte store for checking if device is a mobile device
 	$isMobile = gpuTier.isMobile;
 
 	data = await workItemsFetch;
@@ -114,23 +116,27 @@ onMount(async () => {
 
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 
-	clickables.update(values => values.concat(_viewLinks)); // Add clickables to clickables store
+	// Add clickables to clickables store
+	clickables.update(values => values.concat(_viewLinks));
 
-	if (!gpuTier.isMobile) slider.animate(); // Begin slider animations if device is not a phone
-	if (gpuTier.tier >= 2 && !gpuTier.isMobile && gpuTier.fps >= 30) new ImageRenderer(container, images); // ThreeJS warping effect if device can handle it
+	 // Begin slider animations and effects if device is not a phone
+	if (!gpuTier.isMobile) slider.animate();
+	// ThreeJS warping effect if device can handle it
+	if (gpuTier.tier >= 2 && !gpuTier.isMobile && gpuTier.fps >= 30) new ImageRenderer(container, images);
 
-	animationObserver.observe(workContainer); // Intersection observer for scroll animations
+	// Intersection observer for scroll animations
+	animationObserver.observe(workContainer);
 });
 
 
 
-// Helper Functions
+// Move slider to active item when it is active
 function toggleActiveItem(i) {
 	currentActive = (currentActive == i) ? null : i;
 	if (currentActive != null) slider.targetPosition = -(workItems[i].offsetLeft - (window.innerWidth / 4) + window.innerWidth / 10);
 }
 
-// Add clickables dynamically
+// Svelte function for registering clickables for cursor dot dynamically
 function addClickable(node) {
 	clickables.update(values => [...values, node]);
 	return {
@@ -140,11 +146,10 @@ function addClickable(node) {
 	}
 }
 
-// Prevent clipping of title with letters with overhand
+// Prevents clipping of animated letters that have overhang
 function adjustLineHeight(node) {
 	if (/[gyjqp]/g.test(node.innerText)) node.style.lineHeight = "120%";
 }
-
 
 </script>
 
@@ -158,28 +163,58 @@ function adjustLineHeight(node) {
 		on:mousemove|preventDefault={slider.onMouseMove}
 		bind:this={container}
 		class:disabled={currentActive !== null}
+		use:workListIntro={{ promise: inView }}
 	>
 		<div class:mobile={$isMobile}>
-			<ul class="work-list" bind:this={listContainer} class:hold={isMouseDown}>
-				<!-- Work items render here -->
+			<ul class="work-list" 
+				bind:this={listContainer} 
+				class:hold={isMouseDown}>
+
+				<!-- Work items -->
 				{#await workItemsFetch then items}
 					{#each items as item, i}
-						<li class="list-item clickable passive" 
-							class:ambient="{ currentActive !== i && currentActive !== null }" 
-							class:active="{ currentActive === i }" 
-							bind:this={ workItems[i] }>
+						<li use:workImageIntro={{ promise: inView, delay: i*20 }}>
+							<div class="list-item clickable passive" 
+								class:ambient="{ currentActive !== i && currentActive !== null }" 
+								class:active="{ currentActive === i }" 
+								bind:this={ workItems[i] }>
 
-							<div class="img-wrapper" use:workImageIntro={{ promise: inView, delay: (120 * i) + 100 }}>
-								{#await loadImage(`assets/imgs/work-back/${item.id}/cover.jpg`) then src}
-									<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
+								<div class="img-wrapper">
+									{#await loadImage(`assets/imgs/work-back/${item.id}/cover.jpg`) then src}
+										<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
+									{/await}
+								</div>
+								<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
+									<p 
+										class="item-index"
+										in:maskAnimationIn={{
+											delay: (i*100)+3500 
+										}}>
+										{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
+									</p>
+								</div>
+								{#await inView then _}
+									<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
+										<h1 
+											class="item-title" 
+											in:textAnimationIn={{ 
+												breakWord: false, 
+												duration: 800, 
+												initDelay: (i*100)+400 
+											}}>
+											{item.title}
+										</h1>
+										<div 
+											class="button item-link" 
+											bind:this={_viewLinks[i]} 
+											on:click={() => toggleActiveItem(i)}
+											in:maskAnimationIn={{
+												delay: (i*100)+500 
+											}}>
+											view
+										</div>
+									</div>
 								{/await}
-							</div>
-							<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown} use:workOpacityIntro={{ promise: inView, delay: (120 * i) + 100 }}>
-								<p class="item-date">{item.date}</p>
-							</div>
-							<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown} use:workOpacityIntro={{ promise: inView, delay: (120 * i) + 100 }}>
-								<h1 class="item-title">{item.title}</h1>
-								<div class="button item-link" bind:this={_viewLinks[i]} on:click={() => toggleActiveItem(i)}>view</div>
 							</div>
 						</li>
 					{/each}
@@ -187,7 +222,7 @@ function adjustLineHeight(node) {
 			</ul>
 		</div>
 
-		<!-- Active item details (When a work item is clicked) -->
+		<!-- Active work item details (When a work item is clicked) -->
 		{#if currentActive !== null}
 			<div class="details-container">
 				<div class="wrapper">
@@ -471,26 +506,27 @@ function adjustLineHeight(node) {
 
 		&.hold
 			.list-item
-				height: 50vh !important
+				height: 45vh !important
 
 		.list-item
 			display: inline-flex
 			justify-content: flex-end
 			overflow: hidden
-			height: 60vh
-			width: 25vw
+			height: 55vh
+			width: 23vw
 			box-sizing: border-box
 			position: relative
 			overflow: hidden
 			z-index: 3
 			margin-right: 6vw
-			transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1), height 0.8s cubic-bezier(0.25, 1, 0.5, 1), margin 0.8s cubic-bezier(0.25, 1, 0.5, 1)
+			transition: width 0.7s cubic-bezier(0.25, 1, 0.5, 1), height 0.7s cubic-bezier(0.25, 1, 0.5, 1), margin 0.8s cubic-bezier(0.25, 1, 0.5, 1)
 
 			*
 				transition: opacity 0.3s ease
 				-webkit-transition: opacity 0.3s ease
 
 			&.active
+				height: 60vh
 				width: 50vw
 				margin-right: 16vw
 				margin-left: 10vw
@@ -499,7 +535,7 @@ function adjustLineHeight(node) {
 					width: 100%
 
 			&.ambient
-				height: 55vh
+				height: 45vh
 
 			.hidden
 				opacity: 0
@@ -537,7 +573,7 @@ function adjustLineHeight(node) {
 				white-space: normal
 				text-align: right
 
-				.item-date
+				.item-index
 					font-size: 1vw
 					letter-spacing: 0.1vw
 					text-transform: uppercase
@@ -552,7 +588,7 @@ function adjustLineHeight(node) {
 				z-index: 2
 
 				.button
-					font-size: 1.4vw
+					font-size: 1.3vw
 					letter-spacing: 0.1vw
 					margin-top: 2vh
 					text-transform: uppercase
@@ -560,7 +596,7 @@ function adjustLineHeight(node) {
 				.item-title
 					font-family: $font
 					font-weight: normal
-					font-size: 2.8vw
+					font-size: 2.5vw
 					z-index: 0
 					opacity: 1
 					letter-spacing: 0.1vw
@@ -583,15 +619,12 @@ function adjustLineHeight(node) {
 			.list-item
 				width: 25vw
 
-				.text-wrapper
-					width: calc(40vw - 10vh)
-
 		@media only screen and (max-width: 1110px)
 			.list-item
 				width: 40vw
 
 				.text-top-wrapper
-					.item-date
+					.item-index
 						font-size: 2vh
 
 				.text-wrapper

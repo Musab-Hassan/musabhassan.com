@@ -1,32 +1,34 @@
 <script lang="ts">
 
+import anime from "animejs";
 import { onMount } from "svelte";
 import { homeAnchor, loadPagePromise, slickScrollInstance } from "../store";
-import anime from "animejs";
 import { loadImage } from "../utils";
 
+// DOM Node Binds for animations
 let homeContainer; // Container
 let backgroundContainer, backgroundImage; // Offsets
 let path1, path2, path3, path4; // SVG Paths
 let titleWord1, titleWord2, shortDetails, callToAction; // Elements for animations
 
 onMount(async () => {
-
+	// Wait for page to load
 	await loadPagePromise;
+	// Set navbar home link's y location to top of homeContainer
 	$homeAnchor = homeContainer;
 
-	// Add scroll offsets to slickScroll
+	// Add parallax scrolling offsets to slickScroll
 	$slickScrollInstance.addOffset({
 		element: backgroundContainer,
 		speedY: 0.8
 	});
 
-	introAnimation();
+	introAnimations();
 })
 
 
 // Page load animations
-function introAnimation() {
+function introAnimations() {
 
 	let animation = [{ strokeDashoffset: '0' }];
 
@@ -70,7 +72,7 @@ function introAnimation() {
 		scale: 1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
-		delay: 3000,
+		delay: 500,
 		complete: () => {
 			backgroundContainer.style.boxShadow = "3px 9px 18px rgba(0, 0, 0, 0.2)";
 		}
@@ -81,54 +83,56 @@ function introAnimation() {
 		scale: 1,
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 		duration: 1500,
-		delay: 3000
+		delay: 500
 	});
 
 
 	// Animate title
 	let titleElems = [titleWord1, titleWord2, shortDetails, callToAction];
 	titleElems.forEach(e => {
-		e.style.transform = "translateY(-150%) rotate(-8deg)";
+		e.style.transform = "translateY(130%) rotate(10deg)";
 	})
 	anime({
 		targets: titleElems,
 		rotate: "0",
 		translateY: "0%",
 		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
-		duration: 1400,
-		delay: anime.stagger(80, {start: 3500})
+		duration: 900,
+		delay: anime.stagger(80, {start: 500})
 	});
 }
 
 </script>
+
+
 
 <div id="content-container" style="padding-top: 23vh" bind:this={homeContainer}>
 	<div class="content-wrapper">
 		<div class="flex">
 			<div class="flex-wrapper first">
 
-				<svg id="signature" class="h-signature" viewBox="0 0 190 277" >
+				<svg id="signature" class="h-signature" x="0px" y="0px" viewBox="0 0 190 136.9">
 					<g>
 						<path
 							bind:this={path1}
 							class="path-1"
 							style="fill:none;stroke:#ffffff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;"
-							d="m 38.106433,126.87783 c 0,0 4.865856,-34.380072 39.573341,-37.703672 11.07324,-1.060378 -11.450219,86.225122 -48.943819,87.505612 -18.53491,0.63302 19.011912,-69.27759 51.724719,-84.353928 21.320226,-9.825843 15.273874,25.965428 15.273874,25.965428 0,0 6.177162,-9.2687 7.873312,-6.14451 1.69616,3.1242 0.14106,5.06521 6.85387,-1.87407 1.0166,-1.168 13.87944,3.27501 18.80372,-1.26145 1.42987,-1.31725 6.44242,1.2514 6.44242,1.2514" />
+							d="M38.1,51c0,0,4.9-34.4,39.6-37.7c11.1-1.1-11.5,86.2-48.9,87.5c-18.5,0.6,19-69.3,51.7-84.4c21.3-9.8,15.3,26,15.3,26s6.2-9.3,7.9-6.1c1.7,3.1,0.1,5.1,6.9-1.9c1-1.2,13.9,3.3,18.8-1.3c1.4-1.3,6.4,1.3,6.4,1.3"/>
 						<path
 							bind:this={path2}
 							class="path-2"
 							style="fill:none;stroke:#ffffff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;"
-							d="m 132.18539,124.21348 -23.91573,78.79214" />
+							d="M132.2,48.3l-23.9,78.8"/>
 						<path
 							bind:this={path3}
 							class="path-3"
 							style="fill:none;stroke:#ffffff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;"
-							d="m 110.30899,131.25842 c 0,0 -0.74157,11.67978 -2.7809,17.98315 -2.03933,6.30337 -6.67416,20.20787 -6.85955,24.10112" />
+							d="M110.3,55.3c0,0-0.7,11.7-2.8,18s-6.7,20.2-6.9,24.1"/>
 						<path
 							bind:this={path4}
 							class="path-4"
 							style="fill:none;stroke:#ffffff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;"
-							d="m 121.98876,150.35393 c 0,0 -5.93258,-7.97191 -17.05618,-6.67416 -11.123592,1.29776 -20.207862,11.30899 -21.134827,12.60675 -0.926968,1.29775 -10.011238,9.64044 2.224717,15.01685 12.235955,5.3764 38.93259,-7.23034 38.93259,-7.23034 0,0 17.79775,-10.01123 18.91011,-10.01123 1.11236,0 -4.63483,5.93258 -4.26405,7.23033 0.37079,1.29776 2.77483,2.03165 7.23034,-1.48314 0.97548,-0.76952 17.21937,-0.82644 22.21274,0.97637 1.8694,0.67493 3.48943,-0.21536 4.98153,-1.37648 0.97963,-0.76233 9.43868,2.03194 9.43868,2.03194" />
+							d="M122,74.4c0,0-5.9-8-17.1-6.7c-11.1,1.3-20.2,11.3-21.1,12.6c-0.9,1.3-10,9.6,2.2,15s38.9-7.2,38.9-7.2s17.8-10,18.9-10s-4.6,5.9-4.3,7.2c0.4,1.3,2.8,2,7.2-1.5c1-0.8,17.2-0.8,22.2,1c1.9,0.7,3.5-0.2,5-1.4c1-0.8,9.4,2,9.4,2"/>
 					</g>
 				</svg>
 
@@ -145,7 +149,7 @@ function introAnimation() {
 				</h1>
 				<div class="occupation mask">
 					<p class = "paragraph" bind:this={shortDetails}>
-						front-end web developer from BC Canada
+						web developer from british columbia, canada
 					</p>
 				</div>
 				<div class="wrapper action-mask">
@@ -170,6 +174,8 @@ function introAnimation() {
 		</div>
 	</div>
 </div>
+
+
 
 <style lang="sass">
 
@@ -212,6 +218,7 @@ function introAnimation() {
 
 			h1
 				font-weight: 400
+				text-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3)
 
 			.title-mask
 				overflow: hidden

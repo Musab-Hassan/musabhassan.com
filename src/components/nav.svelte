@@ -1,43 +1,30 @@
 <script lang="ts">
-import { onMount } from "svelte";
-import { clickables, homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "../store";
-import anime from "animejs";
 
-let home, work, about, email, logo, github, mobileMenu;
-let homeLink, workLink, aboutLink;
-let mobileActive;
+// Scroll container to allow scrolling when anchors are clicked
 export let scrollContainer;
 
+import anime from "animejs";
+import { onMount } from "svelte";
+import { clickables, homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "../store";
+
+let homeElem, workElem, aboutElem, emailElem, logoElem, githubElem;
+let homeWrapperElem, workWrapperElem, aboutWrapperElem, mobileMenuElem;
+
+let mobileActive: boolean;
+
 onMount(async () => {
+	// Wait for page to load
 	await loadPagePromise;
-
-	clickables.update(value => [...value, home, work, about, email, logo, github, mobileMenu]);
-
-	let targets = [logo, mobileMenu, homeLink, workLink, aboutLink, github];
-
-	targets.forEach(e => {
-		e.style.transform = "translateY(125%) rotate(10deg)"
-	})
-
-	// Intro animation on page load
-	anime({
-		targets: targets,
-		rotate: 0,
-		translateY: "0%",
-		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
-		duration: 1500,
-		delay: anime.stagger(50, {start: + 3000})
-	});
+	// Register all anchors as clickables for the scroll dot
+	clickables.update(value => [...value, homeElem, workElem, aboutElem, emailElem, logoElem, githubElem, mobileMenuElem]);
+	// Initiate intro animations
+	introAnimations();
 });
 
 
-// Scroll positions fetched from svelte store that are updated by each component itself
-let anchors = { home: 0, work: 0, about: 0 }
-homeAnchor.subscribe(val => anchors.home = val);
-workAnchor.subscribe(val => anchors.work = val);
-aboutAnchor.subscribe(val => anchors.about = val);
 
-const navigate = anchor => { 
+
+function navigate(anchor) {
 	scrollContainer.scrollTo({
 		top: anchor.offsetTop - (window.innerHeight / 5),
 		behavior: "smooth"
@@ -45,45 +32,65 @@ const navigate = anchor => {
 	mobileActive = false; 
 }
 
+function introAnimations() {
+	let targets = [logoElem, mobileMenuElem, homeWrapperElem, workWrapperElem, aboutWrapperElem, githubElem];
+	// Set initial state to begin animation from
+	targets.forEach(e => {
+		e.style.transform = "translateY(125%) rotate(10deg)"
+	})
+
+	anime({
+		targets: targets,
+		rotate: 0,
+		translateY: "0%",
+		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
+		duration: 1500,
+		delay: anime.stagger(50, {start: + 500})
+	});
+}
+
 </script>
 
 
 
 <div class="nav-wrapper" style="transform: translate(0px);">
+	<!-- Logo -->
 	<div class="flex-wrapper ico" style="z-index: 21;">
 		<img 
-			bind:this={logo} 
+			bind:this={logoElem} 
 			src="assets/imgs/logo.svg"
 			class = "logo-icon clickable"
 			alt="Logo"
 			draggable="false"
-			on:click={() => navigate(anchors.home)}>
+			on:click={() => navigate($homeAnchor)}>
 	</div>
 	
 	<div class="flex-wrapper">
+		<!-- Mobile and desktop nav menu -->
 		<div class="wrapper" class:mobileActive>
 			<ul class="nav-list">
-				<li bind:this={homeLink}>
-					<div bind:this={home} on:click={() => navigate(anchors.home)}>Home</div>
+				<li bind:this={homeWrapperElem}>
+					<div bind:this={homeElem} on:click={() => navigate($homeAnchor)}>Home</div>
 				</li>
-				<li bind:this={workLink}>
-					<div bind:this={work} on:click={() => navigate(anchors.work)}>Work</div>
+				<li bind:this={workWrapperElem}>
+					<div bind:this={workElem} on:click={() => navigate($workAnchor)}>Work</div>
 				</li>
-				<li bind:this={aboutLink}>
-					<div bind:this={about} on:click={() => navigate(anchors.about)}>About</div>
+				<li bind:this={aboutWrapperElem}>
+					<div bind:this={aboutElem} on:click={() => navigate($aboutAnchor)}>About</div>
 				</li>
-				<li class="mobile" bind:this={email}>
+				<li class="mobile" bind:this={emailElem}>
 					<a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a>
 				</li>
-				<li bind:this={github}>
+				<li bind:this={githubElem}>
 					<a href="https://github.com/Musab-Hassan" target="_blank">Github</a>
 				</li>
 			
 		</div>
 
+		<!-- Mobile hambuger menu -->
 		<div class="mask">
 			<div class="hb-button clickable" 
-				bind:this={mobileMenu} 
+				bind:this={mobileMenuElem} 
 				on:click={() => mobileActive = !mobileActive} 
 				class:mobileActive>
 
@@ -92,7 +99,6 @@ const navigate = anchor => {
 					<span></span>
 					<span></span>
 				</div>
-				<div class="text">Menu</div>
 			</div>
 		</div>
 	</div>
@@ -165,7 +171,7 @@ const navigate = anchor => {
 			left: 0
 			height: 100vh
 			width: 0vw
-			background-color: #18181a
+			background-color: #131314
 			transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
 			-webkit-transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
 			-moz-transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
@@ -196,12 +202,15 @@ const navigate = anchor => {
 				cursor: pointer
 				padding: 2vh 0
 				box-sizing: border-box
-				border-bottom: 1px solid white
+
+				&:not(:last-child)
+					border-bottom: 1px solid rgba(255, 255, 255, 0.3)
 
 				div 
 					display: inline-block
 
 				a
+					display: inline-block
 					color: white
 					text-decoration: none
 
@@ -220,15 +229,17 @@ const navigate = anchor => {
 			-ms-user-select: none
 			-moz-user-select: none
 
-		.text
-			font-family: $font
-			font-size: 2.5vh
-			text-transform: lowercase
-
 		.hb
+			display: flex
+			flex-direction: column
+			justify-content: center
+			row-gap: 5px
 			width: 3vh
-			height: 2.1vh
+			height: 2.2vh
 			margin-right: 1.5vh
+			transition: row-gap 1s ease
+			-webkit-transition: row-gap 1s ease
+			-moz-transition: row-gap 1s ease
 
 			span
 				transition: 1s ease
@@ -242,30 +253,22 @@ const navigate = anchor => {
 				width: 100%
 				background-color: white
 
-				&:nth-child(1)
-					top: 0
-
-				&:nth-child(2)
-					top: 0.5vh
-
-				&:nth-child(3)
-					top: 1.1vh
-
 		&.mobileActive
 			.text
 				color: white
 
 			.hb
+				row-gap: 0px
+
 				span
 					background-color: white
-					top: 0.5vh
 
 					&:nth-child(1)
 						transform: translateY(100%) rotate(-45deg)
 						width: 100%
 
 					&:nth-child(2)
-						width: 0
+						width: 0%
 
 					&:nth-child(3)
 						transform: translateY(-100%) rotate(45deg)

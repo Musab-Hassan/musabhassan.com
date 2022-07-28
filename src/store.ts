@@ -16,6 +16,8 @@ export let aboutAnchor = writable(null);
 export let imgPromises = writable([]); // Array of asynchronous image promises
 export let loadPageResolve;
 export let loadPagePromise = new Promise((resolve) => loadPageResolve = resolve);
+export let loaderAnimationResolve;
+export let loaderAnimationPromise = new Promise((resolve) => loaderAnimationResolve = resolve);
 
 // Fetch work data from the data.json file
 export const workItemsFetch = new Promise(async (resolve: (data: any[]) => void) => {

@@ -1,15 +1,15 @@
 <script lang="ts">
 	
+import slickScroll from "slickscrolljs";
+import { onMount } from "svelte";
+import { imgPromises, loaderAnimationPromise, loadPageResolve, slickScrollInstance, workItemsFetch } from "./store";
 import HomeSection from "./sections/home.svelte";
 import WorkSection from "./sections/work.svelte";
 import AboutSection from "./sections/about.svelte";
 import NavComponent from "./components/nav.svelte"
 import Footer from "./components/footer.svelte";
 import CursorDot from "./components/cursor-dot.svelte"
-import slickScroll from "slickscrolljs";
 import Loader from "./components/loader.svelte";
-import { onMount } from "svelte";
-import { imgPromises, loadPageResolve, slickScrollInstance, workItemsFetch } from "./store";
 
 let trackedDot; // Mouse following dot
 let scrollContainer;
@@ -17,12 +17,13 @@ let navBar;
 let loading = true;
 
 onMount(async () => {
-	// Disable scrolling on load
+	// Disable scrolling on initial load
 	scrollContainer.style.overflowY = "hidden";
 	scrollContainer.scrollTo(0, 0);
 	
 	await workItemsFetch; // Wait for work data to load
 	await Promise.allSettled($imgPromises); // Wait for images to load
+	await loaderAnimationPromise; // Wait until loading animation is complete
 
 	loading = false; // Destroy loader component 
 	loadPageResolve(); // Resolve loadPagePromise
@@ -31,22 +32,40 @@ onMount(async () => {
 	$slickScrollInstance = (new slickScroll).momentumScroll({
 		root: scrollContainer,
 		easing: "easeOutCirc",
-		duration: 500,
+		duration: 600,
 		fixedOffsets: [
 			navBar
 		]
 	});
 
-	// Remove horizontal scrolling
+	// Enable scrolling
 	scrollContainer.style.overflowX = "hidden";
+	scrollContainer.style.overflowY = "auto";
 
-	// Enable scrolling once all intro animations are over
-	setTimeout(() => {
-		scrollContainer.style.overflowY = "auto";
-	}, 3500);
 });
 
 </script>
+
+
+
+<!-- Cursor dot tracking when mouse moves inside the body -->
+<svelte:body on:mousemove = {(e) => trackedDot.trackMouse(e)}/>
+<CursorDot bind:this={trackedDot}></CursorDot>
+
+<!-- Page loading progress bar -->
+{#if loading} <Loader></Loader> {/if}
+
+<div id="scroll-frame" bind:this={scrollContainer}>
+	<div id="nav-bar" bind:this={navBar}>
+		<NavComponent scrollContainer={scrollContainer}></NavComponent>
+	</div>
+	<HomeSection></HomeSection>
+	<WorkSection></WorkSection>
+	<AboutSection></AboutSection>
+	<Footer></Footer>
+</div>
+
+
 
 
 <style lang="sass">
@@ -81,21 +100,3 @@ onMount(async () => {
 	z-index: 100
 
 </style>
-
-<svelte:body on:mousemove = {(e) => trackedDot.trackMouse(e)}/>
-<CursorDot bind:this={trackedDot}></CursorDot>
-
-{#if loading} <Loader></Loader> {/if}
-
-<div id="scroll-frame" bind:this={scrollContainer}>
-	<div id="nav-bar" bind:this={navBar}>
-		<NavComponent scrollContainer={scrollContainer}></NavComponent>
-	</div>
-	<HomeSection></HomeSection>
-	<WorkSection></WorkSection>
-	<AboutSection></AboutSection>
-	<Footer></Footer>
-</div>
-
-
-
