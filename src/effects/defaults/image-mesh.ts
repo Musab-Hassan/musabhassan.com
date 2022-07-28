@@ -29,7 +29,7 @@ export class ImageMesh {
 
     createMesh(): void {
         this.setDimensions();
-        this.geometry = new THREE.PlaneBufferGeometry(1, 1, 15, 15);
+        this.geometry = new THREE.PlaneBufferGeometry(1, 1, 4, 6);
 
         const { width, height } = this.element.getBoundingClientRect();
 

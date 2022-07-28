@@ -32,7 +32,7 @@ onMount(async () => {
 	$slickScrollInstance = (new slickScroll).momentumScroll({
 		root: scrollContainer,
 		easing: "easeOutCirc",
-		duration: 400,
+		duration: 600,
 		fixedOffsets: [
 			navBar
 		]

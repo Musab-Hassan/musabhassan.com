@@ -239,7 +239,7 @@ export function workImageIntro(node, params: { promise, delay?: number }) {
             targets: node,
             marginRight: "0%",
             easing: "easeOutQuint",
-            duration: 2000,
+            duration: 1600,
             delay: params.delay,
             complete: () => {
                 node.style.marginRight = null;
@@ -258,7 +258,7 @@ export function workListIntro(node, params: { promise, delay?: number }) {
 
     params.promise.then(() => {
         anime({
-            targets: node,
+            targets: node, 
             translateX: "0%",
             easing: "easeOutQuint",
             duration: 1500,
