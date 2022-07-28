@@ -184,9 +184,15 @@ function adjustLineHeight(node) {
 										<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
 									{/await}
 								</div>
-								<!-- <div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
-									<p class="item-date">{item.date}</p>
-								</div> -->
+								<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
+									<p 
+										class="item-index"
+										in:maskAnimationIn={{
+											delay: (i*100)+3500 
+										}}>
+										{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
+									</p>
+								</div>
 								{#await inView then _}
 									<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
 										<h1 
@@ -500,26 +506,27 @@ function adjustLineHeight(node) {
 
 		&.hold
 			.list-item
-				height: 50vh !important
+				height: 45vh !important
 
 		.list-item
 			display: inline-flex
 			justify-content: flex-end
 			overflow: hidden
-			height: 60vh
-			width: 25vw
+			height: 55vh
+			width: 23vw
 			box-sizing: border-box
 			position: relative
 			overflow: hidden
 			z-index: 3
 			margin-right: 6vw
-			transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1), height 0.8s cubic-bezier(0.25, 1, 0.5, 1), margin 0.8s cubic-bezier(0.25, 1, 0.5, 1)
+			transition: width 0.7s cubic-bezier(0.25, 1, 0.5, 1), height 0.7s cubic-bezier(0.25, 1, 0.5, 1), margin 0.8s cubic-bezier(0.25, 1, 0.5, 1)
 
 			*
 				transition: opacity 0.3s ease
 				-webkit-transition: opacity 0.3s ease
 
 			&.active
+				height: 60vh
 				width: 50vw
 				margin-right: 16vw
 				margin-left: 10vw
@@ -528,7 +535,7 @@ function adjustLineHeight(node) {
 					width: 100%
 
 			&.ambient
-				height: 55vh
+				height: 45vh
 
 			.hidden
 				opacity: 0
@@ -566,7 +573,7 @@ function adjustLineHeight(node) {
 				white-space: normal
 				text-align: right
 
-				.item-date
+				.item-index
 					font-size: 1vw
 					letter-spacing: 0.1vw
 					text-transform: uppercase
@@ -589,7 +596,7 @@ function adjustLineHeight(node) {
 				.item-title
 					font-family: $font
 					font-weight: normal
-					font-size: 2.6vw
+					font-size: 2.5vw
 					z-index: 0
 					opacity: 1
 					letter-spacing: 0.1vw
@@ -617,7 +624,7 @@ function adjustLineHeight(node) {
 				width: 40vw
 
 				.text-top-wrapper
-					.item-date
+					.item-index
 						font-size: 2vh
 
 				.text-wrapper
