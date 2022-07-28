@@ -105,11 +105,11 @@ function section2IntroAnimations() {
 	<div class="content-wrapper">
 		<h1 class = "title" bind:this={title}>The Name's<br>Musab</h1>
 		<p class = "paragraph" class:active={allowParagraphDecoratorAnimation} bind:this={paragraph}>
-			I'm a web developer from British Columbia, Canada. I specialize in designing and developing front-end web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
+			I'm a web developer from British Columbia, Canada. I specialize in designing and developing web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
 		</p>
 		<div class="social-button-wrapper">
 			<div bind:this={links}>
-				<span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email</a></span>
+				<span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email Me</a></span>
 				<span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
 			</div>
 		</div>
@@ -125,7 +125,7 @@ function section2IntroAnimations() {
 	{#await section2InViewPromise then _}
 		<ul class="list first">
 			<li class="list-title">
-				<div in:textAnimationIn={{ initDelay: 400 }}>Stuff i use</div>
+				<div in:textAnimationIn={{ initDelay: 400 }}>Stuff i use a lot</div>
 			</li>
 			<li>
 				<div in:textAnimationIn={{ initDelay: 550 }}>Front-end</div>
@@ -164,7 +164,7 @@ function section2IntroAnimations() {
 				<div in:textAnimationIn={{ initDelay: 400 }}>awards</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 550 }}>1x - Awwwards Honors</div>
+				<div in:textAnimationIn={{ initDelay: 550 }}>1x — Awwwards Honors</div>
 			</li>
 		</ul>
 	{/await}

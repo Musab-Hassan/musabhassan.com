@@ -149,7 +149,7 @@ function introAnimations() {
 				</h1>
 				<div class="occupation mask">
 					<p class = "paragraph" bind:this={shortDetails}>
-						front-end web developer from BC Canada
+						web developer from british columbia, canada
 					</p>
 				</div>
 				<div class="wrapper action-mask">
