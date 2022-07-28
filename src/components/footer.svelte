@@ -212,7 +212,6 @@ function introAnimations() {
             br
                 display: none
 
-
     .flex-wrapper.decor
         display: flex
         flex-direction: column

@@ -1,0 +1,60 @@
+name: Build and Deploy to Firebase
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push request but only for the master branch
+  push:
+    branches: [ master ]
+
+  # Run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@master
+
+      # Installs Dependencies
+      - name: NPM Dependencies
+        run: npm ci
+
+      # Build Svelte Project
+      - name: Build Svelte Project
+        run: npm run build
+
+      # Production Artifact
+      - name: Archive Production Artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: public
+          path: public
+          
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout Repo
+      - name: Checkout
+        uses: actions/checkout@master
+        
+      # Download Archived Artifact
+      - name: Get Archived Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: public
+          path: public
+
+      # Deploy to Firebase Hosting
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_AUTH_TOKEN }}
