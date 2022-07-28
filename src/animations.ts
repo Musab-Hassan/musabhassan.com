@@ -2,7 +2,7 @@ import BezierEasing from "bezier-easing";
 import { asyncAnimation } from "./utils";
 import anime from "animejs";
 
-// Letter reveal animation used with the 'in:' and 'out:' svelte directives
+// Letter reveal animation used with the 'in:' and 'out:' svelte directives aswell as a dynamic animeJS version
 export function letterSlide() {
     return {
         in: (node, params: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean, useAnime?: boolean }) => {
@@ -105,7 +105,7 @@ export function letterSlide() {
             let words = node.querySelectorAll(".a-word");
             words.forEach(element => {
                 element.style.display = "inline-block";
-                element.style.marginRight = "0.45vw"
+                element.style.marginRight = "0.45vh"
                 element.style.whiteSpace = "nowrap"
             });
         }
@@ -166,8 +166,8 @@ export function maskSlide() {
                 tick: t => {
                     let eased = BezierEasing(.2, .58, .43, 1)(t);
 
-                    mask.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
-                    node.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                    mask.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                    node.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
                 },
                 anime: (easing?) => {
                     anime({
@@ -199,7 +199,8 @@ export function maskSlide() {
                 parent.insertBefore(mask, parent.children[index]);
 
                 mask.style.transform = "translateX(100%)";
-                node.style.transform = "translateX(-100%)"
+                node.style.transform = "translateX(-100%)";
+                
                 return mask;
             }
         },
@@ -215,7 +216,11 @@ export function maskSlide() {
                 tick: t => {
                     let eased = BezierEasing(.32, .24, .76, .26)(t);
 
-                    node.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                    let isParentMask = node.parentElement?.classList.contains("a-mask");
+                    if (isParentMask) {
+                        node.parentElement.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                    }
+                    node.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
                 }
             }
         }
@@ -227,7 +232,7 @@ export function workImageIntro(node, params: { promise, delay?: number }) {
     if (!params.delay) params.delay = 0;
 
     node.style.transition = "none";
-    node.style.marginRight = "50%"
+    node.style.marginRight = "30%";
 
     params.promise.then(() => {
         anime({
