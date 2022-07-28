@@ -99,7 +99,6 @@ function introAnimations() {
 					<span></span>
 					<span></span>
 				</div>
-				<div class="text">Menu</div>
 			</div>
 		</div>
 	</div>
@@ -172,7 +171,7 @@ function introAnimations() {
 			left: 0
 			height: 100vh
 			width: 0vw
-			background-color: #18181a
+			background-color: #131314
 			transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
 			-webkit-transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
 			-moz-transition: 1s cubic-bezier(0.86, 0, 0.07, 1) width
@@ -203,12 +202,15 @@ function introAnimations() {
 				cursor: pointer
 				padding: 2vh 0
 				box-sizing: border-box
-				border-bottom: 1px solid white
+
+				&:not(:last-child)
+					border-bottom: 1px solid rgba(255, 255, 255, 0.3)
 
 				div 
 					display: inline-block
 
 				a
+					display: inline-block
 					color: white
 					text-decoration: none
 
@@ -227,15 +229,17 @@ function introAnimations() {
 			-ms-user-select: none
 			-moz-user-select: none
 
-		.text
-			font-family: $font
-			font-size: 2.5vh
-			text-transform: lowercase
-
 		.hb
+			display: flex
+			flex-direction: column
+			justify-content: center
+			row-gap: 5px
 			width: 3vh
-			height: 2.1vh
+			height: 2.2vh
 			margin-right: 1.5vh
+			transition: row-gap 1s ease
+			-webkit-transition: row-gap 1s ease
+			-moz-transition: row-gap 1s ease
 
 			span
 				transition: 1s ease
@@ -249,30 +253,22 @@ function introAnimations() {
 				width: 100%
 				background-color: white
 
-				&:nth-child(1)
-					top: 0
-
-				&:nth-child(2)
-					top: 0.5vh
-
-				&:nth-child(3)
-					top: 1.1vh
-
 		&.mobileActive
 			.text
 				color: white
 
 			.hb
+				row-gap: 0px
+
 				span
 					background-color: white
-					top: 0.5vh
 
 					&:nth-child(1)
 						transform: translateY(100%) rotate(-45deg)
 						width: 100%
 
 					&:nth-child(2)
-						width: 0
+						width: 0%
 
 					&:nth-child(3)
 						transform: translateY(-100%) rotate(45deg)
