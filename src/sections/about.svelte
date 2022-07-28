@@ -6,16 +6,26 @@ import { aboutAnchor, clickables, loadPagePromise, slickScrollInstance } from ".
 import { loadImage } from "../utils";
 
 // DOM Node binds for animations
-let aboutContainer;
+let aboutSection1Container, aboutSection2Container;
 let githubLink, emailLink
 let profilePicContainer;
 let title, paragraph, image, links;
+
+let allowParagraphDecoratorAnimation = false;
+
+// Initialised custom animations for use with svelte transitions
+let textAnimationIn = letterSlide().in;
+let maskAnimationIn = maskSlide().in;
+
+// Section two promise which when resolved will trigger svelte animations
+let section2InViewResolve;
+let section2InViewPromise = new Promise((resolve) => section2InViewResolve = resolve);
 
 onMount(async () => {
 	// Wait for page to load
 	await loadPagePromise;
 	// Set navbar about link's y location to top of aboutContainer
-	$aboutAnchor = aboutContainer;
+	$aboutAnchor = aboutSection1Container;
 	
 	// Register links as clickables for cursor dot
 	clickables.update(value => [...value, githubLink, emailLink]);
@@ -26,13 +36,14 @@ onMount(async () => {
 		speedY: 0.8
 	});
 
-	introAnimations();
+	section1IntroAnimations();
+	section2IntroAnimations();
 });
 
 
 
-
-function introAnimations() {
+// About section before skills
+function section1IntroAnimations() {
 	// Scroll activated animations powered by anime instead of svelte transitions
 	const titleAnimate = letterSlide().in(title, { 
 		useAnime: true, 
@@ -53,7 +64,7 @@ function introAnimations() {
 		]
 	});
 
-	// Run animations when intersection obeserver detects aboutcontainer to be in scroll view
+	// Run animations when intersection obeserver detects aboutSection1Container to be in scroll view
 	let observer = new IntersectionObserver((entries) => { 
 		entries.forEach(entry => {
 			if (entry.isIntersecting) {
@@ -62,21 +73,38 @@ function introAnimations() {
 				paragraphAnimate.anime();
 				linkAnimate.anime();
 				imageAnimate.anime("easeInOutQuint");
+				allowParagraphDecoratorAnimation = true;
 				
 				observer.disconnect();
 			}
 		});
 	}, { root: null, threshold: 0.4 });
 	
-	observer.observe(aboutContainer);
+	observer.observe(aboutSection1Container);
+}
+
+// Skills and awards section
+function section2IntroAnimations() {
+	// Resolve animations promise when intersection obeserver detects aboutSection2Container to be in scroll view
+	let observer = new IntersectionObserver((entries) => { 
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				section2InViewResolve();
+				
+				observer.disconnect();
+			}
+		});
+	}, { root: null, threshold: 0.4 });
+	
+	observer.observe(aboutSection2Container);
 }
 
 </script>
 
-<div id="content-container" class="about" bind:this={aboutContainer}>
+<div id="content-container" class="about" bind:this={aboutSection1Container}>
 	<div class="content-wrapper">
 		<h1 class = "title" bind:this={title}>The Name's<br>Musab</h1>
-		<p class = "paragraph" bind:this={paragraph}>
+		<p class = "paragraph" class:active={allowParagraphDecoratorAnimation} bind:this={paragraph}>
 			I'm a web developer from British Columbia, Canada. I specialize in designing and developing front-end web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
 		</p>
 		<div class="social-button-wrapper">
@@ -92,45 +120,54 @@ function introAnimations() {
 		{/await}
 	</div>
 </div>
-<div class="horizontal-flex">
-	<ul class="list first">
-		<li class="list-title">Stuff i use</li>
-		<li>
-			<div>Front-end</div>
-			<div class="flex-item">
-				<img src="assets/imgs/svg-icons/angular.svg" alt="angular">
-				<img src="assets/imgs/svg-icons/svelte.svg" alt="svelte">
-			</div>
-		</li>
-		<li>
-			<div>Mobile</div>
-			<div class="flex-item">
-				<img src="assets/imgs/svg-icons/flutter.svg" alt="flutter">
-				<img src="assets/imgs/svg-icons/android.svg" alt="native android">
-				<img src="assets/imgs/svg-icons/iOS.svg" alt="native ios">
-			</div>
-		</li>
-		<li>
-			<div>Back-end</div>
-			<div class="flex-item">
-				<img src="assets/imgs/svg-icons/firebase.svg" alt="firebase">
-				<img src="assets/imgs/svg-icons/nodejs.svg" alt="node js">
-				<img src="assets/imgs/svg-icons/php.svg" alt="php">
-				<img src="assets/imgs/svg-icons/mysql.svg" alt="mySQL">
-			</div>
-		</li>
-		<li>
-			<div>Design</div>
-			<div class="flex-item">
-				<img src="assets/imgs/svg-icons/illustrator.svg" alt="adobe illustrator">
-				<img src="assets/imgs/svg-icons/xd.svg" alt="adobe xd">
-			</div>
-		</li>
-	</ul>
-	<ul class="list">
-		<li class="list-title">awards</li>
-		<li>1x - Awwwards Honors</li>
-	</ul>
+
+<div class="horizontal-flex" bind:this={aboutSection2Container}>
+	{#await section2InViewPromise then _}
+		<ul class="list first">
+			<li class="list-title">
+				<div in:textAnimationIn={{ initDelay: 400 }}>Stuff i use</div>
+			</li>
+			<li>
+				<div in:textAnimationIn={{ initDelay: 550 }}>Front-end</div>
+				<div class="flex-item" in:maskAnimationIn={{ delay: 600 }}>
+					<img src="assets/imgs/svg-icons/angular.svg" alt="angular">
+					<img src="assets/imgs/svg-icons/svelte.svg" alt="svelte">
+				</div>
+			</li>
+			<li>
+				<div in:textAnimationIn={{ initDelay: 650 }}>Mobile</div>
+				<div class="flex-item" in:maskAnimationIn={{ delay: 700 }}>
+					<img src="assets/imgs/svg-icons/flutter.svg" alt="flutter">
+					<img src="assets/imgs/svg-icons/android.svg" alt="native android">
+					<img src="assets/imgs/svg-icons/iOS.svg" alt="native ios">
+				</div>
+			</li>
+			<li>
+				<div in:textAnimationIn={{ initDelay: 750 }}>Back-end</div>
+				<div class="flex-item" in:maskAnimationIn={{ delay: 800 }}>
+					<img src="assets/imgs/svg-icons/firebase.svg" alt="firebase">
+					<img src="assets/imgs/svg-icons/nodejs.svg" alt="node js">
+					<img src="assets/imgs/svg-icons/php.svg" alt="php">
+					<img src="assets/imgs/svg-icons/mysql.svg" alt="mySQL">
+				</div>
+			</li>
+			<li>
+				<div in:textAnimationIn={{ initDelay: 850 }}>Design</div>
+				<div class="flex-item" in:maskAnimationIn={{ delay: 900 }}>
+					<img src="assets/imgs/svg-icons/illustrator.svg" alt="adobe illustrator">
+					<img src="assets/imgs/svg-icons/xd.svg" alt="adobe xd">
+				</div>
+			</li>
+		</ul>
+		<ul class="list">
+			<li class="list-title">
+				<div in:textAnimationIn={{ initDelay: 400 }}>awards</div>
+			</li>
+			<li>
+				<div in:textAnimationIn={{ initDelay: 550 }}>1x - Awwwards Honors</div>
+			</li>
+		</ul>
+	{/await}
 </div>
 
 
@@ -200,11 +237,16 @@ function introAnimations() {
 			&::before
 				content: ""
 				position: absolute
-				height: 2px
-				width: 11vw
-				right: 110%
+				height: 1px
+				width: 0
+				right: 115%
 				top: 15%
 				background-color: white
+				transition: width 0.6s ease
+
+			&.active::before
+				width: 10vw
+				
 
 		.social-button-wrapper
 			font-size: 3vh
@@ -232,8 +274,8 @@ function introAnimations() {
 	display: flex
 	flex-direction: row
 	justify-content: space-between
-	padding: 0 5vw
-	padding-top: 2vh
+	padding: 0 13vw
+	margin-top: 12vh
 	width: 100%
 	box-sizing: border-box
 
@@ -248,31 +290,25 @@ function introAnimations() {
 		@media only screen and (max-width: 1080px)
 			margin-top: 10vh
 
-		&.first
-			margin-left: 8vw
-
-			@media only screen and (max-width: 1080px)
-				margin-left: 0
-		
-		.flex-item
-			margin-left: 5vw
-
 		li.list-title
-			letter-spacing: 1vh
-			font-size: 1.5vh
+			letter-spacing: 0.6vh
+			font-size: 1.3vh
+			font-weight: bold
 
 		li
 			font-family: $font
 			text-transform: uppercase
 			font-size: 2vh
-			letter-spacing: 1vh
-			white-space: nowrap
+			letter-spacing: 0.5vh
 			padding: 2vh 0
-			border-bottom: 1px solid #707070
+			border-bottom: 1px solid #444
 			display: flex
+			flex-wrap: wrap
 			flex-direction: row
 			justify-content: space-between
 			align-items: center
+			column-gap: 5vw
+			row-gap: 3vh
 
 			img
 				height: 2.3vh
