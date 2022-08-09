@@ -231,9 +231,9 @@ function adjustLineHeight(node) {
 							<div class="index">
 								<div in:maskAnimationIn out:maskAnimationOut>
 									{#if (currentActive < 9)}
-										{"0"+data[currentActive].id}
+										{"0"+(currentActive+1)}
 									{:else}
-										{data[currentActive].id}
+										{currentActive+1}
 									{/if}
 								</div>
 							</div>
