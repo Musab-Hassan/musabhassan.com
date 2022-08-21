@@ -13,26 +13,3 @@ export async function loadImage(src) {
     imgPromises.update(val => [...val, promise]);
     return promise;
 }
-
-// Asyncronous animation delay instead of setTimeout
-export async function asyncAnimation(delay, onLoop, condition) {
-    let target = Date.now() + delay;
-
-    await new Promise((resolve) => {
-        function loop() {
-            if (Date.now() >= target) {
-                resolve(true);
-                return;
-            }
-            requestAnimationFrame(loop);
-        }
-        loop();
-    });
-
-    let loop = () => {
-        if (condition()) return;
-        onLoop();
-        requestAnimationFrame(loop);
-    }
-    loop();
-}

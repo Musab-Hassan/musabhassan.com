@@ -1,21 +1,28 @@
 import BezierEasing from "bezier-easing";
-import { asyncAnimation } from "./utils";
 import anime from "animejs";
 
 // Letter reveal animation used with the 'in:' and 'out:' svelte directives aswell as a dynamic animeJS version
 export function letterSlide() {
     return {
-        in: (node, params: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean, useAnime?: boolean }) => {
+        in: (node, params: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean, useAnime?: boolean, destroyLettersUponSuccess?: boolean }) => {
 
             if (!params.delay) params.delay = 35;
             if (!params.initDelay) params.initDelay = 0;
             if (!params.duration) params.duration = 600;
             if (params.breakWord === undefined) params.breakWord = true;
             if (params.useAnime === undefined) params.useAnime = false;
+            if (params.destroyLettersUponSuccess === undefined) params.destroyLettersUponSuccess = false;
 
-            let masks = wordWrapHandler(node, params.breakWord);
+            // If destroyLettersUponSucess is true, Store innerHTML of node in data attribute so it can be recovered once animation is done
+            let originalNodeHTML = node.innerHTML;
 
-            // Set default properties
+            // Wrap every letter with a div and prepare it for animation
+            let masks = wordWrapHandler(node, {
+                breakWord: params.breakWord,
+                destroyLettersUponSuccess: params.destroyLettersUponSuccess
+            });
+
+            // Set default properties for each mask, fully ready for animation
             masks.forEach(e => {
                 e.childNodes.forEach(child => {
                     child.style.transform = "translateX(150%)";
@@ -25,24 +32,43 @@ export function letterSlide() {
                 e.style.overflow = "hidden";
             });
 
-            let eased = 0, animeTargets = []; // t value with easing applied
+            let eased = 0; // eased timing value 
+            let animeTargets = []; // node list which anime.js should animate (if useAnime is true)
 
+            // Animation
             masks.forEach((element) => {
                 let index = Array.from(element.parentNode.children).indexOf(element) + 1;
                 
                 if (params.useAnime) { // Register children for use with anime
                     animeTargets = [...animeTargets, element, ...element.childNodes];
                 } else {
-                    // Async animations for better performance in svetle tick only
+                    // Async animation of letters for better performance (for svelte transitions only)
                     element.childNodes.forEach(e => {
-                        asyncAnimation((params.delay * index), () => {
-                            e.style.transform = `translateX(${(150 + (-eased * 150)).toFixed(2)}%)`;
-                        }, () => eased >= 1);
+                        asyncAnimation({
+                            delay: params.delay * index,
+                            onLoop: () => {
+                                e.style.transform = `translateX(${(150 + (-eased * 150)).toFixed(2)}%)`;
+                            },
+                            endCondition: () => eased >= 1
+                        });
                     });
 
-                    asyncAnimation((params.delay * index), () => {
-                        element.style.transform = `translateX(${(80 + (-eased * 80)).toFixed(2)}%)`;
-                    }, () => eased >= 1);
+                    // Async animation of words for better performance (for svelte transitions only)
+                    asyncAnimation({
+                        delay: params.delay * index, 
+                        onLoop: () => {
+                            element.style.transform = `translateX(${(80 + (-eased * 80)).toFixed(2)}%)`;
+                        }, 
+                        endCondition: () => eased >= 1,
+                        // Return node to original state if destroyLettersUponSucess is true
+                        onCompletion: () => {
+                            if (params.destroyLettersUponSuccess) {
+                                setTimeout(() => {
+                                    node.innerHTML = originalNodeHTML;
+                                }, 5)
+                            }
+                        }
+                    });
                 }
             });
 
@@ -59,7 +85,15 @@ export function letterSlide() {
                         translateX: "0%",
                         easing: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
                         duration: params.duration,
-                        delay: anime.stagger(params.delay, {start: params.initDelay})
+                        delay: anime.stagger(params.delay, {start: params.initDelay}),
+                        // Return node to original state if destroyLettersUponSucess is true
+                        complete: () => {
+                            if (params.destroyLettersUponSuccess) {
+                                setTimeout(() => {
+                                    node.innerHTML = originalNodeHTML;
+                                }, 5)
+                            }
+                        } 
                     })
                 }
             }
@@ -76,7 +110,6 @@ export function letterSlide() {
                 delay: params.initDelay,
                 duration: 600,
                 tick: t => {
-                    // let eased = BezierEasing(.59, .11, .07, 1.07)(t);
                     let eased = BezierEasing(.32, .24, .76, .26)(t);
 
                     masks.forEach((e) => {
@@ -88,63 +121,6 @@ export function letterSlide() {
                     });
                 }
             }
-        }
-    }
-
-    // Wrap each word with a mask and return masks
-    function wordWrapHandler(node, breakWord: boolean) {
-
-        let masks = node.querySelectorAll(".a-text-mask");
-
-        if (masks.length < 1) {
-            node.innerHTML = parseLetters(node.innerHTML, "<div class=\"a-text-mask\"><div class=\"a-text-block\">", "</div></div>");
-            masks = node.querySelectorAll(".a-text-mask");
-        }
-
-        if (breakWord) {
-            let words = node.querySelectorAll(".a-word");
-            words.forEach(element => {
-                element.style.display = "inline-block";
-                element.style.marginRight = "0.45vh"
-                element.style.whiteSpace = "nowrap"
-            });
-        }
-
-        return masks;
-
-        // parse the letters and break apart words
-        function parseLetters(string: string, startWord: string, endWord: string) {
-            let newString = "";
-            let isTag = false;
-            let isWord = false;
-
-            [...string].forEach((e, i) => {
-                // Tag beginning detection
-                if (e === "<") { 
-                    isTag = true; 
-                    if (isWord) { isWord = false; newString += "</div>"; }
-                }
-                // Tag end detection
-                if (string[i - 1] == ">" && e !== "<") {
-                    isTag = false;
-                    if (!isWord) { isWord = true; newString += "<div class=\"a-word\">"; }
-                }
-
-                if (isTag) {
-                    // Pass characters belong to tags directly without modifying them
-                    newString += e;
-                } else {
-                    // Detect Words and wrap them with tags
-                    if (e === " " || string[i - 1] === " " || i === 0 || i === string.length) {
-                        isWord = !isWord;
-                        newString += isWord ? "<div class=\"a-word\">" : "</div>";
-                    }
-                    // Add mask to letter and Ignore spaces
-                    if (e !== " ") newString += startWord + e + endWord;
-                }
-            });
-
-            return newString;
         }
     }
 }
@@ -292,4 +268,114 @@ export function workSubItemsIntro(node, params: { promise, delay?: number }) {
             }
         });
     });
+}
+
+
+
+
+
+
+
+
+
+
+// Wrap each word with a mask and return masks
+function wordWrapHandler(node, params: { breakWord: boolean, destroyLettersUponSuccess: boolean }) {
+
+    let masks = node.querySelectorAll(".a-text-mask");
+
+    if (masks.length < 1) {
+        node.innerHTML = parseLetters(node.innerHTML, "<div class=\"a-text-mask\"><div class=\"a-text-block\">", "</div></div>");
+        masks = node.querySelectorAll(".a-text-mask");
+    }
+
+    if (params.breakWord) {
+        let words = node.querySelectorAll(".a-word");
+        words.forEach((element, i) => {
+            element.style.display = "inline-block";
+            element.style.whiteSpace = "nowrap";
+        });
+
+        // Set letter-spacing to exact computed letter-spacing to prevent animation popping
+        if (params.destroyLettersUponSuccess) {
+            let computed = getComputedStyle(node);
+            let computedLetterSpacing = computed.getPropertyValue("letter-spacing");
+
+            let letters = node.querySelectorAll(".a-text-block");
+            letters.forEach(element => {
+                element.style.letterSpacing = computedLetterSpacing;
+            });
+        }
+    }
+
+    return masks;
+
+    // parse the letters and break apart words
+    function parseLetters(string: string, startWord: string, endWord: string) {
+        let newString = "";
+        let isTag = false;
+        let isWord = false;
+
+        [...string].forEach((e, i) => {
+            // Tag beginning detection
+            if (e === "<") {
+                isTag = true;
+                if (isWord) { 
+                    isWord = false;
+                    newString += "</div>"; 
+                }
+            }
+            // Tag end detection
+            if (string[i - 1] == ">" && e !== "<") {
+                isTag = false;
+                if (!isWord) { 
+                    isWord = true; 
+                    newString += "<div class=\"a-word\">"; 
+                }
+            }
+
+            if (isTag) {
+                // Pass characters belong to tags directly without modifying them
+                newString += e;
+            } else {
+                // Detect Words and wrap them with word tags and spacers
+                if (e === " " || string[i - 1] === " " || i === 0 || i === string.length) {
+                    isWord = !isWord;
+                    newString += isWord ? "<div class=\"a-word\">" : "</div><span class=\"a-spacer a-text-block\"> </span>";
+                }
+                // Add mask to letter and Ignore spaces
+                if (e !== " ") newString += startWord + e + endWord;
+            }
+        });
+
+        return newString;
+    }
+}
+
+
+
+// Asyncronous animation delay instead of using setTimeout (greatly improves performance when using svelte transitions)
+export async function asyncAnimation(params: { delay: number, onLoop: () => void, endCondition: () => boolean, onCompletion?: () => void }) {
+    let target = Date.now() + params.delay;
+
+    await new Promise((resolve) => {
+        function loop() {
+            if (Date.now() >= target) {
+                resolve(true);
+                return;
+            }
+            requestAnimationFrame(loop);
+        }
+        loop();
+    });
+
+    let loop = () => {
+        if (params.endCondition()) {
+            if (params.onCompletion) params.onCompletion();
+            return;
+        }
+        params.onLoop();
+        requestAnimationFrame(loop);
+    }
+    loop();
 }
