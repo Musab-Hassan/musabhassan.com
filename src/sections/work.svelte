@@ -4,7 +4,7 @@ import { getGPUTier } from 'detect-gpu';
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import { ImageRenderer } from "../effects/work-slider/renderer";
-import { letterSlide, maskSlide, workImageIntro, workListIntro } from "../animations";
+import { letterSlideIn, letterSlideOut, maskSlideIn, maskSlideOut, workImageIntro, workListIntro } from "../animations";
 import { clickables, isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
 import { loadImage } from "../utils";
 
@@ -72,16 +72,12 @@ let images = []; // Array of images to be passed to WebGL Shader
 let workItems = []; // Array of workItems to be animated
 let _viewLinks = []; // Array of clickable Links
 
+let breakTitleWords: boolean = false;
+
 let isMouseDown: boolean = false; // is user holding click
 let currentActive: number = null; // Active work item in the detailsViewer viewed
 
 let data; // JSON Work data fetched from the data.json file
-
-// Animations for active work item description
-let textAnimationIn = letterSlide().in;
-let textAnimationOut = letterSlide().out;
-let maskAnimationIn = maskSlide().in;
-let maskAnimationOut = maskSlide().out;
 
 // Intersection observer and promise to enable scroll activated animations
 let inViewResolve;
@@ -187,7 +183,7 @@ function adjustLineHeight(node) {
 								<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
 									<p 
 										class="item-index"
-										in:maskAnimationIn={{
+										in:maskSlideIn={{
 											delay: (i*100)+3500 
 										}}>
 										{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
@@ -197,10 +193,9 @@ function adjustLineHeight(node) {
 									<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
 										<h1 
 											class="item-title" 
-											in:textAnimationIn={{ 
+											in:letterSlideIn={{ 
 												breakWord: false, 
 												duration: 800, 
-												destroyLettersUponSuccess: true,
 												initDelay: (i*100)+400 
 											}}>
 											{item.title}
@@ -209,7 +204,7 @@ function adjustLineHeight(node) {
 											class="button item-link" 
 											bind:this={_viewLinks[i]} 
 											on:click={() => toggleActiveItem(i)}
-											in:maskAnimationIn={{
+											in:maskSlideIn={{
 												delay: (i*100)+500 
 											}}>
 											view
@@ -230,7 +225,7 @@ function adjustLineHeight(node) {
 					<div class="top-align">
 						<div class="wrapper">
 							<div class="index">
-								<div in:maskAnimationIn out:maskAnimationOut>
+								<div in:maskSlideIn out:maskSlideOut>
 									{#if (currentActive < 9)}
 										{"0"+(currentActive+1)}
 									{:else}
@@ -240,26 +235,34 @@ function adjustLineHeight(node) {
 							</div>
 							<span class="line" transition:fade></span>
 							<h6 class="caption">
-								<div in:maskAnimationIn out:maskAnimationOut>{data[currentActive].details.summary}</div>
+								<div in:maskSlideIn out:maskSlideOut>{data[currentActive].details.summary}</div>
 							</h6>
 						</div>
 					</div>
 					
 					<div class="mid-align">
-						<h1 class="title" in:textAnimationIn={{ breakWord: false }} out:textAnimationOut use:adjustLineHeight>{data[currentActive].title}</h1>
-						<div class="button" use:addClickable on:click={() => toggleActiveItem(currentActive)} in:maskAnimationIn out:maskAnimationOut>&times; close</div>
+						<h1 class="title" 
+							in:letterSlideIn={{ breakWord: false }} 
+							out:letterSlideOut 
+							use:adjustLineHeight
+							class:breakTitleWords
+							on:introend={() => breakTitleWords = true}
+							on:outrostart={() => breakTitleWords = false}>
+							{data[currentActive].title}
+						</h1>
+						<div class="button" use:addClickable on:click={() => toggleActiveItem(currentActive)} in:maskSlideIn out:maskSlideOut>&times; close</div>
 					</div>
 					
 					<div class="bottom-align">
 						<div>
-							<p class="paragraph" in:textAnimationIn out:textAnimationOut>
+							<p class="paragraph" in:letterSlideIn out:letterSlideOut>
 								{data[currentActive].details.description}
 							</p>
 						</div>
 						<div class="links">
 							{#each data[currentActive].links as link}
 								<div style="position: relative">
-									<a in:textAnimationIn out:textAnimationOut use:addClickable href={link.link} target="_blank" class="button no-decor">{link.text}</a>
+									<a in:letterSlideIn out:letterSlideOut use:addClickable href={link.link} target="_blank" class="button no-decor">{link.text}</a>
 									<div class="underline" transition:fade></div>
 								</div><br>
 							{/each}
@@ -267,10 +270,10 @@ function adjustLineHeight(node) {
 						</div>
 						<div class="roles">
 							<div class="wrapper">
-								<p class="descriptor" in:textAnimationIn out:textAnimationOut>Role</p>
+								<p class="descriptor" in:letterSlideIn out:letterSlideOut>Role</p>
 								<ul>
 									{#each data[currentActive].roles as role}
-										<li in:textAnimationIn out:textAnimationOut>{"+ " + role}</li>
+										<li in:letterSlideIn out:letterSlideOut>{"+ " + role}</li>
 									{/each}
 								</ul>
 							</div>
@@ -378,6 +381,10 @@ function adjustLineHeight(node) {
 					word-wrap: break-word
 					white-space: normal
 					line-height: 90%
+
+					&.breakTitleWords
+						display: inline-block
+						max-width: min-content
 
 				.button
 					font-size: 1.4vw

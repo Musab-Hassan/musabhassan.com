@@ -1,7 +1,7 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { letterSlide, maskSlide } from "../animations";
+import { letterSlideIn, maskSlideIn } from "../animations";
 import { clickables } from "../store";
 
 let footerContainer;
@@ -19,23 +19,10 @@ onMount(() => {
 
 function introAnimations() {
     // Scroll activated animations powered by anime instead of svelte transitions
-	const logoAnimate = maskSlide().in(logoElem, {});
-	const statusAnimate = letterSlide().in(statusElem, { 
-		useAnime: true,
-		delay: 6,
-        destroyLettersUponSuccess: true,
-        initDelay: 100
-	});
-    const fullEmailLinkAnimate = letterSlide().in(fullEmailLinkElem, { 
-        useAnime: true,
-		delay: 6,
-        destroyLettersUponSuccess: true,
-        initDelay: 150,
-	});
-    const creditsAnimate = maskSlide().in(creditsElem, {
-		delay: 150,
-	});
-
+	const logoAnimate = maskSlideIn(logoElem, {});
+	const statusAnimate = letterSlideIn(statusElem, { delay: 6, initDelay: 100 });
+    const fullEmailLinkAnimate = letterSlideIn(fullEmailLinkElem, { delay: 6, initDelay: 150 });
+    const creditsAnimate = maskSlideIn(creditsElem, { delay: 150 });
 
     // Intersection observer to run animations when footer is in scroll view
     let animationObserver = new IntersectionObserver((entries) => { 
