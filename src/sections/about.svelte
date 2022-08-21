@@ -47,10 +47,12 @@ function section1IntroAnimations() {
 	// Scroll activated animations powered by anime instead of svelte transitions
 	const titleAnimate = letterSlide().in(title, { 
 		useAnime: true, 
+		destroyLettersUponSuccess: true,
 		delay: 15 
 	});
 	const paragraphAnimate = letterSlide().in(paragraph, { 
 		useAnime: true, 
+		destroyLettersUponSuccess: true,
 		delay: 2 
 	});
 	const linkAnimate = maskSlide().in(links, { 
@@ -125,17 +127,17 @@ function section2IntroAnimations() {
 	{#await section2InViewPromise then _}
 		<ul class="list first">
 			<li class="list-title">
-				<div in:textAnimationIn={{ initDelay: 400 }}>Stuff i use a lot</div>
+				<div in:textAnimationIn={{ initDelay: 400, destroyLettersUponSuccess: true }}>Stuff i use a lot</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 550 }}>Front-end</div>
+				<div in:textAnimationIn={{ initDelay: 550, destroyLettersUponSuccess: true }}>Front-end</div>
 				<div class="flex-item" in:maskAnimationIn={{ delay: 600 }}>
 					<img src="assets/imgs/svg-icons/angular.svg" alt="angular">
 					<img src="assets/imgs/svg-icons/svelte.svg" alt="svelte">
 				</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 650 }}>Mobile</div>
+				<div in:textAnimationIn={{ initDelay: 650, destroyLettersUponSuccess: true }}>Mobile</div>
 				<div class="flex-item" in:maskAnimationIn={{ delay: 700 }}>
 					<img src="assets/imgs/svg-icons/flutter.svg" alt="flutter">
 					<img src="assets/imgs/svg-icons/android.svg" alt="native android">
@@ -143,7 +145,7 @@ function section2IntroAnimations() {
 				</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 750 }}>Back-end</div>
+				<div in:textAnimationIn={{ initDelay: 750, destroyLettersUponSuccess: true }}>Back-end</div>
 				<div class="flex-item" in:maskAnimationIn={{ delay: 800 }}>
 					<img src="assets/imgs/svg-icons/firebase.svg" alt="firebase">
 					<img src="assets/imgs/svg-icons/nodejs.svg" alt="node js">
@@ -152,7 +154,7 @@ function section2IntroAnimations() {
 				</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 850 }}>Design</div>
+				<div in:textAnimationIn={{ initDelay: 850, destroyLettersUponSuccess: true }}>Design</div>
 				<div class="flex-item" in:maskAnimationIn={{ delay: 900 }}>
 					<img src="assets/imgs/svg-icons/illustrator.svg" alt="adobe illustrator">
 					<img src="assets/imgs/svg-icons/xd.svg" alt="adobe xd">
@@ -161,10 +163,10 @@ function section2IntroAnimations() {
 		</ul>
 		<ul class="list">
 			<li class="list-title">
-				<div in:textAnimationIn={{ initDelay: 400 }}>awards</div>
+				<div in:textAnimationIn={{ initDelay: 400, destroyLettersUponSuccess: true }}>awards</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 550 }}>1x — Awwwards Honors</div>
+				<div in:textAnimationIn={{ initDelay: 550, destroyLettersUponSuccess: true }}>1x — Awwwards Honors</div>
 			</li>
 		</ul>
 	{/await}

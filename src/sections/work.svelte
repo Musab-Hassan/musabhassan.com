@@ -200,6 +200,7 @@ function adjustLineHeight(node) {
 											in:textAnimationIn={{ 
 												breakWord: false, 
 												duration: 800, 
+												destroyLettersUponSuccess: true,
 												initDelay: (i*100)+400 
 											}}>
 											{item.title}

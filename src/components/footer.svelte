@@ -23,11 +23,13 @@ function introAnimations() {
 	const statusAnimate = letterSlide().in(statusElem, { 
 		useAnime: true,
 		delay: 6,
+        destroyLettersUponSuccess: true,
         initDelay: 100
 	});
     const fullEmailLinkAnimate = letterSlide().in(fullEmailLinkElem, { 
         useAnime: true,
 		delay: 6,
+        destroyLettersUponSuccess: true,
         initDelay: 150,
 	});
     const creditsAnimate = maskSlide().in(creditsElem, {
