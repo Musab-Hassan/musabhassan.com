@@ -154,10 +154,11 @@ export function letterSlideOut (node, params: { duration?: number, delay?: numbe
 
 
 // Intro Mask reveal animation used with the 'in:' svelte directives
-export function maskSlideIn (node, params: { duration?: number, delay?: number, promise?: Promise<any>, maskStyles?: { property: string, value: string }[] }) {
+export function maskSlideIn (node, params: { duration?: number, delay?: number, reverse?: boolean, promise?: Promise<any>, maskStyles?: { property: string, value: string }[] }) {
 
     if (!params.delay) params.delay = 20;
     if (!params.duration) params.duration = 700;
+    if (!params.reverse) params.reverse = false;
 
     // Wrap content in an overflow hidden mask
     let mask = maskContent();
@@ -175,9 +176,14 @@ export function maskSlideIn (node, params: { duration?: number, delay?: number, 
         // Svelte transition animation
         tick: t => {
             let eased = BezierEasing(.2, .58, .43, 1)(t);
-
-            mask.style.transform = `translate3d(${(-100 + (eased * 100)).toFixed(2)}%, 0px, 0px)`;
-            node.style.transform = `translate3d(${(100 + (-eased * 100)).toFixed(2)}%, 0px, 0px)`;
+            let initialPosition = 100;
+            if (params.reverse) {
+                mask.style.transform = `translate3d(${(100 + (-eased * 100)).toFixed(2)}%, 0px, 0px)`;
+                node.style.transform = `translate3d(${(-100 + (eased * 100)).toFixed(2)}%, 0px, 0px)`;
+            } else {
+                mask.style.transform = `translate3d(${(-100 + (eased * 100)).toFixed(2)}%, 0px, 0px)`;
+                node.style.transform = `translate3d(${(100 + (-eased * 100)).toFixed(2)}%, 0px, 0px)`;
+            }
         },
 
         // Call animation outside of svelte blocks programmatically with animejs
@@ -203,8 +209,13 @@ export function maskSlideIn (node, params: { duration?: number, delay?: number, 
 
         parent.insertBefore(mask, parent.children[index]);
 
-        mask.style.transform = "translateX(100%)";
-        node.style.transform = "translateX(-100%)";
+        if (params.reverse) {
+            mask.style.transform = "translateX(-100%)";
+            node.style.transform = "translateX(100%)";
+        } else {
+            mask.style.transform = "translateX(100%)";
+            node.style.transform = "translateX(-100%)";
+        }
         
         return mask;
     }

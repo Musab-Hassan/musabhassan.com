@@ -5,13 +5,17 @@ import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import { ImageRenderer } from "../effects/work-slider/renderer";
 import { letterSlideIn, letterSlideOut, maskSlideIn, maskSlideOut, workImageIntro, workListIntro } from "../animations";
-import { clickables, isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
+import { isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
 import { loadImage } from "../utils";
 
 /* Slider calculations and rendering */
 class WorkSlider {
-	currentMouseX = 0; initialMouseX = 0;
-	currentPosition = 0; targetPosition = 0; initialPosition = 0;
+
+	currentMouseX = 0; 
+	initialMouseX = 0;
+	currentPosition = 0; 
+	targetPosition = 0; 
+	initialPosition = 0;
 	offsetSpeed = 5000; 
 	lerpSpeed = 0.1;
 
@@ -25,6 +29,7 @@ class WorkSlider {
         if (isMouseDown) {
             let style = window.getComputedStyle(listContainer);
             let matrix = new WebKitCSSMatrix(style.transform);
+
             this.initialPosition = matrix.m41;
         }
     }
@@ -55,9 +60,9 @@ class WorkSlider {
         this.currentPosition = this.lerp(this.currentPosition, this.targetPosition, this.lerpSpeed);
 		
         workScrollSpeed.set(Math.round((this.currentPosition - this.targetPosition) * 100) / 100); // Set Svelte Store value for the Canvas effect
-        listContainer.style.transform = `translateX(${ Math.round(this.currentPosition * 100) / 100 }px)`;
+        listContainer.style.transform = `translate3d(${ Math.round(this.currentPosition * 100) / 100 }px, 0px, 0px)`;
 
-        requestAnimationFrame(this.animate);
+        requestAnimationFrame(() => this.animate());
     }
 
 	lerp(start, end, t) {
@@ -70,7 +75,6 @@ let workContainer;
 let container, listContainer; // Containers for Threejs meshes
 let images = []; // Array of images to be passed to WebGL Shader
 let workItems = []; // Array of workItems to be animated
-let _viewLinks = []; // Array of clickable Links
 
 let breakTitleWords: boolean = false;
 
@@ -112,9 +116,6 @@ onMount(async () => {
 
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 
-	// Add clickables to clickables store
-	clickables.update(values => values.concat(_viewLinks));
-
 	 // Begin slider animations and effects if device is not a phone
 	if (!gpuTier.isMobile) slider.animate();
 	// ThreeJS warping effect if device can handle it
@@ -126,20 +127,12 @@ onMount(async () => {
 
 
 
+
+
 // Move slider to active item when it is active
 function toggleActiveItem(i) {
 	currentActive = (currentActive == i) ? null : i;
 	if (currentActive != null) slider.targetPosition = -(workItems[i].offsetLeft - (window.innerWidth / 4) + window.innerWidth / 10);
-}
-
-// Svelte function for registering clickables for cursor dot dynamically
-function addClickable(node) {
-	clickables.update(values => [...values, node]);
-	return {
-		destroy() {
-			clickables.update(values => values.filter(item => item !== node));
-		}
-	}
 }
 
 // Prevents clipping of animated letters that have overhang
@@ -184,7 +177,7 @@ function adjustLineHeight(node) {
 									<p 
 										class="item-index"
 										in:maskSlideIn={{
-											delay: (i*100)+3500 
+											delay: (i*100)+3500
 										}}>
 										{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
 									</p>
@@ -193,19 +186,19 @@ function adjustLineHeight(node) {
 									<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
 										<h1 
 											class="item-title" 
-											in:letterSlideIn={{ 
-												breakWord: false, 
+											in:maskSlideIn={{
 												duration: 800, 
-												initDelay: (i*100)+400 
+												delay: (i*100)+300,
+												reverse: true 
 											}}>
 											{item.title}
 										</h1>
 										<div 
-											class="button item-link" 
-											bind:this={_viewLinks[i]} 
+											class="button item-link"
 											on:click={() => toggleActiveItem(i)}
 											in:maskSlideIn={{
-												delay: (i*100)+500 
+												delay: (i*100)+300,
+												reverse: true
 											}}>
 											view
 										</div>
@@ -250,19 +243,21 @@ function adjustLineHeight(node) {
 							on:outrostart={() => breakTitleWords = false}>
 							{data[currentActive].title}
 						</h1>
-						<div class="button" use:addClickable on:click={() => toggleActiveItem(currentActive)} in:maskSlideIn out:maskSlideOut>&times; close</div>
+						<div class="button" on:click={() => toggleActiveItem(currentActive)} in:maskSlideIn out:maskSlideOut>&times; close</div>
 					</div>
 					
 					<div class="bottom-align">
 						<div>
-							<p class="paragraph" in:letterSlideIn out:letterSlideOut>
-								{data[currentActive].details.description}
-							</p>
+							<div>
+								<p class="paragraph" in:letterSlideIn out:letterSlideOut>
+									{data[currentActive].details.description}
+								</p>
+							</div>
 						</div>
 						<div class="links">
 							{#each data[currentActive].links as link}
 								<div style="position: relative">
-									<a in:letterSlideIn out:letterSlideOut use:addClickable href={link.link} target="_blank" class="button no-decor">{link.text}</a>
+									<a in:letterSlideIn out:letterSlideOut href={link.link} target="_blank" class="button no-decor">{link.text}</a>
 									<div class="underline" transition:fade></div>
 								</div><br>
 							{/each}
@@ -270,10 +265,12 @@ function adjustLineHeight(node) {
 						</div>
 						<div class="roles">
 							<div class="wrapper">
-								<p class="descriptor" in:letterSlideIn out:letterSlideOut>Role</p>
+								<div in:maskSlideIn={{reverse: true}} out:maskSlideOut>
+									<p class="descriptor">Role</p>
+								</div>
 								<ul>
-									{#each data[currentActive].roles as role}
-										<li in:letterSlideIn out:letterSlideOut>{"+ " + role}</li>
+									{#each data[currentActive].roles as role, index}
+										<li in:maskSlideIn={{reverse: true, delay: index*100}} out:maskSlideOut>{"+ " + role}</li>
 									{/each}
 								</ul>
 							</div>
@@ -416,8 +413,7 @@ function adjustLineHeight(node) {
 					flex-basis: 0
 
 				p
-					font-size: 1.4vh
-					text-transform: uppercase
+					font-size: 1.3vh
 					width: 60%
 
 				.roles 
@@ -426,8 +422,8 @@ function adjustLineHeight(node) {
 					align-items: center
 
 					.descriptor
-						line-height: 250%
-						letter-spacing: 0.6vh
+						line-height: 270%
+						letter-spacing: 0.5vh
 						font-family: $font
 						text-transform: uppercase
 						font-weight: normal
@@ -436,12 +432,14 @@ function adjustLineHeight(node) {
 
 					ul 
 						list-style-type: none
+						display: flex
+						flex-direction: column
 
 						li
 							font-family: $font
 							text-transform: uppercase
 							font-weight: normal
-							font-size: 1.9vh
+							font-size: 1.7vh
 							line-height: 160%
 
 				.links
@@ -589,6 +587,9 @@ function adjustLineHeight(node) {
 
 			.text-wrapper
 				box-sizing: border-box
+				display: flex
+				flex-direction: column
+				justify-content: flex-end
 				position: absolute
 				bottom: 10vh
 				right: 0
