@@ -51,11 +51,11 @@ export function letterSlideIn (node, params: { duration?: number, delay?: number
             masks.forEach((element) => {
                 // Letter animation
                 element.childNodes.forEach(e => {
-                    e.style.transform = `translateX(${(150 + (-eased * 150)).toFixed(2)}%)`;  
+                    e.style.transform = `translate3d(${(150 + (-eased * 150)).toFixed(2)}%, 0px, 0px)`;  
                 });
                 
                 // Word animation
-                element.style.transform = `translateX(${(80 + (-eased * 80)).toFixed(2)}%)`;
+                element.style.transform = `translate3d(${(80 + (-eased * 80)).toFixed(2)}%, 0px, 0px)`;
             });
 
             if (eased >= 1) {
@@ -123,10 +123,10 @@ export function letterSlideOut (node, params: { duration?: number, delay?: numbe
 
             masks.forEach((element) => {
                 element.childNodes.forEach(child => {
-                    child.style.transform = `translateX(${(-150 + (eased * 150)).toFixed(2)}%)`;
+                    child.style.transform = `translate3d(${(-150 + (eased * 150)).toFixed(2)}%, 0px, 0px)`;
                 });
 
-                element.style.transform = `translateX(${(-80 + (eased * 80)).toFixed(2)}%)`;
+                element.style.transform = `translate3d(${(-80 + (eased * 80)).toFixed(2)}%, 0px, 0px)`;
             });
 
             if (eased >= 1) node.innerHTML = originalNodeHTML;
@@ -176,8 +176,8 @@ export function maskSlideIn (node, params: { duration?: number, delay?: number, 
         tick: t => {
             let eased = BezierEasing(.2, .58, .43, 1)(t);
 
-            mask.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
-            node.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
+            mask.style.transform = `translate3d(${(-100 + (eased * 100)).toFixed(2)}%, 0px, 0px)`;
+            node.style.transform = `translate3d(${(100 + (-eased * 100)).toFixed(2)}%, 0px, 0px)`;
         },
 
         // Call animation outside of svelte blocks programmatically with animejs
@@ -238,9 +238,9 @@ export function maskSlideOut (node, params: { duration?: number, delay?: number 
 
             let isParentMask = node.parentElement?.classList.contains("a-mask");
             if (isParentMask) {
-                node.parentElement.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
+                node.parentElement.style.transform = `translate3d(${(-100 + (eased * 100)).toFixed(2)}%, 0px, 0px)`;
             }
-            node.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
+            node.style.transform = `translate3d(${(100 + (-eased * 100)).toFixed(2)}%, 0px, 0px)`;
         }
     }
 }
