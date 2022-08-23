@@ -11,7 +11,6 @@ import Footer from "./components/footer.svelte";
 import CursorDot from "./components/cursor-dot.svelte"
 import Loader from "./components/loader.svelte";
 
-let trackedDot; // Mouse following dot
 let scrollContainer;
 let navBar;
 let loading = true;
@@ -49,16 +48,17 @@ onMount(async () => {
 
 
 <!-- Cursor dot tracking when mouse moves inside the body -->
-<svelte:body on:mousemove = {(e) => trackedDot.trackMouse(e)}/>
-<CursorDot bind:this={trackedDot}></CursorDot>
+<CursorDot></CursorDot>
 
 <!-- Page loading progress bar -->
 {#if loading} <Loader></Loader> {/if}
 
 <div id="scroll-frame" bind:this={scrollContainer}>
+	<!-- Top nav-bar and mobile nav-bar -->
 	<div id="nav-bar" bind:this={navBar}>
 		<NavComponent scrollContainer={scrollContainer}></NavComponent>
 	</div>
+	<!-- page sections -->
 	<HomeSection></HomeSection>
 	<WorkSection></WorkSection>
 	<AboutSection></AboutSection>
