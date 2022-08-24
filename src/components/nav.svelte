@@ -156,6 +156,7 @@ function introAnimations() {
 					cursor: pointer
 
 				a
+					display: inline-block
 					color: white
 					text-decoration: none
 
@@ -199,19 +200,20 @@ function introAnimations() {
 				text-transform: lowercase
 				font-size: 9vw
 				display: inline-block
-				cursor: pointer
-				padding: 2vh 0
 				box-sizing: border-box
+				padding: 2vh 0
 
 				&:not(:last-child)
 					border-bottom: 1px solid rgba(255, 255, 255, 0.3)
 
 				div 
 					display: inline-block
+					cursor: pointer
 
 				a
 					display: inline-block
 					color: white
+					cursor: pointer
 					text-decoration: none
 
 	.mask
