@@ -140,6 +140,13 @@ function adjustLineHeight(node) {
 	if (/[gyjqp]/g.test(node.innerText)) node.style.lineHeight = "120%";
 }
 
+function titleSlide(node) {
+	let title = letterSlideIn(node, { delay: 5, breakWord: false });
+	title.anime({
+		onComplete: () => breakTitleWords=true
+	});
+}
+
 </script>
 
 
@@ -162,7 +169,7 @@ function adjustLineHeight(node) {
 				<!-- Work items -->
 				{#await workItemsFetch then items}
 					{#each items as item, i}
-						<li use:workImageIntro={{ promise: inView, delay: i*20 }}>
+						<li use:workImageIntro={{ promise: inView, delay: i*30 }}>
 							<div class="list-item clickable passive" 
 								class:ambient="{ currentActive !== i && currentActive !== null }" 
 								class:active="{ currentActive === i }" 
@@ -173,31 +180,35 @@ function adjustLineHeight(node) {
 										<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
 									{/await}
 								</div>
-								<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
-									<p 
-										class="item-index"
-										in:maskSlideIn={{
-											delay: (i*100)+3500
-										}}>
-										{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
-									</p>
-								</div>
 								{#await inView then _}
+									<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
+										<p 
+											class="item-index"
+											in:maskSlideIn={{
+												delay: (i*30)+500,
+												reveres: true
+											}}>
+											{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
+										</p>
+									</div>
 									<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
 										<h1 
 											class="item-title" 
-											in:maskSlideIn={{
-												duration: 800, 
-												delay: (i*100)+300,
+											>
+											<span in:maskSlideIn={{
+												duration: 900, 
+												delay: (i*30)+300,
 												reverse: true 
 											}}>
-											{item.title}
+												{item.title}
+											</span>
 										</h1>
 										<div 
 											class="button item-link"
 											on:click={() => toggleActiveItem(i)}
 											in:maskSlideIn={{
-												delay: (i*100)+300,
+												duration: 900,
+												delay: (i*30)+450,
 												reverse: true
 											}}>
 											view
@@ -235,15 +246,24 @@ function adjustLineHeight(node) {
 					
 					<div class="mid-align">
 						<h1 class="title" 
-							in:letterSlideIn={{ breakWord: false }} 
+							use:titleSlide
 							out:letterSlideOut 
 							use:adjustLineHeight
 							class:breakTitleWords
-							on:introend={() => breakTitleWords = true}
-							on:outrostart={() => breakTitleWords = false}>
+							on:introend={() => setTimeout(() => breakTitleWords = true, 100)}
+							on:outrostart={() => setTimeout(() => breakTitleWords = false, 100)}>
+
 							{data[currentActive].title}
 						</h1>
-						<div class="button" on:click={() => toggleActiveItem(currentActive)} in:maskSlideIn out:maskSlideOut>&times; close</div>
+						<div class="close-button-wrapper" on:click={() => toggleActiveItem(currentActive)}>
+							<div 
+								class ="close-button"
+								in:maskSlideIn={{ reverse: true }} 
+								out:maskSlideOut>
+
+								&times;
+							</div>
+						</div>
 					</div>
 					
 					<div class="bottom-align">
@@ -336,6 +356,7 @@ function adjustLineHeight(node) {
 			display: flex
 			flex-direction: column
 			justify-content: space-between
+			flex-basis: 100%
 
 			.top-align
 				.wrapper
@@ -383,11 +404,9 @@ function adjustLineHeight(node) {
 						display: inline-block
 						max-width: min-content
 
-				.button
-					font-size: 1.4vw
-					letter-spacing: 0.1vw
-					margin-top: 2vh
-					text-transform: uppercase
+				.close-button
+					cursor: pointer
+					font-size: 3.3vw
 
 			@media only screen and (max-width: 750px)
 				.mid-align
@@ -398,8 +417,13 @@ function adjustLineHeight(node) {
 					h1.title
 						font-size: 16.5vw
 
-					.button
-						font-size: 2vh
+					.close-button-wrapper
+						position: absolute
+						top: 0
+						right: 0
+
+						.close-button
+							font-size: 5vh
 
 			
 			.bottom-align

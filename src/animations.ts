@@ -69,17 +69,19 @@ export function letterSlideIn (node, params: { duration?: number, delay?: number
 
 
     // Call animation programmatically outside of svelte transitions with animejs
-    function animeAnimation(easing?) {
+    function animeAnimation(animeParams?: { easing?: string, onComplete?: () => void }) {
+        if (animeParams === undefined) animeParams = {};
         anime({
             targets: animeTargets,
             translateX: "0%",
-            easing: (easing) ? easing : "cubicBezier(.2, .58, .43, 1)",
+            easing: (animeParams.easing) ? animeParams.easing : "cubicBezier(.2, .58, .43, 1)",
             duration: params.duration,
             delay: anime.stagger(params.delay, { start: params.initDelay }),
             // Return node to original state if destroyLettersUponSucess is true
             complete: () => {
                 // Return node to original state on completion
                 node.innerHTML = originalNodeHTML;
+                if (animeParams.onComplete) animeParams.onComplete();
             }
         });
     }
@@ -175,8 +177,10 @@ export function maskSlideIn (node, params: { duration?: number, delay?: number, 
         duration: params.duration,
         // Svelte transition animation
         tick: t => {
-            let eased = BezierEasing(.2, .58, .43, 1)(t);
-            let initialPosition = 100;
+            
+            // let eased = BezierEasing(.2, .58, .43, 1)(t);
+            let eased = BezierEasing(.58, .14, .06, .97)(t);
+
             if (params.reverse) {
                 mask.style.transform = `translate3d(${(100 + (-eased * 100)).toFixed(2)}%, 0px, 0px)`;
                 node.style.transform = `translate3d(${(-100 + (eased * 100)).toFixed(2)}%, 0px, 0px)`;
@@ -225,7 +229,7 @@ export function maskSlideIn (node, params: { duration?: number, delay?: number, 
         anime({
             targets: [mask, node],
             translateX: "0%",
-            easing: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
+            easing: easing ? easing : "cubicBezier(.58,.14,.06,.97)",
             duration: params.duration,
             delay: params.delay
         })
@@ -264,14 +268,14 @@ export function workImageIntro(node, params: { promise, delay?: number }) {
     if (!params.delay) params.delay = 0;
 
     node.style.transition = "none";
-    node.style.marginRight = "30%";
+    node.style.marginRight = "60%";
 
     params.promise.then(() => {
         anime({
             targets: node,
             marginRight: "0%",
             easing: "easeOutQuint",
-            duration: 1600,
+            duration: 1400,
             delay: params.delay,
             complete: () => {
                 node.style.marginRight = null;
@@ -296,37 +300,11 @@ export function workListIntro(node, params: { promise, delay?: number }) {
             targets: node, 
             translateX: "0%",
             easing: "easeOutQuint",
-            duration: 1500,
+            duration: 1800,
             delay: params.delay,
             complete: () => {
                 node.style.transform = null;
                 node.style.transition = null;
-            }
-        });
-    });
-}
-
-
-
-
-// Opacity animation for workItem texts and links when workContainer is scrolled into view
-export function workSubItemsIntro(node, params: { promise, delay?: number }) {
-    if (!params.delay) params.delay = 0;
-
-    node.style.transform = "translateX(50%)";
-    node.style.opacity = "0"
-
-    params.promise.then(() => {
-        anime({
-            targets: node,
-            translateX: "0%",
-            opacity: "1",
-            easing: "easeInOutQuint",
-            duration: 1300,
-            delay: params.delay + 100,
-            complete: () => {
-                node.style.opacity = null;
-                node.style.transform = null;
             }
         });
     });
@@ -357,15 +335,15 @@ function tagLettersAndWords(node, params: { breakWord: boolean }) {
             element.style.display = "inline-block";
             element.style.whiteSpace = "nowrap";
         });
-
+    } else {
         // Set letter-spacing to exact computed letter-spacing to prevent animation popping
         let computed = getComputedStyle(node);
         let computedLetterSpacing = computed.getPropertyValue("letter-spacing");
 
-        let letters = node.querySelectorAll(".a-text-block");
-        letters.forEach(element => {
-            element.style.letterSpacing = computedLetterSpacing;
-        });
+        let masks = node.querySelectorAll(".a-text-mask");
+        masks.forEach(element => {
+            element.style.whiteSpace = "no-wrap";
+        })
     }
 
     return masks;
