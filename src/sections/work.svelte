@@ -185,8 +185,8 @@ function titleSlide(node) {
 										<p 
 											class="item-index"
 											in:maskSlideIn={{
-												delay: (i*30)+500,
-												reveres: true
+												delay: (i*30)+100,
+												reverse: true
 											}}>
 											{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
 										</p>
@@ -268,8 +268,8 @@ function titleSlide(node) {
 					
 					<div class="bottom-align">
 						<div>
-							<div>
-								<p class="paragraph" in:letterSlideIn out:letterSlideOut>
+							<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>
+								<p class="paragraph">
 									{data[currentActive].details.description}
 								</p>
 							</div>
