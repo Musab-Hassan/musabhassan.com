@@ -3,7 +3,7 @@
   "author": {
     "name": "Musab Hassan"
   },
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "build": "rollup -c",
