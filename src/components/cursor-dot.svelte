@@ -1,10 +1,9 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { clickables as clickableStore, isMobile, isWorkScroll } from "../store";
+import { isMobile, isWorkScroll } from "../store";
 
 let container;
-let clickables;
 
 // Svelte class toggles for hover-container
 let hover: boolean = false;
@@ -16,10 +15,6 @@ let introDisabled: boolean = true;
 isWorkScroll.subscribe(val => {
 	disabled = val;
 })
-
-clickableStore.subscribe(value => {
-	clickables = value;
-});
 
 
 abstract class CursorDot {

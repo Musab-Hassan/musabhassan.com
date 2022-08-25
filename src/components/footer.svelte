@@ -2,7 +2,6 @@
 
 import { onMount } from "svelte";
 import { letterSlideIn, maskSlideIn } from "../animations";
-import { clickables } from "../store";
 
 let footerContainer;
 let logoElem, creditsElem, statusElem, fullEmailLinkElem;
@@ -11,9 +10,6 @@ let signaturePath1, signaturePath2, signaturePath3, signaturePath4;
 let currentYear = new Date().getFullYear();
 
 onMount(() => {
-    // Register clickables
-	clickables.update(value => [...value, fullEmailLinkElem]);
-    
     introAnimations();
 });
 

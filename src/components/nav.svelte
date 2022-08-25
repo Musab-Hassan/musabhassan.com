@@ -5,9 +5,9 @@ export let scrollContainer;
 
 import anime from "animejs";
 import { onMount } from "svelte";
-import { clickables, homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "../store";
+import { homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "../store";
 
-let homeElem, workElem, aboutElem, emailElem, logoElem, githubElem;
+let logoElem, githubElem;
 let homeWrapperElem, workWrapperElem, aboutWrapperElem, mobileMenuElem;
 
 let mobileActive: boolean;
@@ -15,8 +15,6 @@ let mobileActive: boolean;
 onMount(async () => {
 	// Wait for page to load
 	await loadPagePromise;
-	// Register all anchors as clickables for the scroll dot
-	clickables.update(value => [...value, homeElem, workElem, aboutElem, emailElem, logoElem, githubElem, mobileMenuElem]);
 	// Initiate intro animations
 	introAnimations();
 });
@@ -70,15 +68,15 @@ function introAnimations() {
 		<div class="wrapper" class:mobileActive>
 			<ul class="nav-list">
 				<li bind:this={homeWrapperElem}>
-					<div bind:this={homeElem} on:click={() => navigate($homeAnchor)}>Home</div>
+					<div on:click={() => navigate($homeAnchor)}>Home</div>
 				</li>
 				<li bind:this={workWrapperElem}>
-					<div bind:this={workElem} on:click={() => navigate($workAnchor)}>Work</div>
+					<div on:click={() => navigate($workAnchor)}>Work</div>
 				</li>
 				<li bind:this={aboutWrapperElem}>
-					<div bind:this={aboutElem} on:click={() => navigate($aboutAnchor)}>About</div>
+					<div on:click={() => navigate($aboutAnchor)}>About</div>
 				</li>
-				<li class="mobile" bind:this={emailElem}>
+				<li class="mobile">
 					<a href="mailto:musabhassan04@gmail.com" target="_blank">Email</a>
 				</li>
 				<li bind:this={githubElem}>

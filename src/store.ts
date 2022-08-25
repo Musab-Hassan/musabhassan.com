@@ -2,7 +2,6 @@ import { writable } from "svelte/store";
 
 export let slickScrollInstance = writable(null); // Instance of slickscroll
 
-export let clickables = writable([]); // Array of clickable elements for cursor dot effect
 export let isWorkScroll = writable(false); // Is work slider being scrolled
 export let workScrollSpeed = writable(0); // Speed of work slider for use with Threejs effects
 
