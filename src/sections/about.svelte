@@ -2,16 +2,14 @@
 
 import { onMount } from "svelte";
 import { letterSlideIn, maskSlideIn } from "../animations";
-import { aboutAnchor, clickables, loadPagePromise, slickScrollInstance } from "../store";
+import { aboutAnchor, loadPagePromise, slickScrollInstance } from "../store";
 import { loadImage } from "../utils";
 
 // DOM Node binds
 let aboutSection1Container, aboutSection2Container;
-let githubLink, emailLink
+let githubLink, emailLink;
 let profilePicContainer;
-let title, paragraph, links, profilePicture;
-
-let allowParagraphDecoratorAnimation = false;
+let title, paragraph, profilePicture;
 
 // Promise which when resolved will trigger svelte animations
 let section2InViewResolve;
@@ -22,9 +20,6 @@ onMount(async () => {
 	await loadPagePromise;
 	// Set navbar about link's y location to top of aboutContainer
 	$aboutAnchor = aboutSection1Container;
-	
-	// Register links as clickables for cursor dot
-	clickables.update(value => [...value, githubLink, emailLink]);
 
 	// Add parallax scrolling offsets to slickScroll
 	$slickScrollInstance.addOffset({
@@ -43,8 +38,9 @@ function section1IntroAnimations() {
 
 	// Scroll activated animations powered by anime instead of svelte transitions
 	const titleAnimate = letterSlideIn(title, { delay: 15 });
-	const paragraphAnimate = letterSlideIn(paragraph, { delay: 2 });
-	const linkAnimate = maskSlideIn(links, { delay: 500 });
+	const paragraphAnimate = maskSlideIn(paragraph, { duration: 1000, delay: 200 });
+	const link1Animate = maskSlideIn(emailLink, { delay: 400 });
+	const link2Animate = maskSlideIn(githubLink, { delay: 700 });
 	const profilePictureAnimate = maskSlideIn(profilePicture, { duration: 1200,
 		maskStyles: [
 			{ property: "width", value: "100%"},
@@ -59,9 +55,9 @@ function section1IntroAnimations() {
 
 				titleAnimate.anime();
 				paragraphAnimate.anime();
-				linkAnimate.anime();
+				link1Animate.anime();
+				link2Animate.anime();
 				profilePictureAnimate.anime("easeInOutQuint");
-				allowParagraphDecoratorAnimation = true;
 				
 				observer.disconnect();
 			}
@@ -94,12 +90,16 @@ function section2IntroAnimations() {
 		<h1 class="title" bind:this={title}>
 			The Name's<br>Musab
 		</h1>
-		<p class="paragraph" class:active={allowParagraphDecoratorAnimation} bind:this={paragraph}>
-			I'm a web developer from British Columbia, Canada. I specialize in designing and developing web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
-		</p>
-		<div class="social-button-wrapper" bind:this={links}>
-			<div>
-				<span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email Me</a></span>
+		<div bind:this={paragraph}>
+			<p class="paragraph">
+				I'm a web developer from British Columbia, Canada. I specialize in designing and developing web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
+			</p>
+		</div>
+		<div class="social-button-wrapper">
+			<div bind:this={emailLink}>
+				<span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email Me</a></span>
+			</div>
+			<div bind:this={githubLink}>
 				<span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
 			</div>
 		</div>
@@ -115,59 +115,36 @@ function section2IntroAnimations() {
 	{#await section2InViewPromise then _}
 		<ul class="list first">
 			<li class="list-title">
-				<div in:letterSlideIn={{
-						initDelay: 400,
-						promise: section2InViewPromise
-					}}>
+				<div in:letterSlideIn={{ initDelay: 400 }}>
 					Stuff i use a lot
 				</div>
 			</li>
 			<li>
-				<div in:letterSlideIn={{
-						initDelay: 550,
-						promise: section2InViewPromise
-					}}>
+				<div in:letterSlideIn={{ initDelay: 550 }}>
 					Front-end
 				</div>
 				<div 
 					class="flex-item" 
-					in:maskSlideIn={{
-						delay: 600,
-						promise: section2InViewPromise
-					}}>
+					in:maskSlideIn={{ delay: 600 }}>
 					<img src="assets/imgs/svg-icons/angular.svg" alt="angular">
 					<img src="assets/imgs/svg-icons/svelte.svg" alt="svelte">
 				</div>
 			</li>
 			<li>
-				<div in:letterSlideIn={{
-						initDelay: 650,
-						promise: section2InViewPromise
-					}}>
+				<div in:letterSlideIn={{ initDelay: 650 }}>
 					Mobile
 				</div>
-				<div class="flex-item"
-					in:maskSlideIn={{
-						delay: 700,
-						promise: section2InViewPromise
-					}}>
+				<div class="flex-item" in:maskSlideIn={{ delay: 700 }}>
 					<img src="assets/imgs/svg-icons/flutter.svg" alt="flutter">
 					<img src="assets/imgs/svg-icons/android.svg" alt="native android">
 					<img src="assets/imgs/svg-icons/iOS.svg" alt="native ios">
 				</div>
 			</li>
 			<li>
-				<div in:letterSlideIn={{
-						initDelay: 750,
-						promise: section2InViewPromise
-					}}>
+				<div in:letterSlideIn={{ initDelay: 750 }}>
 					Back-end
 				</div>
-				<div class="flex-item"
-					in:maskSlideIn={{
-						delay: 800,
-						promise: section2InViewPromise
-					}}>
+				<div class="flex-item" in:maskSlideIn={{ delay: 800 }}>
 					<img src="assets/imgs/svg-icons/firebase.svg" alt="firebase">
 					<img src="assets/imgs/svg-icons/nodejs.svg" alt="node js">
 					<img src="assets/imgs/svg-icons/php.svg" alt="php">
@@ -175,17 +152,11 @@ function section2IntroAnimations() {
 				</div>
 			</li>
 			<li>
-				<div in:letterSlideIn={{
-						initDelay: 850,
-						promise: section2InViewPromise
-					}}>
+				<div in:letterSlideIn={{ initDelay: 850 }}>
 					Design
 				</div>
 				<div class="flex-item" 
-					in:maskSlideIn={{
-						delay: 900,
-						promise: section2InViewPromise
-					}}>
+					in:maskSlideIn={{ delay: 900 }}>
 					<img src="assets/imgs/svg-icons/illustrator.svg" alt="adobe illustrator">
 					<img src="assets/imgs/svg-icons/xd.svg" alt="adobe xd">
 				</div>
@@ -193,18 +164,12 @@ function section2IntroAnimations() {
 		</ul>
 		<ul class="list">
 			<li class="list-title">
-				<div in:letterSlideIn={{
-						initDelay: 400,
-						promise: section2InViewPromise
-					}}>
+				<div in:letterSlideIn={{ initDelay: 400 }}>
 					awards
 				</div>
 			</li>
 			<li>
-				<div in:letterSlideIn={{
-						initDelay: 550,
-						promise: section2InViewPromise
-					}}>
+				<div in:letterSlideIn={{ initDelay: 550 }}>
 					1x — Awwwards Honors
 				</div>
 			</li>
@@ -280,14 +245,10 @@ function section2IntroAnimations() {
 				content: ""
 				position: absolute
 				height: 1px
-				width: 0
+				width: 10vw
 				right: 115%
 				top: 15%
 				background-color: white
-				transition: width 0.6s ease
-
-			&.active::before
-				width: 10vw
 				
 
 		.social-button-wrapper
@@ -296,7 +257,7 @@ function section2IntroAnimations() {
 			margin-top: 4vh
 			display: inline-block
 
-			*:not(:last-child)
+			& :global(*:not(:last-child))
 				margin-right: 2vw
 
 			@media only screen and (max-width: 750px)
