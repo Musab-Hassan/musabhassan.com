@@ -28,10 +28,10 @@ onMount(async () => {
 	loadPageResolve(); // Resolve loadPagePromise
 
 	// Resolve slickScroll promise and pass momentumScroll's value
-	$slickScrollInstance = (new slickScroll).momentumScroll({
+	$slickScrollInstance = new slickScroll({
 		root: scrollContainer,
 		easing: "easeOutCirc",
-		duration: 600,
+		duration: 1500,
 		fixedOffsets: [
 			navBar
 		]
