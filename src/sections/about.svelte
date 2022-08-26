@@ -1,23 +1,17 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { letterSlide, maskSlide } from "../animations";
-import { aboutAnchor, clickables, loadPagePromise, slickScrollInstance } from "../store";
+import { letterSlideIn, maskSlideIn } from "../animations";
+import { aboutAnchor, loadPagePromise, slickScrollInstance } from "../store";
 import { loadImage } from "../utils";
 
-// DOM Node binds for animations
+// DOM Node binds
 let aboutSection1Container, aboutSection2Container;
-let githubLink, emailLink
+let githubLink, emailLink;
 let profilePicContainer;
-let title, paragraph, image, links;
+let title, paragraph, profilePicture;
 
-let allowParagraphDecoratorAnimation = false;
-
-// Initialised custom animations for use with svelte transitions
-let textAnimationIn = letterSlide().in;
-let maskAnimationIn = maskSlide().in;
-
-// Section two promise which when resolved will trigger svelte animations
+// Promise which when resolved will trigger svelte animations
 let section2InViewResolve;
 let section2InViewPromise = new Promise((resolve) => section2InViewResolve = resolve);
 
@@ -26,9 +20,6 @@ onMount(async () => {
 	await loadPagePromise;
 	// Set navbar about link's y location to top of aboutContainer
 	$aboutAnchor = aboutSection1Container;
-	
-	// Register links as clickables for cursor dot
-	clickables.update(value => [...value, githubLink, emailLink]);
 
 	// Add parallax scrolling offsets to slickScroll
 	$slickScrollInstance.addOffset({
@@ -36,30 +27,21 @@ onMount(async () => {
 		speedY: 0.8
 	});
 
-	section1IntroAnimations();
 	section2IntroAnimations();
+	section1IntroAnimations();
 });
 
 
 
-// About section before skills
+// About section
 function section1IntroAnimations() {
+
 	// Scroll activated animations powered by anime instead of svelte transitions
-	const titleAnimate = letterSlide().in(title, { 
-		useAnime: true, 
-		destroyLettersUponSuccess: true,
-		delay: 15 
-	});
-	const paragraphAnimate = letterSlide().in(paragraph, { 
-		useAnime: true, 
-		destroyLettersUponSuccess: true,
-		delay: 2 
-	});
-	const linkAnimate = maskSlide().in(links, { 
-		delay: 500 
-	});
-	const imageAnimate = maskSlide().in(image, {
-		duration: 1200,
+	const titleAnimate = letterSlideIn(title, { delay: 15 });
+	const paragraphAnimate = maskSlideIn(paragraph, { duration: 1000, delay: 200 });
+	const link1Animate = maskSlideIn(emailLink, { delay: 400 });
+	const link2Animate = maskSlideIn(githubLink, { delay: 700 });
+	const profilePictureAnimate = maskSlideIn(profilePicture, { duration: 1200,
 		maskStyles: [
 			{ property: "width", value: "100%"},
 			{ property: "height", value: "100%"}
@@ -73,9 +55,9 @@ function section1IntroAnimations() {
 
 				titleAnimate.anime();
 				paragraphAnimate.anime();
-				linkAnimate.anime();
-				imageAnimate.anime("easeInOutQuint");
-				allowParagraphDecoratorAnimation = true;
+				link1Animate.anime();
+				link2Animate.anime();
+				profilePictureAnimate.anime("easeInOutQuint");
 				
 				observer.disconnect();
 			}
@@ -105,20 +87,26 @@ function section2IntroAnimations() {
 
 <div id="content-container" class="about" bind:this={aboutSection1Container}>
 	<div class="content-wrapper">
-		<h1 class = "title" bind:this={title}>The Name's<br>Musab</h1>
-		<p class = "paragraph" class:active={allowParagraphDecoratorAnimation} bind:this={paragraph}>
-			I'm a web developer from British Columbia, Canada. I specialize in designing and developing web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
-		</p>
+		<h1 class="title" bind:this={title}>
+			The Name's<br>Musab
+		</h1>
+		<div bind:this={paragraph}>
+			<p class="paragraph">
+				I'm a web developer from British Columbia, Canada. I specialize in designing and developing web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
+			</p>
+		</div>
 		<div class="social-button-wrapper">
-			<div bind:this={links}>
-				<span class="button" bind:this={emailLink}><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email Me</a></span>
+			<div bind:this={emailLink}>
+				<span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email Me</a></span>
+			</div>
+			<div bind:this={githubLink}>
 				<span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
 			</div>
 		</div>
 	</div>
 	<div class="profile-image" bind:this={profilePicContainer}>
 		{#await loadImage("assets/imgs/profile-photo.jpg") then src}
-			<img bind:this={image} src="{src}" alt="Musab's Cover" class="profile-pic">
+			<img src="{src}" bind:this={profilePicture} alt="Musab's Cover" class="profile-pic">
 		{/await}
 	</div>
 </div>
@@ -127,26 +115,36 @@ function section2IntroAnimations() {
 	{#await section2InViewPromise then _}
 		<ul class="list first">
 			<li class="list-title">
-				<div in:textAnimationIn={{ initDelay: 400, destroyLettersUponSuccess: true }}>Stuff i use a lot</div>
+				<div in:letterSlideIn={{ initDelay: 400 }}>
+					Stuff i use a lot
+				</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 550, destroyLettersUponSuccess: true }}>Front-end</div>
-				<div class="flex-item" in:maskAnimationIn={{ delay: 600 }}>
+				<div in:letterSlideIn={{ initDelay: 550 }}>
+					Front-end
+				</div>
+				<div 
+					class="flex-item" 
+					in:maskSlideIn={{ delay: 600 }}>
 					<img src="assets/imgs/svg-icons/angular.svg" alt="angular">
 					<img src="assets/imgs/svg-icons/svelte.svg" alt="svelte">
 				</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 650, destroyLettersUponSuccess: true }}>Mobile</div>
-				<div class="flex-item" in:maskAnimationIn={{ delay: 700 }}>
+				<div in:letterSlideIn={{ initDelay: 650 }}>
+					Mobile
+				</div>
+				<div class="flex-item" in:maskSlideIn={{ delay: 700 }}>
 					<img src="assets/imgs/svg-icons/flutter.svg" alt="flutter">
 					<img src="assets/imgs/svg-icons/android.svg" alt="native android">
 					<img src="assets/imgs/svg-icons/iOS.svg" alt="native ios">
 				</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 750, destroyLettersUponSuccess: true }}>Back-end</div>
-				<div class="flex-item" in:maskAnimationIn={{ delay: 800 }}>
+				<div in:letterSlideIn={{ initDelay: 750 }}>
+					Back-end
+				</div>
+				<div class="flex-item" in:maskSlideIn={{ delay: 800 }}>
 					<img src="assets/imgs/svg-icons/firebase.svg" alt="firebase">
 					<img src="assets/imgs/svg-icons/nodejs.svg" alt="node js">
 					<img src="assets/imgs/svg-icons/php.svg" alt="php">
@@ -154,8 +152,11 @@ function section2IntroAnimations() {
 				</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 850, destroyLettersUponSuccess: true }}>Design</div>
-				<div class="flex-item" in:maskAnimationIn={{ delay: 900 }}>
+				<div in:letterSlideIn={{ initDelay: 850 }}>
+					Design
+				</div>
+				<div class="flex-item" 
+					in:maskSlideIn={{ delay: 900 }}>
 					<img src="assets/imgs/svg-icons/illustrator.svg" alt="adobe illustrator">
 					<img src="assets/imgs/svg-icons/xd.svg" alt="adobe xd">
 				</div>
@@ -163,10 +164,14 @@ function section2IntroAnimations() {
 		</ul>
 		<ul class="list">
 			<li class="list-title">
-				<div in:textAnimationIn={{ initDelay: 400, destroyLettersUponSuccess: true }}>awards</div>
+				<div in:letterSlideIn={{ initDelay: 400 }}>
+					awards
+				</div>
 			</li>
 			<li>
-				<div in:textAnimationIn={{ initDelay: 550, destroyLettersUponSuccess: true }}>1x — Awwwards Honors</div>
+				<div in:letterSlideIn={{ initDelay: 550 }}>
+					1x — Awwwards Honors
+				</div>
 			</li>
 		</ul>
 	{/await}
@@ -240,14 +245,10 @@ function section2IntroAnimations() {
 				content: ""
 				position: absolute
 				height: 1px
-				width: 0
+				width: 10vw
 				right: 115%
 				top: 15%
 				background-color: white
-				transition: width 0.6s ease
-
-			&.active::before
-				width: 10vw
 				
 
 		.social-button-wrapper
@@ -256,7 +257,7 @@ function section2IntroAnimations() {
 			margin-top: 4vh
 			display: inline-block
 
-			*:not(:last-child)
+			& :global(*:not(:last-child))
 				margin-right: 2vw
 
 			@media only screen and (max-width: 750px)

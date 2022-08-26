@@ -4,14 +4,18 @@ import { getGPUTier } from 'detect-gpu';
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import { ImageRenderer } from "../effects/work-slider/renderer";
-import { letterSlide, maskSlide, workImageIntro, workListIntro } from "../animations";
-import { clickables, isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
+import { letterSlideIn, letterSlideOut, maskSlideIn, maskSlideOut, workImageIntro, workListIntro } from "../animations";
+import { isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "../store";
 import { loadImage } from "../utils";
 
 /* Slider calculations and rendering */
 class WorkSlider {
-	currentMouseX = 0; initialMouseX = 0;
-	currentPosition = 0; targetPosition = 0; initialPosition = 0;
+
+	currentMouseX = 0; 
+	initialMouseX = 0;
+	currentPosition = 0; 
+	targetPosition = 0; 
+	initialPosition = 0;
 	offsetSpeed = 5000; 
 	lerpSpeed = 0.1;
 
@@ -25,6 +29,7 @@ class WorkSlider {
         if (isMouseDown) {
             let style = window.getComputedStyle(listContainer);
             let matrix = new WebKitCSSMatrix(style.transform);
+
             this.initialPosition = matrix.m41;
         }
     }
@@ -55,9 +60,9 @@ class WorkSlider {
         this.currentPosition = this.lerp(this.currentPosition, this.targetPosition, this.lerpSpeed);
 		
         workScrollSpeed.set(Math.round((this.currentPosition - this.targetPosition) * 100) / 100); // Set Svelte Store value for the Canvas effect
-        listContainer.style.transform = `translateX(${ Math.round(this.currentPosition * 100) / 100 }px)`;
+        listContainer.style.transform = `translate3d(${ Math.round(this.currentPosition * 100) / 100 }px, 0px, 0px)`;
 
-        requestAnimationFrame(this.animate);
+        requestAnimationFrame(() => this.animate());
     }
 
 	lerp(start, end, t) {
@@ -70,18 +75,13 @@ let workContainer;
 let container, listContainer; // Containers for Threejs meshes
 let images = []; // Array of images to be passed to WebGL Shader
 let workItems = []; // Array of workItems to be animated
-let _viewLinks = []; // Array of clickable Links
+
+let breakTitleWords: boolean = false;
 
 let isMouseDown: boolean = false; // is user holding click
 let currentActive: number = null; // Active work item in the detailsViewer viewed
 
 let data; // JSON Work data fetched from the data.json file
-
-// Animations for active work item description
-let textAnimationIn = letterSlide().in;
-let textAnimationOut = letterSlide().out;
-let maskAnimationIn = maskSlide().in;
-let maskAnimationOut = maskSlide().out;
 
 // Intersection observer and promise to enable scroll activated animations
 let inViewResolve;
@@ -116,9 +116,6 @@ onMount(async () => {
 
 	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 
-	// Add clickables to clickables store
-	clickables.update(values => values.concat(_viewLinks));
-
 	 // Begin slider animations and effects if device is not a phone
 	if (!gpuTier.isMobile) slider.animate();
 	// ThreeJS warping effect if device can handle it
@@ -130,25 +127,24 @@ onMount(async () => {
 
 
 
+
+
 // Move slider to active item when it is active
 function toggleActiveItem(i) {
 	currentActive = (currentActive == i) ? null : i;
 	if (currentActive != null) slider.targetPosition = -(workItems[i].offsetLeft - (window.innerWidth / 4) + window.innerWidth / 10);
 }
 
-// Svelte function for registering clickables for cursor dot dynamically
-function addClickable(node) {
-	clickables.update(values => [...values, node]);
-	return {
-		destroy() {
-			clickables.update(values => values.filter(item => item !== node));
-		}
-	}
-}
-
 // Prevents clipping of animated letters that have overhang
 function adjustLineHeight(node) {
 	if (/[gyjqp]/g.test(node.innerText)) node.style.lineHeight = "120%";
+}
+
+function titleSlide(node) {
+	let title = letterSlideIn(node, { delay: 5, breakWord: false });
+	title.anime({
+		onComplete: () => breakTitleWords=true
+	});
 }
 
 </script>
@@ -173,7 +169,7 @@ function adjustLineHeight(node) {
 				<!-- Work items -->
 				{#await workItemsFetch then items}
 					{#each items as item, i}
-						<li use:workImageIntro={{ promise: inView, delay: i*20 }}>
+						<li use:workImageIntro={{ promise: inView, delay: i*30 }}>
 							<div class="list-item clickable passive" 
 								class:ambient="{ currentActive !== i && currentActive !== null }" 
 								class:active="{ currentActive === i }" 
@@ -184,33 +180,36 @@ function adjustLineHeight(node) {
 										<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
 									{/await}
 								</div>
-								<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
-									<p 
-										class="item-index"
-										in:maskAnimationIn={{
-											delay: (i*100)+3500 
-										}}>
-										{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
-									</p>
-								</div>
 								{#await inView then _}
+									<div class="text-top-wrapper" class:hidden={currentActive != null || isMouseDown}>
+										<p 
+											class="item-index"
+											in:maskSlideIn={{
+												delay: (i*30)+100,
+												reverse: true
+											}}>
+											{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
+										</p>
+									</div>
 									<div class="text-wrapper" class:hidden={currentActive != null || isMouseDown}>
 										<h1 
 											class="item-title" 
-											in:textAnimationIn={{ 
-												breakWord: false, 
-												duration: 800, 
-												destroyLettersUponSuccess: true,
-												initDelay: (i*100)+400 
+											>
+											<span in:maskSlideIn={{
+												duration: 900, 
+												delay: (i*30)+300,
+												reverse: true 
 											}}>
-											{item.title}
+												{item.title}
+											</span>
 										</h1>
 										<div 
-											class="button item-link" 
-											bind:this={_viewLinks[i]} 
+											class="button item-link"
 											on:click={() => toggleActiveItem(i)}
-											in:maskAnimationIn={{
-												delay: (i*100)+500 
+											in:maskSlideIn={{
+												duration: 900,
+												delay: (i*30)+450,
+												reverse: true
 											}}>
 											view
 										</div>
@@ -230,7 +229,7 @@ function adjustLineHeight(node) {
 					<div class="top-align">
 						<div class="wrapper">
 							<div class="index">
-								<div in:maskAnimationIn out:maskAnimationOut>
+								<div in:maskSlideIn out:maskSlideOut>
 									{#if (currentActive < 9)}
 										{"0"+(currentActive+1)}
 									{:else}
@@ -240,26 +239,45 @@ function adjustLineHeight(node) {
 							</div>
 							<span class="line" transition:fade></span>
 							<h6 class="caption">
-								<div in:maskAnimationIn out:maskAnimationOut>{data[currentActive].details.summary}</div>
+								<div in:maskSlideIn out:maskSlideOut>{data[currentActive].details.summary}</div>
 							</h6>
 						</div>
 					</div>
 					
 					<div class="mid-align">
-						<h1 class="title" in:textAnimationIn={{ breakWord: false }} out:textAnimationOut use:adjustLineHeight>{data[currentActive].title}</h1>
-						<div class="button" use:addClickable on:click={() => toggleActiveItem(currentActive)} in:maskAnimationIn out:maskAnimationOut>&times; close</div>
+						<h1 class="title" 
+							use:titleSlide
+							out:letterSlideOut 
+							use:adjustLineHeight
+							class:breakTitleWords
+							on:introend={() => setTimeout(() => breakTitleWords = true, 100)}
+							on:outrostart={() => setTimeout(() => breakTitleWords = false, 100)}>
+
+							{data[currentActive].title}
+						</h1>
+						<div class="close-button-wrapper" on:click={() => toggleActiveItem(currentActive)}>
+							<div 
+								class ="close-button"
+								in:maskSlideIn={{ reverse: true }} 
+								out:maskSlideOut>
+
+								&times;
+							</div>
+						</div>
 					</div>
 					
 					<div class="bottom-align">
 						<div>
-							<p class="paragraph" in:textAnimationIn out:textAnimationOut>
-								{data[currentActive].details.description}
-							</p>
+							<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>
+								<p class="paragraph">
+									{data[currentActive].details.description}
+								</p>
+							</div>
 						</div>
 						<div class="links">
 							{#each data[currentActive].links as link}
 								<div style="position: relative">
-									<a in:textAnimationIn out:textAnimationOut use:addClickable href={link.link} target="_blank" class="button no-decor">{link.text}</a>
+									<a in:letterSlideIn out:letterSlideOut href={link.link} target="_blank" class="button no-decor">{link.text}</a>
 									<div class="underline" transition:fade></div>
 								</div><br>
 							{/each}
@@ -267,10 +285,12 @@ function adjustLineHeight(node) {
 						</div>
 						<div class="roles">
 							<div class="wrapper">
-								<p class="descriptor" in:textAnimationIn out:textAnimationOut>Role</p>
+								<div in:maskSlideIn={{reverse: true}} out:maskSlideOut>
+									<p class="descriptor">Role</p>
+								</div>
 								<ul>
-									{#each data[currentActive].roles as role}
-										<li in:textAnimationIn out:textAnimationOut>{"+ " + role}</li>
+									{#each data[currentActive].roles as role, index}
+										<li in:maskSlideIn={{reverse: true, delay: index*100}} out:maskSlideOut>{"+ " + role}</li>
 									{/each}
 								</ul>
 							</div>
@@ -336,6 +356,7 @@ function adjustLineHeight(node) {
 			display: flex
 			flex-direction: column
 			justify-content: space-between
+			flex-basis: 100%
 
 			.top-align
 				.wrapper
@@ -379,11 +400,13 @@ function adjustLineHeight(node) {
 					white-space: normal
 					line-height: 90%
 
-				.button
-					font-size: 1.4vw
-					letter-spacing: 0.1vw
-					margin-top: 2vh
-					text-transform: uppercase
+					&.breakTitleWords
+						display: inline-block
+						max-width: min-content
+
+				.close-button
+					cursor: pointer
+					font-size: 3.3vw
 
 			@media only screen and (max-width: 750px)
 				.mid-align
@@ -394,8 +417,13 @@ function adjustLineHeight(node) {
 					h1.title
 						font-size: 16.5vw
 
-					.button
-						font-size: 2vh
+					.close-button-wrapper
+						position: absolute
+						top: 0
+						right: 0
+
+						.close-button
+							font-size: 5vh
 
 			
 			.bottom-align
@@ -409,8 +437,7 @@ function adjustLineHeight(node) {
 					flex-basis: 0
 
 				p
-					font-size: 1.4vh
-					text-transform: uppercase
+					font-size: 1.3vh
 					width: 60%
 
 				.roles 
@@ -419,8 +446,8 @@ function adjustLineHeight(node) {
 					align-items: center
 
 					.descriptor
-						line-height: 250%
-						letter-spacing: 0.6vh
+						line-height: 270%
+						letter-spacing: 0.5vh
 						font-family: $font
 						text-transform: uppercase
 						font-weight: normal
@@ -429,12 +456,14 @@ function adjustLineHeight(node) {
 
 					ul 
 						list-style-type: none
+						display: flex
+						flex-direction: column
 
 						li
 							font-family: $font
 							text-transform: uppercase
 							font-weight: normal
-							font-size: 1.9vh
+							font-size: 1.7vh
 							line-height: 160%
 
 				.links
@@ -582,6 +611,9 @@ function adjustLineHeight(node) {
 
 			.text-wrapper
 				box-sizing: border-box
+				display: flex
+				flex-direction: column
+				justify-content: flex-end
 				position: absolute
 				bottom: 10vh
 				right: 0

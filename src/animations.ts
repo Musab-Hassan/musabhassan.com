@@ -1,221 +1,281 @@
 import BezierEasing from "bezier-easing";
 import anime from "animejs";
 
-// Letter reveal animation used with the 'in:' and 'out:' svelte directives aswell as a dynamic animeJS version
-export function letterSlide() {
+
+
+// Intro Letter reveal animation used declaratively with the 'in:' svelte directive or programatically with animejs
+export function letterSlideIn (node, params: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean, promise?: Promise<any> }) {
+
+    // Set defaults if not set
+    if (!params.delay) params.delay = 35;
+    if (!params.initDelay) params.initDelay = 0;
+    if (!params.duration) params.duration = 600;
+    if (params.breakWord === undefined) params.breakWord = true;
+
+    // Store innerHTML of node in data attribute so it can be recovered once animation is done
+    let originalNodeHTML = node.innerHTML;
+
+    // Wrap every letter with a div and prepare it for animation
+    let masks = tagLettersAndWords(node, { breakWord: params.breakWord });
+
+    // Set initial style properties for each mask before animation begins
+    masks.forEach(e => {
+        e.childNodes.forEach(child => {
+            child.style.transform = "translateX(150%)";
+        });
+        e.style.transform = "translateX(80%)";
+        e.style.display = "inline-flex";
+        e.style.overflow = "hidden";
+    });
+
+    // Create a node list for animejs
+    let animeTargets = [];
+    masks.forEach((element) => {
+        animeTargets = [...animeTargets, element, ...element.childNodes];
+    });
+
+    // If animation should fire after a promise, wait for it and then start animejs animation
+    if (params.promise !== undefined) {
+        params.promise.then(() => {
+            animeAnimation();
+        })
+    }
+
     return {
-        in: (node, params: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean, useAnime?: boolean, destroyLettersUponSuccess?: boolean }) => {
+        delay: params.initDelay,
+        duration: params.duration,
+        // Svelte transition animation
+        tick: t => {
+            let eased = BezierEasing(.2, .58, .43, 1)(t); // t value with easing applied
 
-            if (!params.delay) params.delay = 35;
-            if (!params.initDelay) params.initDelay = 0;
-            if (!params.duration) params.duration = 600;
-            if (params.breakWord === undefined) params.breakWord = true;
-            if (params.useAnime === undefined) params.useAnime = false;
-            if (params.destroyLettersUponSuccess === undefined) params.destroyLettersUponSuccess = false;
-
-            // If destroyLettersUponSucess is true, Store innerHTML of node in data attribute so it can be recovered once animation is done
-            let originalNodeHTML = node.innerHTML;
-
-            // Wrap every letter with a div and prepare it for animation
-            let masks = wordWrapHandler(node, {
-                breakWord: params.breakWord,
-                destroyLettersUponSuccess: params.destroyLettersUponSuccess
-            });
-
-            // Set default properties for each mask, fully ready for animation
-            masks.forEach(e => {
-                e.childNodes.forEach(child => {
-                    child.style.transform = "translateX(150%)";
-                });
-                e.style.transform = "translateX(80%)";
-                e.style.display = "inline-flex";
-                e.style.overflow = "hidden";
-            });
-
-            let eased = 0; // eased timing value 
-            let animeTargets = []; // node list which anime.js should animate (if useAnime is true)
-
-            // Animation
             masks.forEach((element) => {
-                let index = Array.from(element.parentNode.children).indexOf(element) + 1;
+                // Letter animation
+                element.childNodes.forEach(e => {
+                    e.style.transform = `translate3d(${(150 + (-eased * 150)).toFixed(2)}%, 0px, 0px)`;  
+                });
                 
-                if (params.useAnime) { // Register children for use with anime
-                    animeTargets = [...animeTargets, element, ...element.childNodes];
-                } else {
-                    // Async animation of letters for better performance (for svelte transitions only)
-                    element.childNodes.forEach(e => {
-                        asyncAnimation({
-                            delay: params.delay * index,
-                            onLoop: () => {
-                                e.style.transform = `translateX(${(150 + (-eased * 150)).toFixed(2)}%)`;
-                            },
-                            endCondition: () => eased >= 1
-                        });
-                    });
-
-                    // Async animation of words for better performance (for svelte transitions only)
-                    asyncAnimation({
-                        delay: params.delay * index, 
-                        onLoop: () => {
-                            element.style.transform = `translateX(${(80 + (-eased * 80)).toFixed(2)}%)`;
-                        }, 
-                        endCondition: () => eased >= 1,
-                        // Return node to original state if destroyLettersUponSucess is true
-                        onCompletion: () => {
-                            if (params.destroyLettersUponSuccess) {
-                                setTimeout(() => {
-                                    node.innerHTML = originalNodeHTML;
-                                }, 5)
-                            }
-                        }
-                    });
-                }
+                // Word animation
+                element.style.transform = `translate3d(${(80 + (-eased * 80)).toFixed(2)}%, 0px, 0px)`;
             });
 
-            return {
-                delay: params.initDelay,
-                duration: params.duration,
-                tick: t => { // Svelte transitions
-                    eased = BezierEasing(.2, .58, .43, 1)(t); // t value with easing applied
-                },
-                anime: (easing?) => { // Call animation outside of svelte blocks programmatically with animejs
-                    if (!params.useAnime) return;
-                    anime({
-                        targets: animeTargets,
-                        translateX: "0%",
-                        easing: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
-                        duration: params.duration,
-                        delay: anime.stagger(params.delay, {start: params.initDelay}),
-                        // Return node to original state if destroyLettersUponSucess is true
-                        complete: () => {
-                            if (params.destroyLettersUponSuccess) {
-                                setTimeout(() => {
-                                    node.innerHTML = originalNodeHTML;
-                                }, 5)
-                            }
-                        } 
-                    })
-                }
+            if (eased >= 1) {
+                node.innerHTML = originalNodeHTML;
             }
         },
+        // Call animation programmatically outside of svelte transitions with animejs
+        anime: animeAnimation
+    }
 
-        out: (node, params: { duration?: number, delay?: number, initDelay?: number, extraElems?: any }) => {
 
-            let masks = node.querySelectorAll(".a-text-mask");
 
-            if (!params.delay) params.delay = 25;
-            if (!params.initDelay) params.initDelay = 0;
-
-            return {
-                delay: params.initDelay,
-                duration: 600,
-                tick: t => {
-                    let eased = BezierEasing(.32, .24, .76, .26)(t);
-
-                    masks.forEach((e) => {
-                        e.childNodes.forEach(i => {
-                            i.style.transform = `translateX(${(-150 + (eased * 150)).toFixed(2)}%)`;
-                        });
-
-                        e.style.transform = `translateX(${(-80 + (eased * 80)).toFixed(2)}%)`;
-                    });
-                }
+    // Call animation programmatically outside of svelte transitions with animejs
+    function animeAnimation(animeParams?: { easing?: string, onComplete?: () => void }) {
+        if (animeParams === undefined) animeParams = {};
+        anime({
+            targets: animeTargets,
+            translateX: "0%",
+            easing: (animeParams.easing) ? animeParams.easing : "cubicBezier(.2, .58, .43, 1)",
+            duration: params.duration,
+            delay: anime.stagger(params.delay, { start: params.initDelay }),
+            // Return node to original state if destroyLettersUponSucess is true
+            complete: () => {
+                // Return node to original state on completion
+                node.innerHTML = originalNodeHTML;
+                if (animeParams.onComplete) animeParams.onComplete();
             }
-        }
+        });
     }
 }
 
 
-// Mask reveal animation used with the 'in:' and 'out:' svelte directives
-export function maskSlide() {
+
+
+// Outro Letter reveal animation used declaratively with the 'out:' svelte directive or programatically with animejs
+export function letterSlideOut (node, params: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean }) {
+    
+    // Set defaults if not set
+    if (!params.delay) params.delay = 35;
+    if (!params.initDelay) params.initDelay = 0;
+    if (!params.duration) params.duration = 600;
+    if (params.breakWord === undefined) params.breakWord = true;
+
+    // Store innerHTML of node in data attribute so it can be recovered once animation is done
+    let originalNodeHTML = node.innerHTML;
+
+    // Wrap every letter with a div and prepare it for animation
+    let masks = tagLettersAndWords(node, { breakWord: params.breakWord });
+    // Set initial style properties for each mask before animation begins
+    masks.forEach(e => {
+        e.style.display = "inline-flex";
+        e.style.overflow = "hidden";
+    });
+
+    // Create a node list for animejs
+    let animeTargets = [];
+    masks.forEach((element) => {
+        animeTargets = [...animeTargets, element, ...element.childNodes];
+    });
+
     return {
-        in: (node, params: { duration?: number, delay?: number, maskStyles?: { property: string, value: string }[] }) => {
+        delay: params.initDelay,
+        duration: params.duration,
+        // Svelte transition animation
+        tick: t => {
+            let eased = BezierEasing(.32, .24, .76, .26)(t);
 
-            if (!params.delay) params.delay = 20;
-            if (!params.duration) params.duration = 700;
+            masks.forEach((element) => {
+                element.childNodes.forEach(child => {
+                    child.style.transform = `translate3d(${(-150 + (eased * 150)).toFixed(2)}%, 0px, 0px)`;
+                });
 
-            let mask = addMask();
+                element.style.transform = `translate3d(${(-80 + (eased * 80)).toFixed(2)}%, 0px, 0px)`;
+            });
 
-            return {
-                delay: params.delay,
-                duration: params.duration,
-                tick: t => {
-                    let eased = BezierEasing(.2, .58, .43, 1)(t);
-
-                    mask.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
-                    node.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
-                },
-                anime: (easing?) => {
-                    anime({
-                        targets: [mask, node],
-                        translateX: "0%",
-                        easing: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
-                        duration: params.duration,
-                        delay: params.delay
-                    })
-                }
-            }
-
-            function addMask() {
-                let mask = document.createElement("div");
-                let parent = node.parentNode;
-                let index = Array.from(parent.children).indexOf(node);
-
-                mask.classList.add("a-mask");
-                node.classList.add("a-content");
-                mask.insertBefore(node, mask.children[0]);
-                mask.style.display = "inline-block";
-                mask.style.overflow = "hidden";
-                if (params.maskStyles) {
-                    params.maskStyles.forEach(element => {
-                        mask.style[element.property] = element.value;
-                    });
-                }
-
-                parent.insertBefore(mask, parent.children[index]);
-
-                mask.style.transform = "translateX(100%)";
-                node.style.transform = "translateX(-100%)";
-                
-                return mask;
-            }
+            if (eased >= 1) node.innerHTML = originalNodeHTML;
         },
 
-        out: (node, params: { duration?: number, delay?: number }) => {
-
-            if (!params.delay) params.delay = 0;
-            if (!params.duration) params.duration = 400;
-
-            return {
-                delay: params.delay,
+        // Call animation outside of svelte blocks programmatically with animejs
+        anime: (easing?) => {
+            anime({
+                targets: animeTargets,
+                translateX: "-150%",
+                easing: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
                 duration: params.duration,
-                tick: t => {
-                    let eased = BezierEasing(.32, .24, .76, .26)(t);
-
-                    let isParentMask = node.parentElement?.classList.contains("a-mask");
-                    if (isParentMask) {
-                        node.parentElement.style.transform = `translateX(${(-100 + (eased * 100)).toFixed(2)}%)`;
-                    }
-                    node.style.transform = `translateX(${(100 + (-eased * 100)).toFixed(2)}%)`;
+                delay: anime.stagger(params.delay, { start: params.initDelay }),
+                // Return node to original state if destroyLettersUponSucess is true
+                complete: () => {
+                    // Return node to original state on completion
+                    node.innerHTML = originalNodeHTML;
                 }
-            }
+            })
         }
     }
 }
+
+
+
+
+// Intro Mask reveal animation used with the 'in:' svelte directives
+export function maskSlideIn (node, params: { duration?: number, delay?: number, reverse?: boolean, promise?: Promise<any>, maskStyles?: { property: string, value: string }[] }) {
+
+    if (!params.delay) params.delay = 20;
+    if (!params.duration) params.duration = 700;
+    if (!params.reverse) params.reverse = false;
+
+    // Wrap content in an overflow hidden mask
+    let mask = maskContent();
+
+    // If animation should fire after a promise, wait for it and then start animejs animation
+    if (params.promise !== undefined) {
+        params.promise.then(() => {
+            animeAnimation();
+        })
+    }
+
+    return {
+        delay: params.delay,
+        duration: params.duration,
+        // Svelte transition animation
+        tick: t => {
+            
+            // let eased = BezierEasing(.2, .58, .43, 1)(t);
+            let eased = BezierEasing(.58, .14, .06, .97)(t);
+
+            if (params.reverse) {
+                mask.style.transform = `translate3d(${(100 + (-eased * 100)).toFixed(2)}%, 0px, 0px)`;
+                node.style.transform = `translate3d(${(-100 + (eased * 100)).toFixed(2)}%, 0px, 0px)`;
+            } else {
+                mask.style.transform = `translate3d(${(-100 + (eased * 100)).toFixed(2)}%, 0px, 0px)`;
+                node.style.transform = `translate3d(${(100 + (-eased * 100)).toFixed(2)}%, 0px, 0px)`;
+            }
+        },
+
+        // Call animation outside of svelte blocks programmatically with animejs
+        anime: animeAnimation
+    }
+
+
+    function maskContent() {
+        let mask = document.createElement("div");
+        let parent = node.parentNode;
+        let index = Array.from(parent.children).indexOf(node);
+
+        mask.classList.add("a-mask");
+        node.classList.add("a-content");
+        mask.insertBefore(node, mask.children[0]);
+        mask.style.display = "inline-block";
+        mask.style.overflow = "hidden";
+        if (params.maskStyles) {
+            params.maskStyles.forEach(element => {
+                mask.style[element.property] = element.value;
+            });
+        }
+
+        parent.insertBefore(mask, parent.children[index]);
+
+        if (params.reverse) {
+            mask.style.transform = "translateX(-100%)";
+            node.style.transform = "translateX(100%)";
+        } else {
+            mask.style.transform = "translateX(100%)";
+            node.style.transform = "translateX(-100%)";
+        }
+        
+        return mask;
+    }
+
+    // Call animation programmatically outside of svelte transitions with animejs
+    function animeAnimation(easing?) {
+        anime({
+            targets: [mask, node],
+            translateX: "0%",
+            easing: easing ? easing : "cubicBezier(.58,.14,.06,.97)",
+            duration: params.duration,
+            delay: params.delay
+        })
+    }
+}
+
+
+
+
+// Outro Mask reveal animation used with the 'out:' svelte directives
+export function maskSlideOut (node, params: { duration?: number, delay?: number }) {
+
+    if (!params.delay) params.delay = 0;
+    if (!params.duration) params.duration = 400;
+
+    return {
+        delay: params.delay,
+        duration: params.duration,
+        tick: t => {
+            let eased = BezierEasing(.32, .24, .76, .26)(t);
+
+            let isParentMask = node.parentElement?.classList.contains("a-mask");
+            if (isParentMask) {
+                node.parentElement.style.transform = `translate3d(${(-100 + (eased * 100)).toFixed(2)}%, 0px, 0px)`;
+            }
+            node.style.transform = `translate3d(${(100 + (-eased * 100)).toFixed(2)}%, 0px, 0px)`;
+        }
+    }
+}
+
+
+
 
 // Animation for workItem image when workContainer is scrolled into view
 export function workImageIntro(node, params: { promise, delay?: number }) {
     if (!params.delay) params.delay = 0;
 
     node.style.transition = "none";
-    node.style.marginRight = "30%";
+    node.style.marginRight = "60%";
 
     params.promise.then(() => {
         anime({
             targets: node,
             marginRight: "0%",
             easing: "easeOutQuint",
-            duration: 1600,
+            duration: 1400,
             delay: params.delay,
             complete: () => {
                 node.style.marginRight = null;
@@ -224,6 +284,9 @@ export function workImageIntro(node, params: { promise, delay?: number }) {
         });
     });
 }
+
+
+
 
 // Animation for workItem image when workContainer is scrolled into view
 export function workListIntro(node, params: { promise, delay?: number }) {
@@ -237,34 +300,11 @@ export function workListIntro(node, params: { promise, delay?: number }) {
             targets: node, 
             translateX: "0%",
             easing: "easeOutQuint",
-            duration: 1500,
+            duration: 1800,
             delay: params.delay,
             complete: () => {
                 node.style.transform = null;
                 node.style.transition = null;
-            }
-        });
-    });
-}
-
-// Opacity animation for workItem texts and links when workContainer is scrolled into view
-export function workSubItemsIntro(node, params: { promise, delay?: number }) {
-    if (!params.delay) params.delay = 0;
-
-    node.style.transform = "translateX(50%)";
-    node.style.opacity = "0"
-
-    params.promise.then(() => {
-        anime({
-            targets: node,
-            translateX: "0%",
-            opacity: "1",
-            easing: "easeInOutQuint",
-            duration: 1300,
-            delay: params.delay + 100,
-            complete: () => {
-                node.style.opacity = null;
-                node.style.transform = null;
             }
         });
     });
@@ -280,7 +320,7 @@ export function workSubItemsIntro(node, params: { promise, delay?: number }) {
 
 
 // Wrap each word with a mask and return masks
-function wordWrapHandler(node, params: { breakWord: boolean, destroyLettersUponSuccess: boolean }) {
+function tagLettersAndWords(node, params: { breakWord: boolean }) {
 
     let masks = node.querySelectorAll(".a-text-mask");
 
@@ -295,17 +335,15 @@ function wordWrapHandler(node, params: { breakWord: boolean, destroyLettersUponS
             element.style.display = "inline-block";
             element.style.whiteSpace = "nowrap";
         });
-
+    } else {
         // Set letter-spacing to exact computed letter-spacing to prevent animation popping
-        if (params.destroyLettersUponSuccess) {
-            let computed = getComputedStyle(node);
-            let computedLetterSpacing = computed.getPropertyValue("letter-spacing");
+        let computed = getComputedStyle(node);
+        let computedLetterSpacing = computed.getPropertyValue("letter-spacing");
 
-            let letters = node.querySelectorAll(".a-text-block");
-            letters.forEach(element => {
-                element.style.letterSpacing = computedLetterSpacing;
-            });
-        }
+        let masks = node.querySelectorAll(".a-text-mask");
+        masks.forEach(element => {
+            element.style.whiteSpace = "no-wrap";
+        })
     }
 
     return masks;
@@ -350,32 +388,4 @@ function wordWrapHandler(node, params: { breakWord: boolean, destroyLettersUponS
 
         return newString;
     }
-}
-
-
-
-// Asyncronous animation delay instead of using setTimeout (greatly improves performance when using svelte transitions)
-export async function asyncAnimation(params: { delay: number, onLoop: () => void, endCondition: () => boolean, onCompletion?: () => void }) {
-    let target = Date.now() + params.delay;
-
-    await new Promise((resolve) => {
-        function loop() {
-            if (Date.now() >= target) {
-                resolve(true);
-                return;
-            }
-            requestAnimationFrame(loop);
-        }
-        loop();
-    });
-
-    let loop = () => {
-        if (params.endCondition()) {
-            if (params.onCompletion) params.onCompletion();
-            return;
-        }
-        params.onLoop();
-        requestAnimationFrame(loop);
-    }
-    loop();
 }
