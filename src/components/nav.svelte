@@ -29,6 +29,8 @@ $: mobileTransitionSwitcher =
 			tick: t => {
 				let reversedT = 1 - t;
 				out.tick(reversedT);
+
+				if (t == 1) out.tick(1);
 			} 
 		}
 	};
@@ -158,7 +160,7 @@ function introAnimations() {
 				text-transform: uppercase
 				font-size: 2vh
 				letter-spacing: 0.2vh
-				display: inline-block
+				display: inline-flex
 
 				&.mobile
 					display: none
