@@ -33,11 +33,7 @@
     "animejs": "^3.2.1",
     "bezier-easing": "^2.1.0",
     "detect-gpu": "^4.0.7",
-<<<<<<< Updated upstream
-    "node-sass": "^7.0.1",
-=======
     "node-sass": "^8.0.0",
->>>>>>> Stashed changes
     "sirv-cli": "^2.0.1",
     "slickscrolljs": "^2.0.2",
     "three": "^0.136.0",
