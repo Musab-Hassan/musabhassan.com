@@ -2,6 +2,7 @@
 
 import { onMount } from "svelte";
 import { letterSlideIn, maskSlideIn } from "../animations";
+import { dataFetch } from "../store"
 
 let footerContainer;
 let logoElem, creditsElem, statusElem, fullEmailLinkElem;
@@ -13,10 +14,9 @@ onMount(() => {
     introAnimations();
 });
 
-function introAnimations() {
+async function introAnimations() {
     // Scroll activated animations powered by anime instead of svelte transitions
 	const logoAnimate = maskSlideIn(logoElem, {});
-	const statusAnimate = letterSlideIn(statusElem, { delay: 6, initDelay: 100 });
     const fullEmailLinkAnimate = letterSlideIn(fullEmailLinkElem, { delay: 6, initDelay: 150 });
     const creditsAnimate = maskSlideIn(creditsElem, { delay: 150 });
 
@@ -68,6 +68,9 @@ function introAnimations() {
     });
 
     animationObserver.observe(footerContainer);
+
+    await dataFetch;
+	const statusAnimate = letterSlideIn(statusElem, { delay: 6, initDelay: 100 });
 }
 
 </script>
@@ -84,9 +87,17 @@ function introAnimations() {
         </div>
 
         <div class="status-wrapper">
-            <p class="large-text" bind:this={statusElem}>
-                i am currently accepting freelance work,<br>you may reach me on my email.
-            </p>
+            {#await dataFetch then fetchedData}
+                {#if fetchedData.availablity_date == ""}
+                    <p class="large-text" bind:this={statusElem}>
+                        i am currently accepting freelance work, <br>you may reach me on my email.
+                    </p>
+                {:else}
+                    <p class="large-text" bind:this={statusElem}>
+                        i am available for freelance work after <br> {fetchedData.availablity_date}.
+                    </p>
+                {/if}
+            {/await}
             <a class="button large-text" bind:this={fullEmailLinkElem} href="mailto:musabhassan04@gmail.com" target="_blank">musabhassan04@gmail.com</a>
         </div>
         
