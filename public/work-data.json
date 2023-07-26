@@ -87,26 +87,6 @@
         ]
     },
     {
-        "id": "kwa",
-        "title": "Kelowna Wholesale Auto",
-        "details": {
-            "description": "A multipage web application with an inventory management system for a second-hand vehicle dealership",
-            "summary": "Brand Website"
-        },
-        "date": "Jan 2020",
-        "roles": [
-            "Website Designer",
-            "Full-Stack Web Developer"
-        ],
-        "links": [
-            {
-                "type": "web",
-                "text": "Visit Site",
-                "link": "http://kelownawholesaleauto.com/"
-            }
-        ]
-    },
-    {
         "id": "slickscroll",
         "title": "SlickScroll",
         "details": {
