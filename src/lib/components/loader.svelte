@@ -1,9 +1,9 @@
 <script lang="ts">
 import { onMount } from "svelte";
-import waitForElementTransition from 'wait-for-element-transition';
-import { imgPromises, loaderAnimationResolve, workItemsFetch } from "../store";
+import { waitForElementTransition } from '$lib/wait-for-element-transition';
+import { imgPromises, loaderAnimationResolve, workItemsFetch } from "$lib/store";
 
-let loader;
+let loader: HTMLElement;
 let loadingDone = false;
 let loadingPercentage = 0;
 

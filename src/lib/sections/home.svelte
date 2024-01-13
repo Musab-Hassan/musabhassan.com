@@ -6,10 +6,10 @@ import { homeAnchor, loadPagePromise, slickScrollInstance } from "../store";
 import { loadImage } from "../utils";
 
 // DOM Node Binds for animations
-let homeContainer; // Container
-let backgroundContainer, backgroundImage; // Offsets
-let path1, path2, path3, path4; // SVG Paths
-let titleWord1, titleWord2, shortDetails, callToAction; // Elements for animations
+let homeContainer: HTMLElement; // Container
+let backgroundContainer: HTMLElement, backgroundImage: HTMLElement; // Offsets
+let path1: SVGPathElement, path2: SVGPathElement, path3: SVGPathElement, path4: SVGPathElement; // SVG Paths
+let titleWord1: HTMLElement, titleWord2: HTMLElement, shortDetails: HTMLElement, callToAction: HTMLElement; // Elements for animations
 
 onMount(async () => {
 	// Wait for page to load
@@ -18,7 +18,7 @@ onMount(async () => {
 	$homeAnchor = homeContainer;
 
 	// Add parallax scrolling offsets to slickScroll
-	$slickScrollInstance.addOffset({
+	$slickScrollInstance!.addOffset({
 		element: backgroundContainer,
 		speedY: 0.8
 	});
@@ -179,7 +179,7 @@ function introAnimations() {
 
 <style lang="sass">
 
-@import "../consts.sass"
+@import "../consts"
 @include textStyles()
 
 #content-container

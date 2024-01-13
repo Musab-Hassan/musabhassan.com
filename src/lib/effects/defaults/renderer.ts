@@ -4,15 +4,18 @@ import * as THREE from "three"
 export class MeshRenderer {
 
     // Passed properties
-    container; scene; camera; renderer;
+    container: HTMLElement; 
+    scene: THREE.Scene; 
+    camera: THREE.PerspectiveCamera; 
+    renderer: THREE.WebGLRenderer;
 
-    constructor(container) {
+    constructor(container: HTMLElement) {
 
         this.container = container;
         this.scene = new THREE.Scene();
     }
 
-    private get dimensions(): { width, height, aspect } {
+    private get dimensions(): { width: number, height: number, aspect: number } {
         let width = window.innerWidth;
         let height = this.container.getBoundingClientRect().height;
         let aspect = width / height;

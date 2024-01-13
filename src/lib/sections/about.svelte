@@ -1,18 +1,18 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { letterSlideIn, maskSlideIn } from "../animations";
-import { aboutAnchor, loadPagePromise, slickScrollInstance } from "../store";
-import { loadImage } from "../utils";
+import { aboutAnchor, loadPagePromise, slickScrollInstance } from "$lib/store";
+import { letterSlideIn, maskSlideIn } from "$lib/animations";
+import { loadImage } from "$lib/utils";
 
 // DOM Node binds
-let aboutSection1Container, aboutSection2Container;
-let githubLink, emailLink;
-let profilePicContainer;
-let title, paragraph, profilePicture;
+let aboutSection1Container: HTMLElement, aboutSection2Container: HTMLElement;
+let githubLink: HTMLElement, emailLink: HTMLElement;
+let profilePicContainer: HTMLElement;
+let title: HTMLElement, paragraph: HTMLElement, profilePicture: HTMLElement;
 
 // Promise which when resolved will trigger svelte animations
-let section2InViewResolve;
+let section2InViewResolve: (value?: any) => void;
 let section2InViewPromise = new Promise((resolve) => section2InViewResolve = resolve);
 
 onMount(async () => {
@@ -74,7 +74,6 @@ function section2IntroAnimations() {
 		entries.forEach(entry => {
 			if (entry.isIntersecting) {
 				section2InViewResolve();
-				
 				observer.disconnect();
 			}
 		});

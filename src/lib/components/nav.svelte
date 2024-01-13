@@ -1,15 +1,15 @@
 <script lang="ts">
 
 // Scroll container to allow scrolling when anchors are clicked
-export let scrollContainer;
+export let scrollContainer: HTMLElement;
 
 import anime from "animejs";
 import { onMount } from "svelte";
-import { homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "../store";
-import { maskSlideIn, maskSlideOut } from "../animations";
+import { homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "$lib/store";
+import { maskSlideIn } from "$lib/animations";
 
-let logoElem, githubElem;
-let homeWrapperElem, workWrapperElem, aboutWrapperElem, mobileMenuElem;
+let logoElem: HTMLElement, githubElem: HTMLElement;
+let homeWrapperElem: HTMLElement, workWrapperElem: HTMLElement, aboutWrapperElem: HTMLElement, mobileMenuElem: HTMLElement;
 
 let mobileActive: boolean;
 
@@ -23,10 +23,10 @@ onMount(async () => {
 $: mobileTransitionSwitcher = 
 	mobileActive ? 
 	maskSlideIn : 
-	(node, _) => { 
+	(node: HTMLElement, _: any) => { 
 		let out = maskSlideIn(node, {reverse: true}); 
 		return { 
-			tick: t => {
+			tick: (t: number) => {
 				let reversedT = 1 - t;
 				out.tick(reversedT);
 
@@ -36,7 +36,7 @@ $: mobileTransitionSwitcher =
 	};
 
 
-function navigate(anchor) {
+function navigate(anchor: HTMLElement) {
 	scrollContainer.scrollTo({
 		top: anchor.offsetTop - (window.innerHeight / 5),
 		behavior: "smooth"

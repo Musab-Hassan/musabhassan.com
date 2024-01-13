@@ -2,25 +2,27 @@
 	
 import slickScroll from "slickscrolljs";
 import { onMount } from "svelte";
-import { imgPromises, loaderAnimationPromise, loadPageResolve, slickScrollInstance, workItemsFetch } from "./store";
-import HomeSection from "./sections/home.svelte";
-import WorkSection from "./sections/work.svelte";
-import AboutSection from "./sections/about.svelte";
-import NavComponent from "./components/nav.svelte"
-import Footer from "./components/footer.svelte";
-import CursorDot from "./components/cursor-dot.svelte"
-import Loader from "./components/loader.svelte";
+import { imgPromises, loaderAnimationPromise, loadPageResolve, slickScrollInstance, workItemsFetch, siteDataFetch } from "$lib/store";
+import { fetchJsonData } from "$lib/utils";
+import HomeSection from "$lib/sections/home.svelte";
+import WorkSection from "$lib/sections/work.svelte";
+import AboutSection from "$lib/sections/about.svelte";
+import NavComponent from "$lib/components/nav.svelte"
+import Footer from "$lib/components/footer.svelte";
+import CursorDot from "$lib/components/cursor-dot.svelte"
+import Loader from "$lib/components/loader.svelte";
 
-let scrollContainer;
-let navBar;
-let loading = true;
+let scrollContainer: HTMLElement, navBar: HTMLElement;
+let loading: boolean = true;
 
 onMount(async () => {
 	// Disable scrolling on initial load
 	scrollContainer.style.overflowY = "hidden";
 	scrollContainer.scrollTo(0, 0);
 	
-	await workItemsFetch; // Wait for work data to load
+	workItemsFetch.set(await fetchJsonData("/data/work-data.json")); // Wait for work data to load
+	siteDataFetch.set(await fetchJsonData("/data/data.json")); // Wait for work data to load
+
 	await Promise.allSettled($imgPromises); // Wait for images to load
 	await loaderAnimationPromise; // Wait until loading animation is complete
 
@@ -28,7 +30,7 @@ onMount(async () => {
 	loadPageResolve(); // Resolve loadPagePromise
 
 	// Resolve slickScroll promise and pass momentumScroll's value
-	$slickScrollInstance = new slickScroll({
+	$slickScrollInstance = new (slickScroll as any)({
 		root: scrollContainer,
 		easing: "easeOutCirc",
 		duration: 1500,
@@ -40,7 +42,6 @@ onMount(async () => {
 	// Enable scrolling
 	scrollContainer.style.overflowX = "hidden";
 	scrollContainer.style.overflowY = "auto";
-
 });
 
 </script>
@@ -69,8 +70,10 @@ onMount(async () => {
 
 
 <style lang="sass">
+
+@import "$lib/consts"
 	
-\:global(body)
+:global(body)
 	background-color: #222224
 	overflow: hidden
 	color: white
@@ -78,21 +81,21 @@ onMount(async () => {
 	padding: 0
 	-moz-osx-font-smoothing: grayscale
 	-webkit-font-smoothing: antialiased
+	font-family: "Questrial", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif
 
-\:global(*)
+:global(*)
 	margin: 0
 	padding: 0
 	-moz-osx-font-smoothing: grayscale
 	-webkit-font-smoothing: antialiased
 
 #scroll-frame
-	height: 100%
 	top: 0
 	left: 0
-	position: relative
 	width: 100%
-	overflow-y: auto
-	overflow-x: hidden
+	height: 100vh
+	position: relative
+	overflow: hidden auto
 
 #nav-bar
 	position: fixed

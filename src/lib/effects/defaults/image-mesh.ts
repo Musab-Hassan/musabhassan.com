@@ -3,13 +3,44 @@ import * as THREE from "three";
 
 export class ImageMesh {
 
-    element; dimensionsNode; material; scene; offset; sizes; geometry; uniforms; mesh; activeFragmentShader;
+    element: HTMLImageElement; 
+    dimensionsNode: HTMLElement; 
+    scene: THREE.Scene; 
+    offset: THREE.Vector2; 
+    sizes: THREE.Vector2; 
+    material: THREE.Material; 
+    geometry: THREE.BufferGeometry; 
+    mesh: THREE.Mesh<any, THREE.ShaderMaterial, THREE.Object3DEventMap>;
+    activeFragmentShader: string;
+
+    uniforms: any;
+    // uniforms: {
+    //     uTexture: {
+    //         value: THREE.Texture
+    //     },
+    //     uMeshSize: {
+    //         value: THREE.Vector2
+    //     },
+    //     uImgSize: {
+    //         value: THREE.Vector2
+    //     },
+    //     uTime: {
+    //         value: number;
+    //     };
+    //     uOffset: {
+    //         value: THREE.Vector2;
+    //     };
+    //     uAlpha: {
+    //         value: number;
+    //     };
+    // };
+
     shaders: {
         fragment: { vertical: string, horizontal: string },
         vertex: string
     }
 
-    constructor(element, scene, shaders: { fragment: { vertical: string, horizontal: string }, vertex: any }, dimensionsNode, uniforms?) {
+    constructor(element: HTMLImageElement, scene: THREE.Scene, shaders: { fragment: { vertical: string; horizontal: string; }; vertex: string; }, dimensionsNode: HTMLElement, uniforms?: any) {
         this.element = element;
         this.scene = scene;
         this.shaders = shaders;
@@ -29,7 +60,7 @@ export class ImageMesh {
 
     createMesh(): void {
         this.setDimensions();
-        this.geometry = new THREE.PlaneBufferGeometry(1, 1, 4, 6);
+        this.geometry = new (THREE as any).PlaneBufferGeometry(1, 1, 4, 6);
 
         const { width, height } = this.element.getBoundingClientRect();
 

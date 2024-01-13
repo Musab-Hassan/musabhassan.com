@@ -3,9 +3,10 @@ import { SliderImageMesh } from "./item";
 
 export class ImageRenderer extends MeshRenderer {
 
-    images; meshItems;
+    meshItems: SliderImageMesh[];
+    images: HTMLImageElement[];
 
-    constructor(container, images: any[]) {
+    constructor(container: HTMLElement, images: HTMLImageElement[]) {
         super(container);
 
         this.images = images;

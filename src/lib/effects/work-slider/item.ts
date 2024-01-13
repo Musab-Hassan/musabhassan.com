@@ -6,10 +6,9 @@ import { fragmentShader, vertexShader } from "./shaders";
 
 export class SliderImageMesh extends ImageMesh {
 
-    element; scene; speed; 
-    clock;
+    speed: number; clock: THREE.Clock;
 
-    constructor(element, scene) {
+    constructor(element: HTMLImageElement, scene: THREE.Scene) {
         let shaders = {
             vertex: vertexShader,
             fragment: { 
@@ -30,7 +29,7 @@ export class SliderImageMesh extends ImageMesh {
             }
         }
 
-        super(element, scene, shaders, element.parentElement, uniforms);
+        super(element, scene, shaders, element.parentElement!, uniforms);
 
         this.clock = new THREE.Clock();
         workScrollSpeed.subscribe(val => { // Get current slider speed from svelte stores
@@ -40,7 +39,7 @@ export class SliderImageMesh extends ImageMesh {
 
     createMesh(): void {
         super.createMesh();
-        this.element.parentElement.style.visibility = "hidden"; // Hide original image element
+        this.element.parentElement!.style.visibility = "hidden"; // Hide original image element
     }
 
     render(): void {

@@ -1,14 +1,20 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { letterSlideIn, maskSlideIn } from "../animations";
-import { dataFetch } from "../store"
+import { letterSlideIn, maskSlideIn } from "$lib/animations";
+import { siteDataFetch } from "$lib/store"
+import type { SiteData } from "$lib/types";
 
-let footerContainer;
-let logoElem, creditsElem, statusElem, fullEmailLinkElem;
-let signaturePath1, signaturePath2, signaturePath3, signaturePath4; 
+let footerContainer: HTMLElement;
+let logoElem: HTMLElement, creditsElem: HTMLElement, statusElem: HTMLElement, fullEmailLinkElem: HTMLElement;
+let signaturePath1: SVGPathElement, signaturePath2: SVGPathElement, signaturePath3: SVGPathElement, signaturePath4: SVGPathElement; 
 
 let currentYear = new Date().getFullYear();
+
+let siteData: SiteData = {availablity_date: ""};
+siteDataFetch.subscribe(val => {
+    if (val !== undefined) siteData = val;
+});
 
 onMount(() => {
     introAnimations();
@@ -19,6 +25,7 @@ async function introAnimations() {
 	const logoAnimate = maskSlideIn(logoElem, {});
     const fullEmailLinkAnimate = letterSlideIn(fullEmailLinkElem, { delay: 6, initDelay: 150 });
     const creditsAnimate = maskSlideIn(creditsElem, { delay: 150 });
+	const statusAnimate = letterSlideIn(statusElem, { delay: 6, initDelay: 100 });
 
     // Intersection observer to run animations when footer is in scroll view
     let animationObserver = new IntersectionObserver((entries) => { 
@@ -68,9 +75,6 @@ async function introAnimations() {
     });
 
     animationObserver.observe(footerContainer);
-
-    await dataFetch;
-	const statusAnimate = letterSlideIn(statusElem, { delay: 6, initDelay: 100 });
 }
 
 </script>
@@ -87,24 +91,22 @@ async function introAnimations() {
         </div>
 
         <div class="status-wrapper">
-            {#await dataFetch then fetchedData}
-                {#if fetchedData.availablity_date == ""}
+                {#if siteData.availablity_date === ""}
                     <p class="large-text" bind:this={statusElem}>
                         i am currently accepting freelance work, <br>you may reach me on my email.
                     </p>
                 {:else}
                     <p class="large-text" bind:this={statusElem}>
-                        i am available for freelance work after <br> {fetchedData.availablity_date}.
+                        i am available for freelance work after <br> {siteData.availablity_date}.
                     </p>
                 {/if}
-            {/await}
             <a class="button large-text" bind:this={fullEmailLinkElem} href="mailto:musabhassan04@gmail.com" target="_blank">musabhassan04@gmail.com</a>
         </div>
         
         <div class="credits-wrapper" bind:this={creditsElem}>
             <p class="year">© {currentYear}</p>
             <p class="credits">
-                designed and developed by musab hassan<br>this webste is open source on github
+                designed and developed by Musab Hassan<br>this website is open source on github
             </p>
         </div>
     </div>

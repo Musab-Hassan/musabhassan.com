@@ -1,9 +1,9 @@
 <script lang="ts">
 
 import { onMount } from "svelte";
-import { isMobile, isWorkScroll } from "../store";
+import { isMobile, isWorkScroll } from "$lib/store";
 
-let container;
+let container: HTMLElement;
 
 // Svelte class toggles for hover-container
 let hover: boolean = false;
@@ -29,21 +29,19 @@ abstract class CursorDot {
 	};
 
 	// onMouseMove, set current mouse coords and detect if any clickables are hovered
-	static updateMouseCoords(e) {
+	static updateMouseCoords(e: MouseEvent) {
 		// Dont do anything if its a touch mobile device
 		if ($isMobile) return;
 		// Intro animation for cursor dot
 		if (introDisabled) setTimeout(() => introDisabled = false, 500);
 
-		let clickable = false;
-
-		let cursor = window.getComputedStyle(e.target)["cursor"];
+		let cursor = window.getComputedStyle((e as any).target)["cursor"];
 		hover = (cursor === "pointer");
 
 		// clickable transition if mouse changes to pointer
 		if (cursor === "pointer") {
 
-			let currentlyHovering = document.elementFromPoint(e.clientX, e.clientY);
+			let currentlyHovering: Element = document.elementFromPoint(e.clientX, e.clientY)!;
 			
 			let width = currentlyHovering.clientWidth;
 			let height = currentlyHovering.clientHeight;
@@ -84,7 +82,7 @@ abstract class CursorDot {
 	}
 
 	// Tweening function
-	static easeInOutQuad(t) {
+	static easeInOutQuad(t: number) {
 		return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 	}
 }
