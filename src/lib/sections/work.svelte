@@ -1,6 +1,6 @@
 <script lang="ts">
 
-	// import getGPUTier from 'detect-gpu';
+	import { getGPUTier } from 'detect-gpu';
 	import { onMount } from "svelte";
 	import { fade } from "svelte/transition";
 	import { ImageRenderer } from "$lib/effects/work-slider/renderer";
@@ -104,23 +104,20 @@
 
 		onScrolledIntoView(workContainer, () => inViewResolve(true));
 
-		// // GPU Tier to decide if effects should be enabled
-		// const gpuTier = await getGPUTier.getGPUTier();
-		// // Svelte store for checking if device is a mobile device
-		// $isMobile = gpuTier.isMobile!;
+		// GPU Tier to decide if effects should be enabled
+		const gpuTier = await getGPUTier();
+		// Svelte store for checking if device is a mobile device
+		$isMobile = gpuTier.isMobile!;
 
 		await loadPagePromise;
 		$workAnchor = workContainer;
 
 		listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 
-		slider.animate();
-		new ImageRenderer(container, images);
-
-		//  // Begin slider animations and effects if device is not a phone
-		// if (!gpuTier.isMobile) slider.animate();
-		// // ThreeJS warping effect if device can handle it
-		// if (gpuTier.tier >= 2 && !gpuTier.isMobile && gpuTier.fps! >= 30) new ImageRenderer(container, images);
+		 // Begin slider animations and effects if device is not a phone
+		if (!gpuTier.isMobile) slider.animate();
+		// ThreeJS warping effect if device can handle it
+		if (gpuTier.tier >= 2 && !gpuTier.isMobile && gpuTier.fps! >= 30) new ImageRenderer(container, images);
 	});
 
 	// Move slider to active item when it is active
