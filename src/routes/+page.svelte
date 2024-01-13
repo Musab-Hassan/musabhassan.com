@@ -72,6 +72,12 @@ onMount(async () => {
 <style lang="sass">
 
 @import "$lib/consts"
+
+:global(canvas)
+	position: absolute
+	top: 0
+	left: 0
+	z-index: -1
 	
 :global(body)
 	background-color: #222224

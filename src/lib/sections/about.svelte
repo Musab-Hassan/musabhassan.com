@@ -1,117 +1,80 @@
 <script lang="ts">
 
-import { onMount } from "svelte";
-import { aboutAnchor, loadPagePromise, slickScrollInstance } from "$lib/store";
-import { letterSlideIn, maskSlideIn } from "$lib/animations";
-import { loadImage } from "$lib/utils";
+	import { onMount } from "svelte";
+	import { aboutAnchor, loadPagePromise, slickScrollInstance } from "$lib/store";
+	import { letterSlideIn, maskSlideIn } from "$lib/animations";
+	import { loadImage, onScrolledIntoView } from "$lib/utils";
 
-// DOM Node binds
-let aboutSection1Container: HTMLElement, aboutSection2Container: HTMLElement;
-let githubLink: HTMLElement, emailLink: HTMLElement;
-let profilePicContainer: HTMLElement;
-let title: HTMLElement, paragraph: HTMLElement, profilePicture: HTMLElement;
+	let section1Element: HTMLElement, section2Element: HTMLElement;
+	let profilePicContainer: HTMLElement;
 
-// Promise which when resolved will trigger svelte animations
-let section2InViewResolve: (value?: any) => void;
-let section2InViewPromise = new Promise((resolve) => section2InViewResolve = resolve);
+	// Promise which when resolved will trigger svelte animations
+	let sectionOneResolve: (value?: any) => void;
+	let sectionOnePromise = new Promise((resolve) => sectionOneResolve = resolve);
+	let sectionTwoResolve: (value?: any) => void;
+	let sectionTwoPromise = new Promise((resolve) => sectionTwoResolve = resolve);
 
-onMount(async () => {
-	// Wait for page to load
-	await loadPagePromise;
-	// Set navbar about link's y location to top of aboutContainer
-	$aboutAnchor = aboutSection1Container;
+	onMount(async () => {
+		// Wait for page to load
+		await loadPagePromise;
+		// Set navbar about link's y location to top of aboutContainer
+		$aboutAnchor = section1Element;
+
+		$slickScrollInstance.addOffset({
+			element: profilePicContainer,
+			speedY: 0.8
+		});
+
+		onScrolledIntoView(section1Element, () => sectionOneResolve(true));
+		onScrolledIntoView(section2Element, () => sectionTwoResolve(true));
+	});
+
 
 	// Add parallax scrolling offsets to slickScroll
-	$slickScrollInstance.addOffset({
-		element: profilePicContainer,
-		speedY: 0.8
-	});
-
-	section2IntroAnimations();
-	section1IntroAnimations();
-});
-
-
-
-// About section
-function section1IntroAnimations() {
-
-	// Scroll activated animations powered by anime instead of svelte transitions
-	const titleAnimate = letterSlideIn(title, { delay: 15 });
-	const paragraphAnimate = maskSlideIn(paragraph, { duration: 1000, delay: 200 });
-	const link1Animate = maskSlideIn(emailLink, { delay: 400 });
-	const link2Animate = maskSlideIn(githubLink, { delay: 700 });
-	const profilePictureAnimate = maskSlideIn(profilePicture, { duration: 1200,
-		maskStyles: [
-			{ property: "width", value: "100%"},
-			{ property: "height", value: "100%"}
-		]
-	});
-
-	// Run animations when intersection obeserver detects aboutSection1Container to be in scroll view
-	let observer = new IntersectionObserver((entries) => { 
-		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-
-				titleAnimate.anime();
-				paragraphAnimate.anime();
-				link1Animate.anime();
-				link2Animate.anime();
-				profilePictureAnimate.anime("easeInOutQuint");
-				
-				observer.disconnect();
-			}
+	function addSlickScrollOffset(node: HTMLElement) {
+		$slickScrollInstance.addOffset({
+			element: node,
+			speedY: 0.8
 		});
-	}, { root: null, threshold: 0.4 });
-	
-	observer.observe(aboutSection1Container);
-}
-
-// Skills and awards section
-function section2IntroAnimations() {
-	// Resolve animations promise when intersection obeserver detects aboutSection2Container to be in scroll view
-	let observer = new IntersectionObserver((entries) => { 
-		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-				section2InViewResolve();
-				observer.disconnect();
-			}
-		});
-	}, { root: null, threshold: 0.4 });
-	
-	observer.observe(aboutSection2Container);
-}
+	}
 
 </script>
 
-<div id="content-container" class="about" bind:this={aboutSection1Container}>
-	<div class="content-wrapper">
-		<h1 class="title" bind:this={title}>
-			The Name's<br>Musab
-		</h1>
-		<div bind:this={paragraph}>
-			<p class="paragraph">
-				I'm a web developer from British Columbia, Canada. I specialize in designing and developing web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
-			</p>
-		</div>
-		<div class="social-button-wrapper">
-			<div bind:this={emailLink}>
-				<span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email Me</a></span>
+<div id="content-container" class="about" bind:this={section1Element}>
+	{#await sectionOnePromise then _}
+		<div class="content-wrapper">
+			<h1 class="title" in:letterSlideIn={{ delay: 15 }}>
+				The Name's<br>Musab
+			</h1>
+			<div in:maskSlideIn={{ duration: 1000, delay: 200 }}>
+				<p class="paragraph">
+					I'm a web developer from British Columbia, Canada. I specialize in designing and developing web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
+				</p>
 			</div>
-			<div bind:this={githubLink}>
-				<span class="button" bind:this={githubLink}><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
+			<div class="social-button-wrapper">
+				<div in:maskSlideIn={{ delay: 400 }}>
+					<span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email Me</a></span>
+				</div>
+				<div in:maskSlideIn={{ delay: 700 }}>
+					<span class="button"><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="profile-image" bind:this={profilePicContainer}>
-		{#await loadImage("assets/imgs/profile-photo.jpg") then src}
-			<img src="{src}" bind:this={profilePicture} alt="Musab's Cover" class="profile-pic">
-		{/await}
-	</div>
+		<div class="profile-image" use:addSlickScrollOffset>
+			{#await loadImage("assets/imgs/profile-photo.jpg") then src}
+				<img src="{src}" in:maskSlideIn={{ duration: 1200,
+					maskStyles: [
+						{ property: "width", value: "100%"},
+						{ property: "height", value: "100%"}
+					]
+				}} alt="Musab's Profile" class="profile-pic">
+			{/await}
+		</div>
+	{/await}
 </div>
 
-<div class="horizontal-flex" bind:this={aboutSection2Container}>
-	{#await section2InViewPromise then _}
+<div class="horizontal-flex" bind:this={section2Element}>
+	{#await sectionTwoPromise then _}
 		<ul class="list first">
 			<li class="list-title">
 				<div in:letterSlideIn={{ initDelay: 400 }}>
@@ -265,10 +228,6 @@ function section2IntroAnimations() {
 
 
 	@media only screen and (max-width: 950px)
-		.right-container
-			margin-top: 3vh
-			justify-content: flex-start !important
-
 		.profile-image
 			display: none
 

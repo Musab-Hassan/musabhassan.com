@@ -1,175 +1,163 @@
 <script lang="ts">
 
-// import getGPUTier from 'detect-gpu';
-import { onMount } from "svelte";
-import { fade } from "svelte/transition";
+	// import getGPUTier from 'detect-gpu';
+	import { onMount } from "svelte";
+	import { fade } from "svelte/transition";
+	import { ImageRenderer } from "$lib/effects/work-slider/renderer";
+	import { letterSlideIn, letterSlideOut, maskSlideIn, maskSlideOut, workImageIntro, workListIntro } from "$lib/animations";
+	import { isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "$lib/store";
+	import { loadImage, onScrolledIntoView } from "$lib/utils";
+	import type { WorkData } from '$lib/types';
 
-import { ImageRenderer } from "$lib/effects/work-slider/renderer";
-import { letterSlideIn, letterSlideOut, maskSlideIn, maskSlideOut, workImageIntro, workListIntro } from "$lib/animations";
-import { isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "$lib/store";
-import { loadImage } from "$lib/utils";
-import type { WorkData } from '$lib/types';
+	// JSON Work data fetched from the work-data.json file
+	let data: WorkData = [];
+	workItemsFetch.subscribe(val => {
+		if (val !== undefined) data = val;
+	});
 
-/* Slider calculations and rendering */
-class WorkSlider {
+	// Is user holding click
+	let isMouseDown: boolean = false;
+	isWorkScroll.subscribe(val => isMouseDown = val);
 
-	currentMouseX = 0; 
-	initialMouseX = 0;
-	currentPosition = 0; 
-	targetPosition = 0; 
-	initialPosition = 0;
-	offsetSpeed = 5000; 
-	lerpSpeed = 0.1;
 
-    onHold = (e: MouseEvent) => {
-        if (currentActive >= 0 || isMouseDown || (e.target! as HTMLElement).classList.contains("button")) return;
+	let workContainer: HTMLElement;
+	let container: HTMLElement, listContainer: HTMLElement; // Containers for Three meshes
+	let images: HTMLImageElement[] = []; // Array of images to be passed to WebGL Shader
+	let workItems: HTMLElement[]  = []; // Array of workItems to be animated
 
-        this.initialMouseX = e.clientX;
-		this.currentMouseX = e.clientX;
-        isWorkScroll.set(true);
+	let breakTitleWords: boolean = false;
+	let currentActive: number = -1; // The work item to expand
 
-        if (isMouseDown) {
-            let style = window.getComputedStyle(listContainer);
-            let matrix = new WebKitCSSMatrix(style.transform);
+	let inViewResolve: (_: boolean) => void;
+	const inViewPromise: Promise<boolean> = new Promise((resolve) => {
+		inViewResolve = resolve;
+	});
 
-            this.initialPosition = matrix.m41;
-        }
-    }
 
-    onRelease() {
-        isWorkScroll.set(false);
-    }
- 
-    onMouseMove = (e: MouseEvent) => {
-    	if (!isMouseDown) return; 
-		this.currentMouseX = e.clientX;
+	// Slider calculations and rendering
+	class WorkSlider {
 
-        let diff = (this.currentMouseX - this.initialMouseX) * -1;
-		this.targetPosition = Math.round((this.initialPosition - (this.offsetSpeed * (diff / document.body.clientWidth))) * 100) / 100;
-    }
+		currentMouseX = 0; 
+		initialMouseX = 0;
+		currentPosition = 0; 
+		targetPosition = 0; 
+		initialPosition = 0;
+		offsetSpeed = 5000; 
+		lerpSpeed = 0.1;
 
-    animate = () => {
-		if (currentActive < 0) {
-			let endPoint = listContainer.offsetWidth - document.body.clientWidth
-			if (endPoint < 0) endPoint = listContainer.offsetWidth;
+		onHold = (e: MouseEvent) => {
+			if (currentActive >= 0 || isMouseDown || (e.target! as HTMLElement).classList.contains("button")) return;
 
-			// Checks for disabling overscrolling
-			if (this.targetPosition > 0) this.targetPosition = 0;
-			if (this.targetPosition <= (endPoint * -1)) this.targetPosition = - endPoint;
+			this.initialMouseX = e.clientX;
+			this.currentMouseX = e.clientX;
+			isWorkScroll.set(true);
+
+			if (isMouseDown) {
+				let style = window.getComputedStyle(listContainer);
+				let matrix = new WebKitCSSMatrix(style.transform);
+
+				this.initialPosition = matrix.m41;
+			}
 		}
 
-        // Lerp easing
-        this.currentPosition = this.lerp(this.currentPosition, this.targetPosition, this.lerpSpeed);
-		
-        workScrollSpeed.set(Math.round((this.currentPosition - this.targetPosition) * 100) / 100); // Set Svelte Store value for the Canvas effect
-        listContainer.style.transform = `translate3d(${ Math.round(this.currentPosition * 100) / 100 }px, 0px, 0px)`;
+		onRelease() {
+			isWorkScroll.set(false);
+		}
+	
+		onMouseMove = (e: MouseEvent) => {
+			if (!isMouseDown) return; 
+			this.currentMouseX = e.clientX;
 
-        requestAnimationFrame(() => this.animate());
-    }
+			let diff = (this.currentMouseX - this.initialMouseX) * -1;
+			this.targetPosition = Math.round((this.initialPosition - (this.offsetSpeed * (diff / document.body.clientWidth))) * 100) / 100;
+		}
 
-	lerp(start: number, end: number, t: number) {
-		return start * (1 - t) + end * t;
+		animate = () => {
+			if (currentActive < 0) {
+				let endPoint = listContainer.offsetWidth - document.body.clientWidth
+				if (endPoint < 0) endPoint = listContainer.offsetWidth;
+
+				// Checks for disabling over-scrolling
+				if (this.targetPosition > 0) this.targetPosition = 0;
+				if (this.targetPosition <= (endPoint * -1)) this.targetPosition = - endPoint;
+			}
+
+			// Lerp easing
+			this.currentPosition = this.lerp(this.currentPosition, this.targetPosition, this.lerpSpeed);
+			
+			workScrollSpeed.set(Math.round((this.currentPosition - this.targetPosition) * 100) / 100); // Set Svelte Store value for the Canvas effect
+			listContainer.style.transform = `translate3d(${ Math.round(this.currentPosition * 100) / 100 }px, 0px, 0px)`;
+
+			requestAnimationFrame(() => this.animate());
+		}
+
+		lerp(start: number, end: number, t: number) {
+			return start * (1 - t) + end * t;
+		}
 	}
-}
 
 
-let workContainer: HTMLElement;
-let container: HTMLElement, listContainer: HTMLElement; // Containers for Threejs meshes
-let images: HTMLImageElement[] = []; // Array of images to be passed to WebGL Shader
-let workItems: HTMLElement[]  = []; // Array of workItems to be animated
+	
+	const slider = new WorkSlider();
 
-let breakTitleWords: boolean = false;
+	onMount(async () => {
 
-let isMouseDown: boolean = false; // is user holding click
-let currentActive: number = -1; // Active work item in the detailsViewer viewed
+		onScrolledIntoView(workContainer, () => inViewResolve(true));
 
-let data: WorkData = []; // JSON Work data fetched from the data.json file
-workItemsFetch.subscribe(val => {
-	if (val !== undefined) data = val;
-});
+		// // GPU Tier to decide if effects should be enabled
+		// const gpuTier = await getGPUTier.getGPUTier();
+		// // Svelte store for checking if device is a mobile device
+		// $isMobile = gpuTier.isMobile!;
 
-// Intersection observer and promise to enable scroll activated animations
-let inViewResolve: (val?: any) => void;
-let inView = new Promise((resolve) => inViewResolve = resolve);
+		await loadPagePromise;
+		$workAnchor = workContainer;
 
-let animationObserver = new IntersectionObserver((entries) => { 
-	entries.forEach(entry => {
-		if (entry.isIntersecting) {
-			inViewResolve();
-			animationObserver.disconnect();
-		}
+		listContainer.style.transform = "translate3d(0px, 0px, 0px)";
+
+		slider.animate();
+		new ImageRenderer(container, images);
+
+		//  // Begin slider animations and effects if device is not a phone
+		// if (!gpuTier.isMobile) slider.animate();
+		// // ThreeJS warping effect if device can handle it
+		// if (gpuTier.tier >= 2 && !gpuTier.isMobile && gpuTier.fps! >= 30) new ImageRenderer(container, images);
 	});
-}, {
-	root: null,
-	threshold: 0.4
-});
 
-// Svelte Store subscriptions
-isWorkScroll.subscribe(val => isMouseDown = val);
+	// Move slider to active item when it is active
+	function toggleActiveItem(i: number) {
+		currentActive = (currentActive == i) ? -1 : i;
+		if (currentActive >= 0) slider.targetPosition = -(workItems[i].offsetLeft - (window.innerWidth / 4) + window.innerWidth / 10);
+	}
 
-const slider = new WorkSlider(); // workItems slider functionality
+	// Prevents clipping of animated letters that have overhang
+	function adjustLineHeight(node: HTMLElement) {
+		if (/[gyjqp]/g.test(node.innerText)) node.style.lineHeight = "120%";
+	}
 
-onMount(async () => {
-
-	// // GPU Tier to decide if effects should be enabled
-	// const gpuTier = await getGPUTier.getGPUTier();
-	// // Svelte store for checking if device is a mobile device
-	// $isMobile = gpuTier.isMobile!;
-
-	await loadPagePromise;
-	$workAnchor = workContainer;
-
-	listContainer.style.transform = "translate3d(0px, 0px, 0px)";
-
-	slider.animate();
-	new ImageRenderer(container, images);
-
-	//  // Begin slider animations and effects if device is not a phone
-	// if (!gpuTier.isMobile) slider.animate();
-	// // ThreeJS warping effect if device can handle it
-	// if (gpuTier.tier >= 2 && !gpuTier.isMobile && gpuTier.fps! >= 30) new ImageRenderer(container, images);
-
-	// Intersection observer for scroll animations
-	animationObserver.observe(workContainer);
-});
-
-
-
-
-
-// Move slider to active item when it is active
-function toggleActiveItem(i: number) {
-	currentActive = (currentActive == i) ? -1 : i;
-	if (currentActive >= 0) slider.targetPosition = -(workItems[i].offsetLeft - (window.innerWidth / 4) + window.innerWidth / 10);
-}
-
-// Prevents clipping of animated letters that have overhang
-function adjustLineHeight(node: HTMLElement) {
-	if (/[gyjqp]/g.test(node.innerText)) node.style.lineHeight = "120%";
-}
-
-function titleSlide(node: HTMLElement) {
-	let title = letterSlideIn(node, { delay: 5, breakWord: false });
-	title.anime({
-		onComplete: () => breakTitleWords=true
-	});
-}
+	function titleSlide(node: HTMLElement) {
+		let title = letterSlideIn(node, { delay: 5, breakWord: false });
+		title.anime({
+			onComplete: () => breakTitleWords=true
+		});
+	}
 
 </script>
 
 
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div id="content-container" class="work-click-area" style = "margin-top: 30vh;" bind:this="{workContainer}">
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+
+<div id="content-container" class="work-click-area" bind:this="{ workContainer }">
+
 	<div class="content-wrapper" 
+		role="listbox"
+		tabindex="0"
 		on:mousedown|preventDefault={slider.onHold}
 		on:mouseup={slider.onRelease}
 		on:mouseleave={slider.onRelease}
 		on:mousemove|preventDefault={slider.onMouseMove}
 		bind:this={container}
 		class:disabled={currentActive >= 0}
-		use:workListIntro={{ promise: inView }}
+		use:workListIntro={{ promise: inViewPromise }}
 	>
 		<div class:mobile={$isMobile}>
 			<ul class="work-list" 
@@ -178,7 +166,7 @@ function titleSlide(node: HTMLElement) {
 
 				<!-- Work items -->
 				{#each data as item, i}
-					<li use:workImageIntro={{ promise: inView, delay: i*30 }}>
+					<li use:workImageIntro={{ promise: inViewPromise, delay: i*30 }}>
 						<div class="list-item clickable passive" 
 							class:ambient="{ currentActive !== i && currentActive >= 0 }" 
 							class:active="{ currentActive === i }" 
@@ -189,7 +177,7 @@ function titleSlide(node: HTMLElement) {
 									<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
 								{/await}
 							</div>
-							{#await inView then _}
+							{#await inViewPromise then _}
 								<div class="text-top-wrapper" class:hidden={currentActive >= 0 || isMouseDown}>
 									<p 
 										class="item-index"
@@ -200,8 +188,7 @@ function titleSlide(node: HTMLElement) {
 										{(i.toString().length > 1) ? (i+1) : "0"+(i+1).toString()}
 									</p>
 								</div>
-								<!-- svelte-ignore a11y-no-static-element-interactions -->
-								<!-- svelte-ignore a11y-no-static-element-interactions -->
+								
 								<div class="text-wrapper" class:hidden={currentActive >= 0 || isMouseDown}>
 									<h1 
 										class="item-title" 
@@ -214,9 +201,9 @@ function titleSlide(node: HTMLElement) {
 											{item.title}
 										</span>
 									</h1>
-									<!-- svelte-ignore a11y-click-events-have-key-events -->
-									<div 
-										class="button item-link"
+
+									<button 
+										class="button item-link interactive"
 										on:click={() => toggleActiveItem(i)}
 										in:maskSlideIn={{
 											duration: 900,
@@ -224,7 +211,7 @@ function titleSlide(node: HTMLElement) {
 											reverse: true
 										}}>
 										view
-									</div>
+									</button>
 								</div>
 							{/await}
 						</div>
@@ -255,9 +242,6 @@ function titleSlide(node: HTMLElement) {
 						</div>
 					</div>
 					
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="mid-align">
 						<h1 class="title" 
 							use:titleSlide
@@ -269,7 +253,7 @@ function titleSlide(node: HTMLElement) {
 
 							{data[currentActive].title}
 						</h1>
-						<div class="close-button-wrapper" on:click={() => toggleActiveItem(currentActive)}>
+						<button class="close-button-wrapper interactive" on:click={() => toggleActiveItem(currentActive)}>
 							<div 
 								class ="close-button"
 								in:maskSlideIn={{ reverse: true }} 
@@ -277,7 +261,7 @@ function titleSlide(node: HTMLElement) {
 
 								&times;
 							</div>
-						</div>
+						</button>
 					</div>
 					
 					<div class="bottom-align">
@@ -319,14 +303,11 @@ function titleSlide(node: HTMLElement) {
 
 <style lang="sass">
 
-\:global(canvas)
-	position: absolute
-	top: 0
-	left: 0
-	z-index: -1
-
 @import "../consts"
 @include textStyles()
+
+#content-container.work-click-area
+	margin-top: 30vh
 
 #content-container.work-click-area .content-wrapper
 	display: flex
@@ -603,10 +584,6 @@ function titleSlide(node: HTMLElement) {
 					transform: translate(-50%, -50%)
 					-webkit-transform: translate(-50%, -50%)
 					opacity: 0.5
-
-			.scroll-done
-				transition: 0.8s opacity ease
-				-webkit-transition: 0.8s opacity ease
 
 			.text-top-wrapper
 				position: absolute

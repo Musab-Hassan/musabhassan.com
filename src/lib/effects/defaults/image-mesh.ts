@@ -13,27 +13,26 @@ export class ImageMesh {
     mesh: THREE.Mesh<any, THREE.ShaderMaterial, THREE.Object3DEventMap>;
     activeFragmentShader: string;
 
-    uniforms: any;
-    // uniforms: {
-    //     uTexture: {
-    //         value: THREE.Texture
-    //     },
-    //     uMeshSize: {
-    //         value: THREE.Vector2
-    //     },
-    //     uImgSize: {
-    //         value: THREE.Vector2
-    //     },
-    //     uTime: {
-    //         value: number;
-    //     };
-    //     uOffset: {
-    //         value: THREE.Vector2;
-    //     };
-    //     uAlpha: {
-    //         value: number;
-    //     };
-    // };
+    uniforms: {
+        uTexture?: {
+            value: THREE.Texture
+        },
+        uMeshSize?: {
+            value: THREE.Vector2
+        },
+        uImgSize?: {
+            value: THREE.Vector2
+        },
+        uTime?: {
+            value: number;
+        };
+        uOffset?: {
+            value: THREE.Vector2;
+        };
+        uAlpha?: {
+            value: number;
+        };
+    };
 
     shaders: {
         fragment: { vertical: string, horizontal: string },
@@ -98,8 +97,8 @@ export class ImageMesh {
         this.mesh.scale.set(this.sizes.x, this.sizes.y, 1);
 
         const { width, height } = this.element.getBoundingClientRect();
-        this.uniforms.uImgSize.value.set(width, height);
-        this.uniforms.uMeshSize.value.set(this.sizes.x, this.sizes.y);
+        this.uniforms.uImgSize!.value.set(width, height);
+        this.uniforms.uMeshSize!.value.set(this.sizes.x, this.sizes.y);
     }
 
     // Updates vertexShader
