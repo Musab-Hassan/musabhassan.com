@@ -29,6 +29,10 @@
 		onScrolledIntoView(section2Element, () => sectionTwoResolve(true));
 	});
 
+	function titleIn(node: HTMLElement) {
+		const titleAnimation = letterSlideIn(node, { delay: 15 });
+		titleAnimation.anime();
+	}
 
 	// Add parallax scrolling offsets to slickScroll
 	function addSlickScrollOffset(node: HTMLElement) {
@@ -43,19 +47,19 @@
 <div id="content-container" class="about" bind:this={section1Element}>
 	{#await sectionOnePromise then _}
 		<div class="content-wrapper">
-			<h1 class="title" in:letterSlideIn={{ delay: 15 }}>
-				The Name's<br>Musab
+			<h1 class="title" use:titleIn>
+				Hey I'm <br>Musab
 			</h1>
-			<div in:maskSlideIn={{ duration: 1000, delay: 200 }}>
+			<div in:maskSlideIn={{ duration: 1200, reverse: true, delay: 150 }}>
 				<p class="paragraph">
 					I'm a web developer from British Columbia, Canada. I specialize in designing and developing web experiences<br><br>I work with organizations and individuals to create beautiful, responsive, and scalable web products tailor-made for them. Think we can make something great together? Let's talk over email.
 				</p>
 			</div>
 			<div class="social-button-wrapper">
-				<div in:maskSlideIn={{ delay: 400 }}>
+				<div in:maskSlideIn={{ delay: 400, reverse: true }}>
 					<span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email Me</a></span>
 				</div>
-				<div in:maskSlideIn={{ delay: 700 }}>
+				<div in:maskSlideIn={{ delay: 700, reverse: true }}>
 					<span class="button"><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
 				</div>
 			</div>
@@ -63,6 +67,8 @@
 		<div class="profile-image" use:addSlickScrollOffset>
 			{#await loadImage("assets/imgs/profile-photo.jpg") then src}
 				<img src="{src}" in:maskSlideIn={{ duration: 1200,
+					delay: 100,
+					reverse: true,
 					maskStyles: [
 						{ property: "width", value: "100%"},
 						{ property: "height", value: "100%"}
@@ -78,7 +84,7 @@
 		<ul class="list first">
 			<li class="list-title">
 				<div in:letterSlideIn={{ initDelay: 400 }}>
-					Stuff i use a lot
+					Tech I work with
 				</div>
 			</li>
 			<li>
@@ -156,9 +162,9 @@
 	padding-bottom: 5vh
 
 	.profile-image
-		width: 70%
+		width: 55%
 		overflow: hidden
-		margin-top: -30vh
+		margin-top: -40vh
 		position: relative
 
 		img
@@ -180,7 +186,7 @@
 		box-sizing: border-box
 		z-index: 2
 
-		@media only screen and (max-width: 750px)
+		@media only screen and (max-width: 950px)
 			&
 				width: 80%
 
