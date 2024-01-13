@@ -1,39 +1,41 @@
 <script lang="ts">
-import { onMount } from "svelte";
-import { waitForElementTransition } from '$lib/wait-for-element-transition';
-import { imgPromises, loaderAnimationResolve, workItemsFetch } from "$lib/store";
 
-let loader: HTMLElement;
-let loadingDone = false;
-let loadingPercentage = 0;
+    import { onMount } from "svelte";
+    import { waitForElementTransition } from '$lib/wait-for-element-transition';
+    import { imgPromises, loaderAnimationResolve, workItemsFetch } from "$lib/store";
 
-onMount(async () => {
-    // Wait for work item loading from JSON file to complete
-    await workItemsFetch;
-    
-    let counter = 0;
-    let length = $imgPromises.length;
+    let loader: HTMLElement;
+    let loadingDone = false;
+    let loadingPercentage = 0;
 
-    // Calculate percentage by how many images have loaded
-    $imgPromises.forEach(async (promise) => {
-        await promise;
-        counter++;
-        loadingPercentage = Math.round((counter / length) * 100);
+    onMount(async () => {
 
-        // If loading is complete, initiate outro animation
-        if (loadingPercentage > 99) {
-            waitForElementTransition(loader).then(() => {
-                loadingDone = true;
-                loadingPercentage = 0;
+        let counter = 0;
+        let length = $imgPromises.length;
 
-                // Once outro animation is complete, resolve page loading promise, allowing intro animations to begin
+        // Wait for work item loading from JSON file to complete
+        await workItemsFetch;
+
+        // Calculate percentage by how many images have loaded
+        $imgPromises.forEach(async (promise) => {
+            await promise;
+            counter++;
+            loadingPercentage = Math.round((counter / length) * 100);
+
+            // If loading is complete, initiate outro animation
+            if (loadingPercentage > 99) {
                 waitForElementTransition(loader).then(() => {
-                    loaderAnimationResolve();
+                    loadingDone = true;
+                    loadingPercentage = 0;
+
+                    // Once outro animation is complete, resolve page loading promise, allowing intro animations to begin
+                    waitForElementTransition(loader).then(() => {
+                        loaderAnimationResolve();
+                    });
                 });
-            });
-        }
+            }
+        });
     });
-});
 
 </script>
 
@@ -53,9 +55,6 @@ onMount(async () => {
 
 
 <style lang="sass">
-
-@import "../consts.sass"
-@include textStyles()
 
 .page-cover
     width: 100vw

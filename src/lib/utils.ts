@@ -21,3 +21,19 @@ export function fetchJsonData(sourceFile: string) {
         resolve(data);
     });
 }
+
+export function onScrolledIntoView(node: HTMLElement, entryInView: (entry: IntersectionObserverEntry) => void) {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entryInView(entry);
+                observer.disconnect();
+            }
+        });
+    }, {
+        root: null,
+        threshold: 0.4
+    });
+
+    observer.observe(node);
+}

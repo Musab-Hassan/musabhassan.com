@@ -1,128 +1,139 @@
 <script lang="ts">
 
-// Scroll container to allow scrolling when anchors are clicked
-export let scrollContainer: HTMLElement;
+	// Scroll container to allow scrolling when anchors are clicked
+	export let scrollContainer: HTMLElement;
 
-import anime from "animejs";
-import { onMount } from "svelte";
-import { homeAnchor, workAnchor, aboutAnchor, loadPagePromise } from "$lib/store";
-import { maskSlideIn } from "$lib/animations";
+	import anime from "animejs";
+	import { homeAnchor, workAnchor, aboutAnchor, loadPagePromise, isMobile } from "$lib/store";
+	import { maskSlideIn } from "$lib/animations";
+	import { browser } from "$app/environment";
 
-let logoElem: HTMLElement, githubElem: HTMLElement;
-let homeWrapperElem: HTMLElement, workWrapperElem: HTMLElement, aboutWrapperElem: HTMLElement, mobileMenuElem: HTMLElement;
+	let mobileMenuActive: boolean = false;
+	let isMobileMenuAllowed: boolean = browser ? window.innerWidth <= 950 : false;
 
-let mobileActive: boolean;
-
-onMount(async () => {
-	// Wait for page to load
-	await loadPagePromise;
-	// Initiate intro animations
-	introAnimations();
-});
-
-$: mobileTransitionSwitcher = 
-	mobileActive ? 
-	maskSlideIn : 
-	(node: HTMLElement, _: any) => { 
-		let out = maskSlideIn(node, {reverse: true}); 
-		return { 
-			tick: (t: number) => {
-				let reversedT = 1 - t;
-				out.tick(reversedT);
-
-				if (t == 1) out.tick(1);
-			} 
-		}
-	};
+	$: mobileTransitionSwitcher = 
+		mobileMenuActive ? 
+		maskSlideIn : 
+		(node: HTMLElement, _: any) => { 
+			let out = maskSlideIn(node, {reverse: true, duration: 3000}); 
+			return { 
+				tick: (t: number) => {
+					let reversedT = 1 - t;
+					out.tick(reversedT);
+					// Reset animation once all animations are done so desktop nav bar doesn't break
+					if (t == 1) setTimeout(() => out.tick(1), 500);
+				} 
+			}
+		};
 
 
-function navigate(anchor: HTMLElement) {
-	scrollContainer.scrollTo({
-		top: anchor.offsetTop - (window.innerHeight / 5),
-		behavior: "smooth"
-	});
-	mobileActive = false; 
-}
+	function navigate(anchor: HTMLElement) {
+		scrollContainer.scrollTo({
+			top: anchor.offsetTop - (window.innerHeight / 5),
+			behavior: "smooth"
+		});
+		mobileMenuActive = false; 
+	}
 
-function introAnimations() {
-	let targets = [logoElem, mobileMenuElem, homeWrapperElem, workWrapperElem, aboutWrapperElem, githubElem];
-	// Set initial state to begin animation from
-	targets.forEach(e => {
-		e.style.transform = "translateY(130%) rotate(-7deg)"
-	})
-
-	anime({
-		targets: targets,
-		rotate: 0,
-		translateY: "0%",
-		easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
-		duration: 1000,
-		delay: anime.stagger(100, {start: + 500})
-	});
-}
+	function introAnimation(node: HTMLElement, params: { delay: number }) {
+		if (isMobileMenuAllowed) return;
+		node.style.transform = "translateY(130%) rotate(7deg)"
+		anime({
+			targets: node,
+			rotate: 0,
+			translateY: "0%",
+			easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
+			duration: 1000,
+			delay: params.delay
+		});
+	}
 
 </script>
 
+<svelte:window on:resize={() => isMobileMenuAllowed = window.innerWidth <= 950 }></svelte:window>
 
+{#await loadPagePromise then _}
+	<div class="nav-wrapper" style="transform: translate(0px);">
+		<!-- Logo -->
+		<div class="flex-wrapper ico" style="z-index: 21;">
+			<button class="interactive clickable"
+				on:click={() => navigate($homeAnchor)}>
 
-<div class="nav-wrapper" style="transform: translate(0px);">
-	<!-- Logo -->
-	<div class="flex-wrapper ico" style="z-index: 21;">
-		<img 
-			bind:this={logoElem} 
-			src="assets/imgs/logo.svg"
-			class = "logo-icon clickable"
-			alt="Logo"
-			draggable="false"
-			on:click={() => navigate($homeAnchor)}>
-	</div>
-	
-	<div class="flex-wrapper">
-		<!-- Mobile and desktop nav menu -->
-		<div class="wrapper" class:mobileActive>
-			<ul class="nav-list">
-				{#key mobileActive}
-				<li bind:this={homeWrapperElem}>
-					<div on:click={() => navigate($homeAnchor)} in:mobileTransitionSwitcher={{ delay: 200 }}>Home</div>
-				</li>
-				<li bind:this={workWrapperElem}>
-					<div on:click={() => navigate($workAnchor)} in:mobileTransitionSwitcher={{ delay: 250 }}>Work</div>
-				</li>
-				<li bind:this={aboutWrapperElem}>
-					<div on:click={() => navigate($aboutAnchor)} in:mobileTransitionSwitcher={{ delay: 300 }}>About</div>
-				</li>
-				<li class="mobile">
-					<a href="mailto:musabhassan04@gmail.com" target="_blank" in:mobileTransitionSwitcher={{ delay: 350 }}>Email</a>
-				</li>
-				<li bind:this={githubElem}>
-					<a href="https://github.com/Musab-Hassan" target="_blank" in:mobileTransitionSwitcher={{ delay: 400 }}>Github</a>
-				</li>
-				{/key}
-			</ul>
+				<img src="assets/imgs/logo.svg"
+					class="logo-icon"
+					alt="Logo"
+					draggable="false"
+					use:introAnimation={{ delay: 1000 }}>
+			</button>
 		</div>
+		
+		<div class="flex-wrapper">
+			<!-- Mobile and desktop nav menu -->
+			<div class="wrapper" class:mobileMenuActive>
+				<ul class="nav-list">
+					{#key mobileMenuActive}
+						<li use:introAnimation={{ delay: 1000 }}>
+							<button 
+								class="interactive clickable"
+								on:click={() => navigate($homeAnchor)} 
+								in:mobileTransitionSwitcher={{ delay: 200 }}>
+								Home
+							</button>
+						</li>
+						<li use:introAnimation={{ delay: 1100 }}>
+							<button 
+								class="interactive clickable"
+								on:click={() => navigate($workAnchor)} 
+								in:mobileTransitionSwitcher={{ delay: 250 }}>
+								<p>Work</p>
+							</button>
+						</li>
+						<li use:introAnimation={{ delay: 1200 }}>
+							<button 
+								class="interactive clickable"
+								on:click={() => navigate($aboutAnchor)} 
+								in:mobileTransitionSwitcher={{ delay: 300 }}>
+								About
+							</button>
+						</li>
+						<li class="mobile">
+							<a href="mailto:musabhassan04@gmail.com" target="_blank" in:mobileTransitionSwitcher={{ delay: 350 }}>Email</a>
+						</li>
+						<li use:introAnimation={{ delay: 1300 }}>
+							<a href="https://github.com/Musab-Hassan" target="_blank" in:mobileTransitionSwitcher={{ delay: 400 }}>Github</a>
+						</li>
+					{/key}
+				</ul>
+			</div>
 
-		<!-- Mobile hambuger menu -->
-		<div class="mask">
-			<div class="hb-button clickable" 
-				bind:this={mobileMenuElem} 
-				on:click={() => mobileActive = !mobileActive} 
-				class:mobileActive>
+			<!-- Mobile hambuger menu -->
+			<div class="mask">
+				<button class="interactive hb-button clickable"
+					use:introAnimation={{ delay: 1000 }}
+					on:click={() => mobileMenuActive = !mobileMenuActive} 
+					class:mobileMenuActive>
 
-				<div class="hb">
-					<span></span>
-					<span></span>
-					<span></span>
-				</div>
+					<div class="hb">
+						<span></span>
+						<span></span>
+						<span></span>
+					</div>
+				</button>
 			</div>
 		</div>
 	</div>
-</div>
+{/await}
 
 
 
 <style lang="sass">
 
 @import "../consts.sass"
+
+button.interactive
+	border: none
+	background-color: transparent
+	cursor: pointer
 
 .nav-wrapper
 	width: 100vw
@@ -142,6 +153,10 @@ function introAnimations() {
 		width: 7vh
 		mix-blend-mode: exclusion
 		cursor: pointer
+
+		*
+			width: 100%
+			height: 100%
 
 		.logo-icon
 			position: relative
@@ -165,9 +180,14 @@ function introAnimations() {
 				&.mobile
 					display: none
 
-				div 
+				button 
 					display: inline-block
 					cursor: pointer
+					color: white
+					font-size: inherit
+					font-family: inherit
+					letter-spacing: inherit
+					text-transform: uppercase
 
 				a
 					display: inline-block
@@ -205,7 +225,7 @@ function introAnimations() {
 				padding-top: 10vh
 				overflow: hidden !important
 
-			&.mobileActive
+			&.mobileMenuActive
 				left: 0
 				width: 100vw
 
@@ -221,9 +241,14 @@ function introAnimations() {
 				&:not(:last-child)
 					border-bottom: 1px solid rgba(255, 255, 255, 0.3)
 
-				div 
+				button 
 					display: inline-block
 					cursor: pointer
+					font-size: inherit
+					font-family: inherit
+					color: white
+					text-transform: inherit
+					font-weight: inherit
 
 				a
 					display: inline-block
@@ -270,7 +295,7 @@ function introAnimations() {
 				width: 100%
 				background-color: white
 
-		&.mobileActive
+		&.mobileMenuActive
 			.text
 				color: white
 

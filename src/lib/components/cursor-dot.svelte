@@ -1,44 +1,33 @@
 <script lang="ts">
 
-import { onMount } from "svelte";
-import { isMobile, isWorkScroll } from "$lib/store";
+	import { isMobile, isWorkScroll, loadPagePromise } from "$lib/store";
 
-let container: HTMLElement;
+	// Svelte class toggles for hover-container
+	let hover: boolean = false;
+	let disabled: boolean = false;
+	let introDisabled: boolean = true;
 
-// Svelte class toggles for hover-container
-let hover: boolean = false;
-let disabled: boolean = false;
-let introDisabled: boolean = true;
+	// Svelte store subscriptions
+	isWorkScroll.subscribe(val => disabled = val);
 
-
-/** Svelte store subscriptions **/
-isWorkScroll.subscribe(val => {
-	disabled = val;
-})
-
-
-abstract class CursorDot {
-
-	static currentPosition = {
-		x: 0,
-		y: 0
+	let currentPosition = {
+		x: 0, y: 0
 	};
-	static targetPosition = {
-		x: 0,
-		y: 0
+	let targetPosition = {
+		x: 0, y: 0
 	};
 
-	// onMouseMove, set current mouse coords and detect if any clickables are hovered
-	static updateMouseCoords(e: MouseEvent) {
-		// Dont do anything if its a touch mobile device
+	// onMouseMove, set current mouse coords and detect if any clickable is hovered
+	function updateMouseCoords(e: MouseEvent) {
+		// Don't do anything if its a touch mobile device
 		if ($isMobile) return;
-		// Intro animation for cursor dot
-		if (introDisabled) setTimeout(() => introDisabled = false, 500);
+
+		if (introDisabled) setTimeout(() => introDisabled = false, 200);
 
 		let cursor = window.getComputedStyle((e as any).target)["cursor"];
 		hover = (cursor === "pointer");
 
-		// clickable transition if mouse changes to pointer
+		// Clickable transition if mouse changes to pointer
 		if (cursor === "pointer") {
 
 			let currentlyHovering: Element = document.elementFromPoint(e.clientX, e.clientY)!;
@@ -51,13 +40,14 @@ abstract class CursorDot {
 				y: (currentlyHovering.getBoundingClientRect().top + (height / 2))
 			}
 
-			this.targetPosition = {
+			targetPosition = {
 				x: clickableMid.x + ((clickableMid.x - e.clientX)*0.15),
 				y: clickableMid.y + ((clickableMid.y - e.clientY)*0.15)
-			};
+			}
+
+		// Otherwise, follow the cursor
 		} else {
-			// Otherwise, follow the cursor
-			this.targetPosition = {
+			targetPosition = {
 				x: e.clientX,
 				y: e.clientY
 			}
@@ -65,48 +55,42 @@ abstract class CursorDot {
 	}
 
 
-	// Animation loop for tweening (only call once)
-	static animate() {
+	// Animation loop for easing
+	function animate(node: HTMLElement) {
 		let t = 0.4;
 
-		this.currentPosition.x += this.easeInOutQuad(t) * (this.targetPosition.x - this.currentPosition.x);
-		this.currentPosition.y += this.easeInOutQuad(t) * (this.targetPosition.y - this.currentPosition.y);
+		currentPosition.x += easeInOutQuad(t) * (targetPosition.x - currentPosition.x);
+		currentPosition.y += easeInOutQuad(t) * (targetPosition.y - currentPosition.y);
 		
 		// Fix js's weird rounding errors
-		this.currentPosition.x = Math.ceil(this.currentPosition.x * 100) / 100;
-		this.currentPosition.y = Math.ceil(this.currentPosition.y * 100) / 100;
+		currentPosition.x = Math.ceil(currentPosition.x * 100) / 100;
+		currentPosition.y = Math.ceil(currentPosition.y * 100) / 100;
 
-		container.style.transform = `translate3d(${this.currentPosition.x}px, ${this.currentPosition.y}px, 0px)`;
+		node.style.transform = `translate3d(${currentPosition.x}px, ${currentPosition.y}px, 0px)`;
 
-		requestAnimationFrame(() => this.animate());
+		requestAnimationFrame(() => animate(node));
 	}
 
-	// Tweening function
-	static easeInOutQuad(t: number) {
+	// Easing function
+	function easeInOutQuad(t: number) {
 		return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 	}
-}
-
-
-// Run Animation Loop to begin tweening
-onMount(() => {
-	CursorDot.animate();
-})
 
 
 </script>
 
 
 
-<svelte:body on:mousemove = {(e) => CursorDot.updateMouseCoords(e)}/>
+<svelte:body on:mousemove = {(e) => updateMouseCoords(e)}/>
 
-<div class="dot-container active" 
-	bind:this={container}
-	class:hover
-	class:disabled
-	class:introDisabled>
-	<div class="dot"></div>
-</div>
+{#await loadPagePromise then _}
+	<div class="dot-container active"
+		class:hover
+		class:disabled={ introDisabled || disabled }
+		use:animate>
+		<div class="dot"></div>
+	</div>
+{/await}
 
 
 
@@ -138,7 +122,7 @@ onMount(() => {
 		width: 4vh
 		height: 4vh
 
-	&.disabled .dot, &.introDisabled .dot
+	&.disabled .dot
 		width: 0 !important
 		height: 0 !important
 

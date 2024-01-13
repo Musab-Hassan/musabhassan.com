@@ -1,112 +1,103 @@
 <script lang="ts">
 
-import { onMount } from "svelte";
-import { letterSlideIn, maskSlideIn } from "$lib/animations";
-import { siteDataFetch } from "$lib/store"
-import type { SiteData } from "$lib/types";
+    import { onMount } from "svelte";
+    import { letterSlideIn, maskSlideIn } from "$lib/animations";
+    import { siteDataFetch } from "$lib/store";
+    import { onScrolledIntoView } from "$lib/utils";
+    import type { SiteData } from "$lib/types";
 
-let footerContainer: HTMLElement;
-let logoElem: HTMLElement, creditsElem: HTMLElement, statusElem: HTMLElement, fullEmailLinkElem: HTMLElement;
-let signaturePath1: SVGPathElement, signaturePath2: SVGPathElement, signaturePath3: SVGPathElement, signaturePath4: SVGPathElement; 
+    let footerContainerElement: HTMLElement, logoElement: HTMLElement, creditsElement: HTMLElement, statusElement: HTMLElement, fullEmailLinkElement: HTMLElement;
+    let signaturePath1: SVGPathElement, signaturePath2: SVGPathElement, signaturePath3: SVGPathElement, signaturePath4: SVGPathElement; 
 
-let currentYear = new Date().getFullYear();
+    let siteData: SiteData = { availablity_date: "" };
 
-let siteData: SiteData = {availablity_date: ""};
-siteDataFetch.subscribe(val => {
-    if (val !== undefined) siteData = val;
-});
-
-onMount(() => {
-    introAnimations();
-});
-
-async function introAnimations() {
-    // Scroll activated animations powered by anime instead of svelte transitions
-	const logoAnimate = maskSlideIn(logoElem, {});
-    const fullEmailLinkAnimate = letterSlideIn(fullEmailLinkElem, { delay: 6, initDelay: 150 });
-    const creditsAnimate = maskSlideIn(creditsElem, { delay: 150 });
-	const statusAnimate = letterSlideIn(statusElem, { delay: 6, initDelay: 100 });
-
-    // Intersection observer to run animations when footer is in scroll view
-    let animationObserver = new IntersectionObserver((entries) => { 
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-
-				logoAnimate.anime();
-                creditsAnimate.anime();
-                statusAnimate.anime();
-				fullEmailLinkAnimate.anime();
-
-                // Signature SVG animation
-                let animation = [{ strokeDashoffset: '0' }];
-
-                // Signature animation using svg strokDashOffset
-                signaturePath1.animate(animation, {
-                    duration: 1000,
-                    delay: 0,
-                    easing: 'cubic-bezier(.72,.3,.25,1)',
-                    fill: 'forwards' 
-                });
-                signaturePath2.animate(animation, {
-                    duration: 300,
-                    delay: 1000,
-                    easing: 'cubic-bezier(.47,.41,.26,1)',
-                    fill: 'forwards' 
-                });
-                signaturePath3.animate(animation, {
-                    duration: 200,
-                    delay: 1300,
-                    easing: 'cubic-bezier(.47,.41,.26,1)',
-                    fill: 'forwards' 
-                });
-                signaturePath4.animate(animation, {
-                    duration: 1000,
-                    delay: 1500,
-                    easing: 'cubic-bezier(.47,.41,.26,1)',
-                    fill: 'forwards' 
-                });
-
-                animationObserver.disconnect();
-            }
-        });
-    }, {
-        root: null,
-        threshold: 0.4
+    siteDataFetch.subscribe(val => {
+        if (val !== undefined)
+            siteData = val;
     });
 
-    animationObserver.observe(footerContainer);
-}
+    const currentYear = new Date().getFullYear();
+    
+    function introAnimations() {
+
+        // Scroll activated animations powered by anime instead of svelte transitions
+        const logoAnimate = maskSlideIn(logoElement, {});
+        const fullEmailLinkAnimate = letterSlideIn(fullEmailLinkElement, { delay: 6, initDelay: 150 });
+        const creditsAnimate = maskSlideIn(creditsElement, { delay: 150 });
+        const statusAnimate = letterSlideIn(statusElement, { delay: 6, initDelay: 100 });
+
+        // Intersection observer to run animations when footer is in scroll view
+        onScrolledIntoView(footerContainerElement, () => {
+            logoAnimate.anime();
+            creditsAnimate.anime();
+            fullEmailLinkAnimate.anime();
+            statusAnimate.anime();
+
+            // Signature SVG animation
+            let animation = [{ strokeDashoffset: '0' }];
+
+            // Signature animation using svg strokDashOffset
+            signaturePath1.animate(animation, {
+                duration: 1000,
+                delay: 0,
+                easing: 'cubic-bezier(.72,.3,.25,1)',
+                fill: 'forwards' 
+            });
+            signaturePath2.animate(animation, {
+                duration: 300,
+                delay: 1000,
+                easing: 'cubic-bezier(.47,.41,.26,1)',
+                fill: 'forwards' 
+            });
+            signaturePath3.animate(animation, {
+                duration: 200,
+                delay: 1300,
+                easing: 'cubic-bezier(.47,.41,.26,1)',
+                fill: 'forwards' 
+            });
+            signaturePath4.animate(animation, {
+                duration: 1000,
+                delay: 1500,
+                easing: 'cubic-bezier(.47,.41,.26,1)',
+                fill: 'forwards' 
+            });
+        });
+    }
+
+    onMount(() => {
+        introAnimations();
+    });
 
 </script>
 
 
 
-<div class="footer-wrapper" bind:this={footerContainer}>
+<div class="footer-wrapper" bind:this={footerContainerElement}>
     <!-- Left side -->
     <div class="flex-wrapper">
         <div class="logo-wrapper">
-            <div class="inline-flex" bind:this={logoElem}>
+            <div class="inline-flex" bind:this={logoElement}>
                 <img src="assets/imgs/logo.svg" alt="mh logo" class="logo">
             </div>
         </div>
 
         <div class="status-wrapper">
                 {#if siteData.availablity_date === ""}
-                    <p class="large-text" bind:this={statusElem}>
+                    <p class="large-text" bind:this={statusElement}>
                         i am currently accepting freelance work, <br>you may reach me on my email.
                     </p>
                 {:else}
-                    <p class="large-text" bind:this={statusElem}>
+                    <p class="large-text" bind:this={statusElement}>
                         i am available for freelance work after <br> {siteData.availablity_date}.
                     </p>
                 {/if}
-            <a class="button large-text" bind:this={fullEmailLinkElem} href="mailto:musabhassan04@gmail.com" target="_blank">musabhassan04@gmail.com</a>
+            <a class="button large-text" bind:this={fullEmailLinkElement} href="mailto:musabhassan04@gmail.com" target="_blank">musabhassan04@gmail.com</a>
         </div>
         
-        <div class="credits-wrapper" bind:this={creditsElem}>
+        <div class="credits-wrapper" bind:this={creditsElement}>
             <p class="year">© {currentYear}</p>
             <p class="credits">
-                designed and developed by Musab Hassan<br>this website is open source on github
+                Original work of Musab Hassan<br>this website is open source on github
             </p>
         </div>
     </div>
