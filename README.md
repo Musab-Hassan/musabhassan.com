@@ -1,38 +1,47 @@
-# create-svelte
+# <img src="banner.jpg" align="center" alt="banner"/>
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Source code for my personal portfolio, musabhassan.com
 
-## Creating a project
+[![Visit Live Site](https://img.shields.io/badge/Visit%20Live%20Site-222224?style=for-the-badge)](https://musabhassan.com)
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Source Information
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+This website is built with
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+- [SvelteKit (Frontend Framework)](https://kit.svelte.dev/)
+- [Slickscroll (Scroll Effects)](https://github.com/Musab-Hassan/slickscrolljs)
+- [Anime (Animations)](https://github.com/juliangarnier/anime)
+- [Three.js (3D Effects)](https://github.com/mrdoob/three.js/)
+- [Firebase (Hosting)](https://firebase.google.com/docs/hosting)
 
-## Developing
+This is the source for version 2+. Version 1.0, the one built with jQuery is in the [v1 branch](https://github.com/Musab-Hassan/musabhassan.com/tree/v1).
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Developing
+
+The site is just a regular SvelteKit project, with ssr disabled.
+
+For development, start the vite development server:
 
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+*Note: Due to migration from Rollup, HMR breaks the site. You have to do a full reload if you modify any components or TS files.*
 
-To create a production version of your app:
+For production, build the site:
 
 ```bash
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+### Contributing
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+You can fork this repo and modify it however I wont really be accepting pull requests due to the nature of the website being based on "taste" and a showcase of my work.
+
+If you decide to use this site for your own commercial work, replace my personal logos with yours.
+
+Please don't use my personal logos as yours.
+
+### License
+
+Mozilla Public License 2.0 License.
