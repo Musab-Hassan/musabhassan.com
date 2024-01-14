@@ -84,7 +84,7 @@
 		<ul class="list first">
 			<li class="list-title">
 				<div in:letterSlideIn={{ initDelay: 400 }}>
-					Tech I work with
+					technical expertise
 				</div>
 			</li>
 			<li>
@@ -94,8 +94,26 @@
 				<div 
 					class="flex-item" 
 					in:maskSlideIn={{ delay: 600 }}>
-					<img src="assets/imgs/svg-icons/angular.svg" alt="angular">
-					<img src="assets/imgs/svg-icons/svelte.svg" alt="svelte">
+					<img src="assets/imgs/svg-icons/svelte.svg" alt="Svelte">
+					<img src="assets/imgs/svg-icons/react.svg" alt="React">
+				</div>
+			</li>
+			<li>
+				<div in:letterSlideIn={{ initDelay: 750 }}>
+					Back-end
+				</div>
+				<div class="flex-item" in:maskSlideIn={{ delay: 800 }}>
+					<img src="assets/imgs/svg-icons/nodejs.svg" alt="node js">
+					<img src="assets/imgs/svg-icons/php.svg" alt="php">
+				</div>
+			</li>
+			<li>
+				<div in:letterSlideIn={{ initDelay: 750 }}>
+					Dev-ops
+				</div>
+				<div class="flex-item" in:maskSlideIn={{ delay: 800 }}>
+					<img src="assets/imgs/svg-icons/firebase.svg" alt="Firebase">
+					<img src="assets/imgs/svg-icons/gcp.svg" alt="Google Cloud Platform">
 				</div>
 			</li>
 			<li>
@@ -106,27 +124,6 @@
 					<img src="assets/imgs/svg-icons/flutter.svg" alt="flutter">
 					<img src="assets/imgs/svg-icons/android.svg" alt="native android">
 					<img src="assets/imgs/svg-icons/iOS.svg" alt="native ios">
-				</div>
-			</li>
-			<li>
-				<div in:letterSlideIn={{ initDelay: 750 }}>
-					Back-end
-				</div>
-				<div class="flex-item" in:maskSlideIn={{ delay: 800 }}>
-					<img src="assets/imgs/svg-icons/firebase.svg" alt="firebase">
-					<img src="assets/imgs/svg-icons/nodejs.svg" alt="node js">
-					<img src="assets/imgs/svg-icons/php.svg" alt="php">
-					<img src="assets/imgs/svg-icons/mysql.svg" alt="mySQL">
-				</div>
-			</li>
-			<li>
-				<div in:letterSlideIn={{ initDelay: 850 }}>
-					Design
-				</div>
-				<div class="flex-item" 
-					in:maskSlideIn={{ delay: 900 }}>
-					<img src="assets/imgs/svg-icons/illustrator.svg" alt="adobe illustrator">
-					<img src="assets/imgs/svg-icons/xd.svg" alt="adobe xd">
 				</div>
 			</li>
 		</ul>
@@ -274,7 +271,7 @@
 			flex-direction: row
 			justify-content: space-between
 			align-items: center
-			column-gap: 5vw
+			column-gap: 10vw
 			row-gap: 3vh
 
 			img

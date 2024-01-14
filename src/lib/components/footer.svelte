@@ -2,7 +2,7 @@
 
     import { onMount } from "svelte";
     import { letterSlideIn, maskSlideIn } from "$lib/animations";
-    import { siteDataFetch } from "$lib/store";
+    import { loadPagePromise, siteDataFetch } from "$lib/store";
     import { onScrolledIntoView } from "$lib/utils";
     import type { SiteData } from "$lib/types";
 
@@ -64,7 +64,8 @@
         });
     }
 
-    onMount(() => {
+    onMount(async () => {
+        await loadPagePromise;
         introAnimations();
     });
 
@@ -97,7 +98,12 @@
         <div class="credits-wrapper" bind:this={creditsElement}>
             <p class="year">© {currentYear}</p>
             <p class="credits">
-                Original work of Musab Hassan<br>this website is open source on github
+                designed and developed by Musab Hassan<br>
+                
+                <!-- Support the project by keeping this line in your fork -->
+                <a class="clickable button no-decor" href="https://github.com/Musab-Hassan/musabhassan.com" target="_blank">
+                    this website is open source on github
+                </a>
             </p>
         </div>
     </div>
@@ -193,6 +199,9 @@
             line-height: 125%
             white-space: nowrap
             color: rgba(255,255,255,0.3)
+
+            .button
+                color: rgba(255,255,255,0.3)
 
     .large-text
         font-size: 2.5vh
