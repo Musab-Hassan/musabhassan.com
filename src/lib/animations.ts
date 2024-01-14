@@ -1,5 +1,7 @@
 import BezierEasing from "bezier-easing";
 import anime from "animejs";
+import { workScrollSpeed } from "./store";
+import { quintOut } from "svelte/easing";
 
 // Intro Letter reveal animation used declaratively with the 'in:' svelte directive or programmatically with anime.js
 export function letterSlideIn (node: HTMLElement, params?: { duration?: number, delay?: number, initDelay?: number, breakWord?: boolean, promise?: Promise<any> }) {
@@ -24,7 +26,8 @@ export function letterSlideIn (node: HTMLElement, params?: { duration?: number, 
         });
         e.style.transform = "translateX(80%)";
         e.style.display = "inline-flex";
-        e.style.overflow = "hidden";
+        e.style.overflowY = "visible";
+        e.style.overflowX = "clip";
     });
 
     // Create a node list for anime.js
@@ -301,7 +304,7 @@ export function workImageIntro(node: HTMLElement, params?: { promise: Promise<an
 
 
 // Animation for workItem image when workContainer is scrolled into view
-export function workListIntro(node: HTMLElement, params?: { promise: Promise<any>, delay?: number }) {
+export function workListIntro(node: HTMLElement, params?: { promise: Promise<any>, delay?: number, onComplete?: () => void }) {
     
     if (params === undefined) return;
 
@@ -315,11 +318,18 @@ export function workListIntro(node: HTMLElement, params?: { promise: Promise<any
             targets: node, 
             translateX: "0%",
             easing: "easeOutQuint",
-            duration: 1800,
+            duration: 1600,
             delay: params.delay,
+            update: (anim) => {
+                // let transformPosition = anime.get(node, "translateX", "px");
+                const t = 1 - quintOut(anim.progress / 100);
+                console.log(t);
+                workScrollSpeed.set(t * 2500);
+            },
             complete: () => {
                 node.style.transform = "";
                 node.style.transition = "";
+                if (params.onComplete) params.onComplete();
             }
         });
     });
@@ -351,10 +361,6 @@ function tagLettersAndWords(node: HTMLElement, params: { breakWord: boolean }) {
             element.style.whiteSpace = "nowrap";
         });
     } else {
-        // Set letter-spacing to exact computed letter-spacing to prevent animation popping
-        let computed = getComputedStyle(node);
-        let computedLetterSpacing = computed.getPropertyValue("letter-spacing");
-
         let masks = node.querySelectorAll(".a-text-mask");
         (masks as NodeListOf<HTMLElement>).forEach(element => {
             element.style.whiteSpace = "no-wrap";

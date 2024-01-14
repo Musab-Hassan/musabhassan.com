@@ -90,17 +90,36 @@ $font: "Questrial", sans-serif
 		display: inline-block
 		position: relative
 		cursor: pointer
+		padding-bottom: 1%
+		text-decoration: none
 
 		a
 			text-decoration: none
 			color: inherit
 			display: inline-block
 
-		&:not(.no-decor)::after
-			content: ""
-			position: absolute
-			width: 100%
-			height: 2px
-			bottom: 0
-			left: 0
-			background-color: white
+		&:not(.no-decor)
+			&::after, &::before
+				content: ""
+				position: absolute
+				width: 100%
+				height: 2px
+				bottom: 0
+				background-color: white
+
+			&::after
+				left: 0
+				width: 0%
+
+			&::before
+				right: 0
+				width: 100%
+
+			&:hover::after
+				width: 100%
+				transition: width 0.8s ease
+
+			&:hover::before
+				width: 0%
+				transition: width 0.5s ease
+				

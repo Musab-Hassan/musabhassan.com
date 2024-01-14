@@ -114,8 +114,6 @@
 
 		listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 
-		 // Begin slider animations and effects if device is not a phone
-		if (!gpuTier.isMobile) slider.animate();
 		// ThreeJS warping effect if device can handle it
 		if (gpuTier.tier >= 2 && !gpuTier.isMobile && gpuTier.fps! >= 30) new ImageRenderer(container, images);
 	});
@@ -124,11 +122,6 @@
 	function toggleActiveItem(i: number) {
 		currentActive = (currentActive == i) ? -1 : i;
 		if (currentActive >= 0) slider.targetPosition = -(workItems[i].offsetLeft - (window.innerWidth / 4) + window.innerWidth / 10);
-	}
-
-	// Prevents clipping of animated letters that have overhang
-	function adjustLineHeight(node: HTMLElement) {
-		if (/[gyjqp]/g.test(node.innerText)) node.style.lineHeight = "120%";
 	}
 
 	function titleSlide(node: HTMLElement) {
@@ -154,7 +147,11 @@
 		on:mousemove|preventDefault={slider.onMouseMove}
 		bind:this={container}
 		class:disabled={currentActive >= 0}
-		use:workListIntro={{ promise: inViewPromise }}
+		use:workListIntro={{ promise: inViewPromise, onComplete: async () => {
+			 // Begin slider animations and effects once slider is animated in and if device is not a phone
+			const gpuTier = await getGPUTier();
+			if (!gpuTier.isMobile) slider.animate();
+		} }}
 	>
 		<div class:mobile={$isMobile}>
 			<ul class="work-list" 
@@ -224,7 +221,7 @@
 					<div class="top-align">
 						<div class="wrapper">
 							<div class="index">
-								<div in:maskSlideIn out:maskSlideOut>
+								<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>
 									{#if (currentActive < 9)}
 										{"0"+(currentActive+1)}
 									{:else}
@@ -234,7 +231,7 @@
 							</div>
 							<span class="line" transition:fade></span>
 							<h6 class="caption">
-								<div in:maskSlideIn out:maskSlideOut>{data[currentActive].details.summary}</div>
+								<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>{data[currentActive].details.summary}</div>
 							</h6>
 						</div>
 					</div>
@@ -242,8 +239,7 @@
 					<div class="mid-align">
 						<h1 class="title" 
 							use:titleSlide
-							out:letterSlideOut 
-							use:adjustLineHeight
+							out:letterSlideOut
 							class:breakTitleWords
 							on:introend={() => setTimeout(() => breakTitleWords = true, 100)}
 							on:outrostart={() => setTimeout(() => breakTitleWords = false, 100)}>
@@ -269,25 +265,23 @@
 								</p>
 							</div>
 						</div>
-						<div class="links">
-							{#each data[currentActive].links as link}
-								<div style="position: relative">
-									<a in:letterSlideIn out:letterSlideOut href={link.link} target="_blank" class="button no-decor">{link.text}</a>
-									<div class="underline" transition:fade></div>
-								</div><br>
-							{/each}
-							<div class="line" transition:fade></div>
-						</div>
 						<div class="roles">
 							<div class="wrapper">
 								<div in:maskSlideIn={{reverse: true}} out:maskSlideOut>
 									<p class="descriptor">Role</p>
 								</div>
-								<ul>
-									{#each data[currentActive].roles as role, index}
-										<li in:maskSlideIn={{reverse: true, delay: index*100}} out:maskSlideOut>{"+ " + role}</li>
+								<ul in:maskSlideIn={{ reverse: true, delay: 100 }} out:maskSlideOut>
+									{#each data[currentActive].roles as role}
+										<li>{"+ " + role}</li>
 									{/each}
 								</ul>
+							</div>
+						</div>
+						<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>
+							<div class="links">
+								{#each data[currentActive].links as link}
+									<a href={link.link} target="_blank" class="button">{link.text}</a>
+								{/each}
 							</div>
 						</div>
 					</div>
@@ -390,7 +384,7 @@
 					font-weight: normal
 					word-wrap: break-word
 					white-space: normal
-					line-height: 90%
+					line-height: 100%
 
 					&.breakTitleWords
 						display: inline-block
@@ -423,6 +417,7 @@
 				flex-direction: row
 				justify-content: space-between
 				align-items: center
+				gap: 5vh
 
 				*
 					flex-grow: 1
@@ -430,7 +425,7 @@
 
 				p
 					font-size: 1.3vh
-					width: 60%
+					width: 65%
 
 				.roles 
 					display: flex
@@ -462,19 +457,11 @@
 					position: relative
 					display: flex
 					flex-direction: column
-					align-items: center
-						
-					div.line
-						content: ""
-						position: absolute
-						top: 150%
-						left: 50%
-						width: 1.2px
-						background-color: white
-						height: 5vh
+					align-items: flex-end
+					gap: 2vh
 
 					.button
-						font-size: 1.3vw
+						font-size: 1.1vw
 						letter-spacing: 0.2vw
 						text-transform: uppercase
 						text-decoration: none
@@ -488,6 +475,7 @@
 					flex-direction: column
 					justify-content: flex-start
 					align-items: flex-start
+					gap: 1vh
 
 					p
 						font-size: 1.6vh !important
