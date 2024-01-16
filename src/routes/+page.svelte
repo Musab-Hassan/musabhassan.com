@@ -3,7 +3,7 @@
 import slickScroll from "slickscrolljs";
 import { onMount } from "svelte";
 import { imgPromises, loaderAnimationPromise, loadPageResolve, slickScrollInstance, workItemsFetch, siteDataFetch } from "$lib/store";
-import { fetchJsonData } from "$lib/utils";
+import { devMsg, fetchJsonData } from "$lib/utils";
 import HomeSection from "$lib/sections/home.svelte";
 import WorkSection from "$lib/sections/work.svelte";
 import AboutSection from "$lib/sections/about.svelte";
@@ -28,6 +28,7 @@ onMount(async () => {
 
 	loading = false; // Destroy loader component 
 	loadPageResolve(); // Resolve loadPagePromise
+	devMsg();
 
 	// Resolve slickScroll promise and pass momentumScroll's value
 	$slickScrollInstance = new (slickScroll as any)({

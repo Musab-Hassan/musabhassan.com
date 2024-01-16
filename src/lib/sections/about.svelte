@@ -99,10 +99,10 @@
 				</div>
 			</li>
 			<li>
-				<div in:letterSlideIn={{ initDelay: 750 }}>
+				<div in:letterSlideIn={{ initDelay: 650 }}>
 					Back-end
 				</div>
-				<div class="flex-item" in:maskSlideIn={{ delay: 800 }}>
+				<div class="flex-item" in:maskSlideIn={{ delay: 700 }}>
 					<img src="assets/imgs/svg-icons/nodejs.svg" alt="node js">
 					<img src="assets/imgs/svg-icons/php.svg" alt="php">
 				</div>
@@ -117,10 +117,10 @@
 				</div>
 			</li>
 			<li>
-				<div in:letterSlideIn={{ initDelay: 650 }}>
+				<div in:letterSlideIn={{ initDelay: 850 }}>
 					Mobile
 				</div>
-				<div class="flex-item" in:maskSlideIn={{ delay: 700 }}>
+				<div class="flex-item" in:maskSlideIn={{ delay: 900 }}>
 					<img src="assets/imgs/svg-icons/flutter.svg" alt="flutter">
 					<img src="assets/imgs/svg-icons/android.svg" alt="native android">
 					<img src="assets/imgs/svg-icons/iOS.svg" alt="native ios">

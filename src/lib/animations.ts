@@ -49,7 +49,6 @@ export function letterSlideIn (node: HTMLElement, params?: { duration?: number, 
         duration: params.duration,
         // Svelte transition animation
         tick: (t: number) => {
-            console.log(node);
             let eased = BezierEasing(.2, .58, .43, 1)(t); // t value with easing applied
 
             masks.forEach((element: HTMLElement) => {
@@ -321,9 +320,7 @@ export function workListIntro(node: HTMLElement, params?: { promise: Promise<any
             duration: 1600,
             delay: params.delay,
             update: (anim) => {
-                // let transformPosition = anime.get(node, "translateX", "px");
                 const t = 1 - quintOut(anim.progress / 100);
-                console.log(t);
                 workScrollSpeed.set(t * 2500);
             },
             complete: () => {
