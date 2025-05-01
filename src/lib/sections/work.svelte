@@ -5,26 +5,16 @@
 	import { fade } from "svelte/transition";
 	import { ImageRenderer } from "$lib/effects/work-slider/renderer";
 	import { letterSlideIn, letterSlideOut, maskSlideIn, maskSlideOut, workImageIntro, workListIntro } from "$lib/animations";
-	import { isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "$lib/store";
+	import { loadPagePromise } from "$lib/store";
+	import { dataState, scrollAnchorState, viewPortState, workScrollState } from "$lib/state.svelte";
 	import { loadImage, onScrolledIntoView } from "$lib/utils";
-	import type { WorkData } from '$lib/types';
-
-	// JSON Work data fetched from the work-data.json file
-	let data: WorkData = $state([]);
-	workItemsFetch.subscribe(val => {
-		if (val !== undefined) data = val;
-	});
-
-	// Is user holding click
-	let isMouseDown: boolean = $state(false);
-	isWorkScroll.subscribe(val => isMouseDown = val);
 
 
-	let workContainer: HTMLElement;// = $state()!;
-	let container: HTMLElement;// = $state()!; 
-	let listContainer: HTMLElement;// = $state()!; // Containers for Three meshes
-	let images: HTMLImageElement[] = [];// = $state([]); // Array of images to be passed to WebGL Shader
-	let workItems: HTMLElement[] = [];//  = $state([]); // Array of workItems to be animated
+	let workContainer: HTMLElement;
+	let container: HTMLElement; 
+	let listContainer: HTMLElement; // Containers for Three meshes
+	let images: HTMLImageElement[] = []; // Array of images to be passed to WebGL Shader
+	let workItems: HTMLElement[] = []; // Array of workItems to be animated
 
 	let breakTitleWords: boolean = $state(false);
 	let currentActive: number = $state(-1); // The work item to expand
@@ -48,13 +38,13 @@
 
 		onHold = (e: MouseEvent) => {
 			e.preventDefault();
-			if (currentActive >= 0 || isMouseDown || (e.target! as HTMLElement).classList.contains("button")) return;
+			if (currentActive >= 0 || workScrollState.active || (e.target! as HTMLElement).classList.contains("button")) return;
 
 			this.initialMouseX = e.clientX;
 			this.currentMouseX = e.clientX;
-			isWorkScroll.set(true);
+			workScrollState.active = true;
 
-			if (isMouseDown) {
+			if (workScrollState.active) {
 				let style = window.getComputedStyle(listContainer);
 				let matrix = new WebKitCSSMatrix(style.transform);
 
@@ -63,12 +53,12 @@
 		}
 
 		onRelease() {
-			isWorkScroll.set(false);
+			workScrollState.active = false;
 		}
 	
 		onMouseMove = (e: MouseEvent) => {
 			e.preventDefault();
-			if (!isMouseDown) return; 
+			if (!workScrollState.active) return; 
 			this.currentMouseX = e.clientX;
 
 			let diff = (this.currentMouseX - this.initialMouseX) * -1;
@@ -88,7 +78,7 @@
 			// Lerp easing
 			this.currentPosition = this.lerp(this.currentPosition, this.targetPosition, this.lerpSpeed);
 			
-			workScrollSpeed.set(Math.round((this.currentPosition - this.targetPosition) * 100) / 100); // Set Svelte Store value for the Canvas effect
+			workScrollState.speed = Math.round((this.currentPosition - this.targetPosition) * 100) / 100; // Set Svelte Store value for the Canvas effect
 			listContainer.style.transform = `translate3d(${ Math.round(this.currentPosition * 100) / 100 }px, 0px, 0px)`;
 
 			requestAnimationFrame(() => this.animate());
@@ -110,10 +100,10 @@
 		// GPU Tier to decide if effects should be enabled
 		const gpuTier = await getGPUTier();
 		// Svelte store for checking if device is a mobile device
-		$isMobile = gpuTier.isMobile!;
+		viewPortState.isMobile = gpuTier.isMobile!;
 
 		await loadPagePromise;
-		$workAnchor = workContainer;
+		scrollAnchorState.work = workContainer;
 
 		listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 
@@ -156,13 +146,13 @@
 			if (!gpuTier.isMobile) slider.animate();
 		} }}
 	>
-		<div class:mobile={$isMobile}>
+		<div class:mobile={viewPortState.isMobile}>
 			<ul class="work-list" 
 				bind:this={listContainer} 
-				class:hold={isMouseDown}>
+				class:hold={workScrollState.active}>
 
 				<!-- Work items -->
-				{#each data as item, i}
+				{#each dataState.workData! as item, i}
 					<li use:workImageIntro={{ promise: inViewPromise, delay: i*30 }}>
 						<div class="list-item clickable passive" 
 							class:ambient="{ currentActive !== i && currentActive >= 0 }" 
@@ -175,7 +165,7 @@
 								{/await}
 							</div>
 							{#await inViewPromise then _}
-								<div class="text-top-wrapper" class:hidden={currentActive >= 0 || isMouseDown}>
+								<div class="text-top-wrapper" class:hidden={currentActive >= 0 || workScrollState.active}>
 									<p 
 										class="item-index"
 										in:maskSlideIn={{
@@ -186,7 +176,7 @@
 									</p>
 								</div>
 								
-								<div class="text-wrapper" class:hidden={currentActive >= 0 || isMouseDown}>
+								<div class="text-wrapper" class:hidden={currentActive >= 0 || workScrollState.active}>
 									<h1 
 										class="item-title" 
 										>
@@ -234,7 +224,7 @@
 							</div>
 							<span class="line" transition:fade></span>
 							<h6 class="caption">
-								<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>{data[currentActive].details.summary}</div>
+								<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>{dataState.workData![currentActive].details.summary}</div>
 							</h6>
 						</div>
 					</div>
@@ -247,7 +237,7 @@
 							onintroend={() => setTimeout(() => breakTitleWords = true, 100)}
 							onoutrostart={() => setTimeout(() => breakTitleWords = false, 100)}>
 
-							{data[currentActive].title}
+							{dataState.workData![currentActive].title}
 						</h1>
 						<button class="close-button-wrapper interactive" onclick={() => toggleActiveItem(currentActive)}>
 							<div 
@@ -264,7 +254,7 @@
 						<div>
 							<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>
 								<p class="paragraph">
-									{data[currentActive].details.description}
+									{dataState.workData![currentActive].details.description}
 								</p>
 							</div>
 						</div>
@@ -274,7 +264,7 @@
 									<p class="descriptor">Role</p>
 								</div>
 								<ul in:maskSlideIn={{ reverse: true, delay: 100 }} out:maskSlideOut>
-									{#each data[currentActive].roles as role}
+									{#each dataState.workData![currentActive].roles as role}
 										<li>{"+ " + role}</li>
 									{/each}
 								</ul>
@@ -282,7 +272,7 @@
 						</div>
 						<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>
 							<div class="links">
-								{#each data[currentActive].links as link}
+								{#each dataState.workData![currentActive].links as link}
 									<a href={link.link} target="_blank" class="button">{link.text}</a>
 								{/each}
 							</div>

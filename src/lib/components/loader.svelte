@@ -2,7 +2,8 @@
 
     import { onMount } from "svelte";
     import { waitForElementTransition } from '$lib/wait-for-element-transition';
-    import { imgPromises, loaderAnimationResolve, workItemsFetch } from "$lib/store";
+    import { imgPromises, loaderAnimationResolve } from "$lib/store";
+    import { dataState } from "$lib/state.svelte";
 
     let loader: HTMLElement = $state()!;
     let loadingDone = $state(false);
@@ -14,7 +15,7 @@
         let length = $imgPromises.length;
 
         // Wait for work item loading from JSON file to complete
-        await workItemsFetch;
+        await dataState.workData;
 
         // Calculate percentage by how many images have loaded
         $imgPromises.forEach(async (promise) => {

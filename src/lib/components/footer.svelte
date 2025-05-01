@@ -2,9 +2,9 @@
 
     import { onMount } from "svelte";
     import { letterSlideIn, maskSlideIn } from "$lib/animations";
-    import { loadPagePromise, siteDataFetch } from "$lib/store";
+    import { loadPagePromise } from "$lib/store";
     import { onScrolledIntoView } from "$lib/utils";
-    import type { SiteData } from "$lib/types";
+    import { dataState } from "$lib/state.svelte";
 
     let footerContainerElement: HTMLElement = $state()!
     let logoElement: HTMLElement = $state()!; 
@@ -16,13 +16,6 @@
     let signaturePath2: SVGPathElement = $state()!; 
     let signaturePath3: SVGPathElement = $state()!;
     let signaturePath4: SVGPathElement = $state()!; 
-
-    let siteData: SiteData = $state({ availablity_date: "" });
-
-    siteDataFetch.subscribe(val => {
-        if (val !== undefined)
-            siteData = val;
-    });
 
     const currentYear = new Date().getFullYear();
     
@@ -91,15 +84,17 @@
         </div>
 
         <div class="status-wrapper">
-                {#if siteData.availablity_date === ""}
+            {#if dataState.siteData}
+                {#if dataState.siteData!.availablity_date === ""}
                     <p class="large-text" bind:this={statusElement}>
                         i am currently accepting freelance work, <br>you may reach me on my email.
                     </p>
                 {:else}
                     <p class="large-text" bind:this={statusElement}>
-                        i am available for freelance work after <br> {siteData.availablity_date}.
+                        i am available for freelance work after <br> {dataState.siteData.availablity_date}.
                     </p>
                 {/if}
+            {/if}
             <a class="button large-text" bind:this={fullEmailLinkElement} href="mailto:musabhassan04@gmail.com" target="_blank">musabhassan04@gmail.com</a>
         </div>
         

@@ -1,6 +1,6 @@
 import BezierEasing from "bezier-easing";
 import { animate, stagger } from "animejs";
-import { workScrollSpeed } from "./store";
+import { workScrollState } from "$lib/state.svelte";
 import { quintOut } from "svelte/easing";
 
 // Intro Letter reveal animation used declaratively with the 'in:' svelte directive or programmatically with anime.js
@@ -316,7 +316,7 @@ export function workListIntro(node: HTMLElement, params?: { promise: Promise<any
             // delay: params.delay,
             update: (anim: { progress: number; }) => {
                 const t = 1 - quintOut(anim.progress / 100);
-                workScrollSpeed.set(t * 2500);
+                workScrollState.speed = t * 2500;
             },
             complete: () => {
                 node.style.transform = "";

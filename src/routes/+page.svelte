@@ -1,50 +1,51 @@
 <script lang="ts">
 
-import slickScroll from "slickscrolljs";
-import { onMount } from "svelte";
-import { imgPromises, loaderAnimationPromise, loadPageResolve, slickScrollInstance, workItemsFetch, siteDataFetch } from "$lib/store";
-import { devMsg, fetchJsonData } from "$lib/utils";
-import HomeSection from "$lib/sections/home.svelte";
-import WorkSection from "$lib/sections/work.svelte";
-import AboutSection from "$lib/sections/about.svelte";
-import NavComponent from "$lib/components/nav.svelte"
-import Footer from "$lib/components/footer.svelte";
-import CursorDot from "$lib/components/cursor-dot.svelte"
-import Loader from "$lib/components/loader.svelte";
+	import slickScroll from "slickscrolljs";
+	import { onMount } from "svelte";
+	import { loaderAnimationPromise, loadPageResolve, imgPromises } from "$lib/store";
+	import { devMsg, fetchJsonData } from "$lib/utils";
+	import HomeSection from "$lib/sections/home.svelte";
+	import WorkSection from "$lib/sections/work.svelte";
+	import AboutSection from "$lib/sections/about.svelte";
+	import NavComponent from "$lib/components/nav.svelte"
+	import Footer from "$lib/components/footer.svelte";
+	import CursorDot from "$lib/components/cursor-dot.svelte"
+	import Loader from "$lib/components/loader.svelte";
+    import { dataState, viewPortState } from "$lib/state.svelte";
 
-let scrollContainer: HTMLElement = $state()!;
-let navBar: HTMLElement = $state()!;
-let loading: boolean = $state(true);
+	let scrollContainer: HTMLElement = $state()!;
+	let navBar: HTMLElement = $state()!;
+	let loading: boolean = $state(true);
 
-onMount(async () => {
-	// Disable scrolling on initial load
-	scrollContainer.style.overflowY = "hidden";
-	scrollContainer.scrollTo(0, 0);
-	
-	workItemsFetch.set(await fetchJsonData("/data/work-data.json")); // Wait for work data to load
-	siteDataFetch.set(await fetchJsonData("/data/data.json")); // Wait for work data to load
+	onMount(async () => {
+		// Disable scrolling on initial load
+		scrollContainer.style.overflowY = "hidden";
+		scrollContainer.scrollTo(0, 0);
+		
+		dataState.workData = await fetchJsonData("/data/work-data.json"); // Wait for work data to load
+		dataState.siteData = await fetchJsonData("/data/data.json"); // Wait for work data to load
 
-	await Promise.allSettled($imgPromises); // Wait for images to load
-	await loaderAnimationPromise; // Wait until loading animation is complete
+		await Promise.allSettled($imgPromises); // Wait for images to load
+		await loaderAnimationPromise; // Wait until loading animation is complete
 
-	loading = false; // Destroy loader component 
-	loadPageResolve(); // Resolve loadPagePromise
-	devMsg();
+		loading = false; // Destroy loader component 
+		loadPageResolve(); // Resolve loadPagePromise
+		devMsg();
 
-	// Resolve slickScroll promise and pass momentumScroll's value
-	$slickScrollInstance = new (slickScroll as any)({
-		root: scrollContainer,
-		easing: "easeOutCirc",
-		duration: 1500,
-		fixedOffsets: [
-			navBar
-		]
+		// Resolve slickScroll promise and pass momentumScroll's value
+		viewPortState.slickscrollInstance = new (slickScroll as any)({
+			root: scrollContainer,
+			easing: "easeOutCirc",
+			duration: 1500,
+			fixedOffsets: [
+				navBar
+			]
+		});
+
+		// Enable scrolling
+		scrollContainer.style.overflowX = "hidden";
+		scrollContainer.style.overflowY = "auto";
 	});
-
-	// Enable scrolling
-	scrollContainer.style.overflowX = "hidden";
-	scrollContainer.style.overflowY = "auto";
-});
 
 </script>
 

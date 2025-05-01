@@ -1,9 +1,10 @@
 <script lang="ts">
 
 	import { onMount } from "svelte";
-	import { aboutAnchor, loadPagePromise, slickScrollInstance } from "$lib/store";
+	import { loadPagePromise } from "$lib/store";
 	import { letterSlideIn, maskSlideIn } from "$lib/animations";
 	import { loadImage, onScrolledIntoView } from "$lib/utils";
+    import { scrollAnchorState, viewPortState } from "$lib/state.svelte";
 
 	let section1Element: HTMLElement;
 	let section2Element: HTMLElement;
@@ -19,9 +20,9 @@
 		// Wait for page to load
 		await loadPagePromise;
 		// Set navbar about link's y location to top of aboutContainer
-		$aboutAnchor = section1Element;
+		scrollAnchorState.about = section1Element;
 
-		$slickScrollInstance.addOffset({
+		viewPortState.slickscrollInstance.addOffset({
 			element: profilePicContainer!,
 			speedY: 0.8
 		});
@@ -37,7 +38,7 @@
 
 	// Add parallax scrolling offsets to slickScroll
 	function addSlickScrollOffset(node: HTMLElement) {
-		$slickScrollInstance.addOffset({
+		viewPortState.slickscrollInstance.addOffset({
 			element: node,
 			speedY: 0.8
 		});

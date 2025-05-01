@@ -2,8 +2,9 @@
 
 	import { animate, stagger } from "animejs";
 	import { onMount } from "svelte";
-	import { homeAnchor, loadPagePromise, slickScrollInstance } from "$lib/store";
+	import { loadPagePromise } from "$lib/store";
 	import { loadImage } from "$lib/utils";
+    import { scrollAnchorState, viewPortState } from "$lib/state.svelte";
 
 	// DOM Node Binds for animations
 	let homeContainerElement: HTMLElement = $state()!; // Container
@@ -25,10 +26,10 @@
 	onMount(async () => {
 		await loadPagePromise;
 		// Set navbar home link's y location to top of homeContainer
-		$homeAnchor = homeContainerElement;
+		scrollAnchorState.home = homeContainerElement;
 
 		// Add parallax scrolling offsets to slickScroll
-		$slickScrollInstance!.addOffset({
+		viewPortState.slickscrollInstance!.addOffset({
 			element: backgroundContainerElement,
 			speedY: 0.8
 		});

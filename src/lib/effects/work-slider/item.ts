@@ -1,6 +1,6 @@
 
 import * as THREE from "three";
-import { workScrollSpeed } from "../../store";
+import { workScrollState } from "../../state.svelte";
 import { ImageMesh } from "../defaults/image-mesh";
 import { fragmentShader, vertexShader } from "./shaders";
 
@@ -32,9 +32,7 @@ export class SliderImageMesh extends ImageMesh {
         super(element, scene, shaders, element.parentElement!, uniforms);
 
         this.clock = new THREE.Clock();
-        workScrollSpeed.subscribe(val => { // Get current slider speed from svelte stores
-            this.speed = val;
-        });
+        this.speed = workScrollState.speed;
     }
 
     createMesh(): void {

@@ -1,9 +1,10 @@
 <script lang="ts">
 
 	import { animate } from "animejs";
-	import { homeAnchor, workAnchor, aboutAnchor, loadPagePromise, isMobile } from "$lib/store";
+	import { loadPagePromise } from "$lib/store";
 	import { maskSlideIn } from "$lib/animations";
 	import { browser } from "$app/environment";
+    import { scrollAnchorState } from "$lib/state.svelte";
 	interface Props {
 		// Scroll container to allow scrolling when anchors are clicked
 		scrollContainer: HTMLElement;
@@ -59,7 +60,7 @@
 		<!-- Logo -->
 		<div class="flex-wrapper ico" style="z-index: 21;">
 			<button class="interactive clickable"
-				onclick={() => navigate($homeAnchor)}>
+				onclick={() => navigate(scrollAnchorState.home!)}>
 
 				<img src="assets/imgs/logo.svg"
 					class="logo-icon"
@@ -77,7 +78,7 @@
 						<li use:introAnimation={{ delay: 1000 }}>
 							<button 
 								class="interactive clickable"
-								onclick={() => navigate($homeAnchor)} 
+								onclick={() => navigate(scrollAnchorState.home!)} 
 								in:mobileTransitionSwitcher={{ delay: 200 }}>
 								Home
 							</button>
@@ -85,7 +86,7 @@
 						<li use:introAnimation={{ delay: 1100 }}>
 							<button 
 								class="interactive clickable"
-								onclick={() => navigate($workAnchor)} 
+								onclick={() => navigate(scrollAnchorState.work!)} 
 								in:mobileTransitionSwitcher={{ delay: 250 }}>
 								<p>Work</p>
 							</button>
@@ -93,7 +94,7 @@
 						<li use:introAnimation={{ delay: 1200 }}>
 							<button 
 								class="interactive clickable"
-								onclick={() => navigate($aboutAnchor)} 
+								onclick={() => navigate(scrollAnchorState.about!)} 
 								in:mobileTransitionSwitcher={{ delay: 300 }}>
 								About
 							</button>
