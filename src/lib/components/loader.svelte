@@ -4,9 +4,9 @@
     import { waitForElementTransition } from '$lib/wait-for-element-transition';
     import { imgPromises, loaderAnimationResolve, workItemsFetch } from "$lib/store";
 
-    let loader: HTMLElement;
-    let loadingDone = false;
-    let loadingPercentage = 0;
+    let loader: HTMLElement = $state()!;
+    let loadingDone = $state(false);
+    let loadingPercentage = $state(0);
 
     onMount(async () => {
 

@@ -6,10 +6,18 @@
     import { onScrolledIntoView } from "$lib/utils";
     import type { SiteData } from "$lib/types";
 
-    let footerContainerElement: HTMLElement, logoElement: HTMLElement, creditsElement: HTMLElement, statusElement: HTMLElement, fullEmailLinkElement: HTMLElement;
-    let signaturePath1: SVGPathElement, signaturePath2: SVGPathElement, signaturePath3: SVGPathElement, signaturePath4: SVGPathElement; 
+    let footerContainerElement: HTMLElement = $state()!
+    let logoElement: HTMLElement = $state()!; 
+    let creditsElement: HTMLElement = $state()!; 
+    let statusElement: HTMLElement = $state()!; 
+    let fullEmailLinkElement: HTMLElement = $state()!;
 
-    let siteData: SiteData = { availablity_date: "" };
+    let signaturePath1: SVGPathElement = $state()!; 
+    let signaturePath2: SVGPathElement = $state()!; 
+    let signaturePath3: SVGPathElement = $state()!;
+    let signaturePath4: SVGPathElement = $state()!; 
+
+    let siteData: SiteData = $state({ availablity_date: "" });
 
     siteDataFetch.subscribe(val => {
         if (val !== undefined)
@@ -142,8 +150,9 @@
 
 <style lang="sass">
 
-@import "../consts.sass"
-@include textStyles()
+@use "../consts.sass" as consts
+
+@include consts.textStyles()
 
 .footer-wrapper
     width: 100vw
@@ -189,7 +198,7 @@
 
         p.year
             margin-bottom: 1vh
-            font-family: $font
+            font-family: consts.$font
             font-size: 1.8vh
             font-weight: normal
             color: rgba(255,255,255,0.3)

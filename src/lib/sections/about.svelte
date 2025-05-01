@@ -5,7 +5,8 @@
 	import { letterSlideIn, maskSlideIn } from "$lib/animations";
 	import { loadImage, onScrolledIntoView } from "$lib/utils";
 
-	let section1Element: HTMLElement, section2Element: HTMLElement;
+	let section1Element: HTMLElement;
+	let section2Element: HTMLElement;
 	let profilePicContainer: HTMLElement;
 
 	// Promise which when resolved will trigger svelte animations
@@ -21,7 +22,7 @@
 		$aboutAnchor = section1Element;
 
 		$slickScrollInstance.addOffset({
-			element: profilePicContainer,
+			element: profilePicContainer!,
 			speedY: 0.8
 		});
 
@@ -145,8 +146,9 @@
 
 <style lang="sass">
 
-@import "../consts.sass"
-@include textStyles()
+@use "../consts.sass" as consts
+
+@include consts.textStyles()
 
 #content-container.about
 	display: flex
@@ -260,7 +262,7 @@
 			font-weight: bold
 
 		li
-			font-family: $font
+			font-family: consts.$font
 			text-transform: uppercase
 			font-size: 2vh
 			letter-spacing: 0.5vh

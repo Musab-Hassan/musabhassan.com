@@ -3,9 +3,9 @@
 	import { isMobile, isWorkScroll, loadPagePromise } from "$lib/store";
 
 	// Svelte class toggles for hover-container
-	let hover: boolean = false;
-	let disabled: boolean = false;
-	let introDisabled: boolean = true;
+	let hover: boolean = $state(false);
+	let disabled: boolean = $state(false);
+	let introDisabled: boolean = $state(true);
 
 	// Svelte store subscriptions
 	isWorkScroll.subscribe(val => disabled = val);
@@ -81,7 +81,7 @@
 
 
 
-<svelte:body on:mousemove = {(e) => updateMouseCoords(e)}/>
+<svelte:body onmousemove={(e) => updateMouseCoords(e)}/>
 
 {#await loadPagePromise then _}
 	<div class="dot-container active"

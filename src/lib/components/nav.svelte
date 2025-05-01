@@ -1,18 +1,21 @@
 <script lang="ts">
 
-	// Scroll container to allow scrolling when anchors are clicked
-	export let scrollContainer: HTMLElement;
-
-	import anime from "animejs";
+	import { animate } from "animejs";
 	import { homeAnchor, workAnchor, aboutAnchor, loadPagePromise, isMobile } from "$lib/store";
 	import { maskSlideIn } from "$lib/animations";
 	import { browser } from "$app/environment";
+	interface Props {
+		// Scroll container to allow scrolling when anchors are clicked
+		scrollContainer: HTMLElement;
+	}
 
-	let mobileMenuActive: boolean = false;
-	let isMobileMenuAllowed: boolean = browser ? window.innerWidth <= 950 : false;
+	let { scrollContainer }: Props = $props();
 
-	$: mobileTransitionSwitcher = 
-		mobileMenuActive ? 
+	let mobileMenuActive: boolean = $state(false);
+	let isMobileMenuAllowed: boolean = $state(browser ? window.innerWidth <= 950 : false);
+
+	let mobileTransitionSwitcher = 
+		$derived(mobileMenuActive ? 
 		maskSlideIn : 
 		(node: HTMLElement, _: any) => { 
 			let out = maskSlideIn(node, {reverse: true, duration: 3000}); 
@@ -24,7 +27,7 @@
 					if (t == 1) setTimeout(() => out.tick(1), 500);
 				} 
 			}
-		};
+		});
 
 
 	function navigate(anchor: HTMLElement) {
@@ -38,8 +41,7 @@
 	function introAnimation(node: HTMLElement, params: { delay: number }) {
 		if (isMobileMenuAllowed) return;
 		node.style.transform = "translateY(130%) rotate(7deg)"
-		anime({
-			targets: node,
+		animate(node, {
 			rotate: 0,
 			translateY: "0%",
 			easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
@@ -50,14 +52,14 @@
 
 </script>
 
-<svelte:window on:resize={() => isMobileMenuAllowed = window.innerWidth <= 950 }></svelte:window>
+<svelte:window onresize={() => isMobileMenuAllowed = window.innerWidth <= 950}></svelte:window>
 
 {#await loadPagePromise then _}
 	<div class="nav-wrapper" style="transform: translate(0px);">
 		<!-- Logo -->
 		<div class="flex-wrapper ico" style="z-index: 21;">
 			<button class="interactive clickable"
-				on:click={() => navigate($homeAnchor)}>
+				onclick={() => navigate($homeAnchor)}>
 
 				<img src="assets/imgs/logo.svg"
 					class="logo-icon"
@@ -75,7 +77,7 @@
 						<li use:introAnimation={{ delay: 1000 }}>
 							<button 
 								class="interactive clickable"
-								on:click={() => navigate($homeAnchor)} 
+								onclick={() => navigate($homeAnchor)} 
 								in:mobileTransitionSwitcher={{ delay: 200 }}>
 								Home
 							</button>
@@ -83,7 +85,7 @@
 						<li use:introAnimation={{ delay: 1100 }}>
 							<button 
 								class="interactive clickable"
-								on:click={() => navigate($workAnchor)} 
+								onclick={() => navigate($workAnchor)} 
 								in:mobileTransitionSwitcher={{ delay: 250 }}>
 								<p>Work</p>
 							</button>
@@ -91,7 +93,7 @@
 						<li use:introAnimation={{ delay: 1200 }}>
 							<button 
 								class="interactive clickable"
-								on:click={() => navigate($aboutAnchor)} 
+								onclick={() => navigate($aboutAnchor)} 
 								in:mobileTransitionSwitcher={{ delay: 300 }}>
 								About
 							</button>
@@ -110,8 +112,9 @@
 			<div class="mask">
 				<button class="interactive hb-button clickable"
 					use:introAnimation={{ delay: 1000 }}
-					on:click={() => mobileMenuActive = !mobileMenuActive} 
-					class:mobileMenuActive>
+					onclick={() => mobileMenuActive = !mobileMenuActive} 
+					class:mobileMenuActive
+					aria-label="Open Menu">
 
 					<div class="hb">
 						<span></span>
@@ -128,7 +131,7 @@
 
 <style lang="sass">
 
-@import "../consts.sass"
+@use "../consts.sass" as consts
 
 button.interactive
 	border: none
@@ -171,7 +174,7 @@ button.interactive
 			overflow: hidden
 
 			li
-				font-family: $font
+				font-family: consts.$font
 				text-transform: uppercase
 				font-size: 2vh
 				letter-spacing: 0.2vh
@@ -230,7 +233,7 @@ button.interactive
 				width: 100vw
 
 			li
-				font-family: $font
+				font-family: consts.$font
 				font-weight: bolder
 				text-transform: lowercase
 				font-size: 9vw
@@ -296,9 +299,6 @@ button.interactive
 				background-color: white
 
 		&.mobileMenuActive
-			.text
-				color: white
-
 			.hb
 				row-gap: 0px
 

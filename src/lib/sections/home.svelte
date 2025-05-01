@@ -1,15 +1,26 @@
 <script lang="ts">
 
-	import anime from "animejs";
+	import { animate, stagger } from "animejs";
 	import { onMount } from "svelte";
 	import { homeAnchor, loadPagePromise, slickScrollInstance } from "$lib/store";
 	import { loadImage } from "$lib/utils";
 
 	// DOM Node Binds for animations
-	let homeContainerElement: HTMLElement; // Container
-	let backgroundContainerElement: HTMLElement, backgroundImageElement: HTMLElement; // Offsets
-	let titleWord1Element: HTMLElement, titleWord2Element: HTMLElement, shortDetailsElement: HTMLElement, callToActionElement: HTMLElement; // Elements for animations
-	let signaturePath1: SVGPathElement, signaturePath2: SVGPathElement, signaturePath3: SVGPathElement, signaturePath4: SVGPathElement; // SVG Paths
+	let homeContainerElement: HTMLElement = $state()!; // Container
+	let backgroundContainerElement: HTMLElement = $state()!;
+	let backgroundImageElement: HTMLElement = $state()!; // Offsets
+
+	// Elements for animations
+	let titleWord1Element: HTMLElement = $state()!; 
+	let titleWord2Element: HTMLElement = $state()!; 
+	let shortDetailsElement: HTMLElement = $state()!; 
+	let callToActionElement: HTMLElement = $state()!;
+
+	// SVG Paths
+	let signaturePath1: SVGPathElement = $state()!; 
+	let signaturePath2: SVGPathElement = $state()!;
+	let signaturePath3: SVGPathElement = $state()!; 
+	let signaturePath4: SVGPathElement = $state()!;
 
 	onMount(async () => {
 		await loadPagePromise;
@@ -65,8 +76,7 @@
 		});
 		backgroundImageElement.style.transform = "translateY(80%) scale(1.4)";
 
-		anime({
-			targets: backgroundContainerElement,
+		animate(backgroundContainerElement, {
 			height: "100%",
 			scale: 1,
 			easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
@@ -76,8 +86,8 @@
 				backgroundContainerElement.style.boxShadow = "3px 9px 18px rgba(0, 0, 0, 0.2)";
 			}
 		});
-		anime({
-			targets: backgroundImageElement,
+
+		animate(backgroundImageElement, {
 			translateY: "0",
 			scale: 1,
 			easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
@@ -91,13 +101,12 @@
 		titleElements.forEach(e => {
 			e.style.transform = "translateY(130%) rotate(10deg)";
 		})
-		anime({
-			targets: titleElements,
+		animate(titleElements, {
 			rotate: "0",
 			translateY: "0%",
 			easing: "cubicBezier(0.165, 0.84, 0.44, 1)",
 			duration: 900,
-			delay: anime.stagger(80, {start: 500})
+			delay: stagger(80, {start: 500})
 		});
 	}
 
@@ -178,8 +187,8 @@
 
 <style lang="sass">
 
-@import "../consts"
-@include textStyles()
+@use "../consts" as consts
+@include consts.textStyles()
 
 #content-container
 	height: 100vh
@@ -243,7 +252,7 @@
 				.action
 					font-size: 2vh
 					letter-spacing: 0.5vh
-					font-family: $font
+					font-family: consts.$font
 					text-transform: uppercase
 					color: white
 					position: relative

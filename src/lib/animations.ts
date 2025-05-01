@@ -1,5 +1,5 @@
 import BezierEasing from "bezier-easing";
-import anime from "animejs";
+import { animate, stagger } from "animejs";
 import { workScrollSpeed } from "./store";
 import { quintOut } from "svelte/easing";
 
@@ -74,12 +74,11 @@ export function letterSlideIn (node: HTMLElement, params?: { duration?: number, 
     // Call animation programmatically outside of svelte transitions with anime.js
     function animeAnimation(animeParams?: { easing?: string, onComplete?: () => void }) {
         if (animeParams === undefined) animeParams = {};
-        anime({
-            targets: animeTargets,
+        animate(animeTargets, {
             translateX: "0%",
+            // duration: params!.duration,
             easing: (animeParams.easing) ? animeParams.easing : "cubicBezier(.2, .58, .43, 1)",
-            duration: params!.duration,
-            delay: anime.stagger(params!.delay!, { start: params!.initDelay }),
+            delay: stagger(params!.delay!, { start: params!.initDelay }),
             // Return node to original state if destroyLettersUponSuccess is true
             complete: () => {
                 // Return node to original state on completion
@@ -143,12 +142,11 @@ export function letterSlideOut (node: HTMLElement, params?: { duration?: number,
 
         // Call animation outside of svelte blocks programmatically with anime.js
         anime: (easing?: string) => {
-            anime({
-                targets: animeTargets,
+            animate(animeTargets, {
                 translateX: "-150%",
                 easing: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
-                duration: params!.duration,
-                delay: anime.stagger(params!.delay!, { start: params!.initDelay }),
+                // duration: params!.duration,
+                delay: stagger(params!.delay!, { start: params!.initDelay }),
                 // Return node to original state if destroyLettersUponSuccess is true
                 complete: () => {
                     // Return node to original state on completion
@@ -236,12 +234,11 @@ export function maskSlideIn(node: HTMLElement, params?: { duration?: number, del
 
     // Call animation programmatically outside of svelte transitions with anime.js
     function animeAnimation(easing?: string) {
-        anime({
-            targets: [mask, node],
+        animate([mask, node], {
             translateX: "0%",
             easing: easing ? easing : "cubicBezier(.58,.14,.06,.97)",
-            duration: params!.duration,
-            delay: params!.delay
+            // duration: params!.duration,
+            // delay: params!.delay
         })
     }
 }
@@ -285,12 +282,11 @@ export function workImageIntro(node: HTMLElement, params?: { promise: Promise<an
     node.style.marginRight = "60%";
 
     params.promise.then(() => {
-        anime({
-            targets: node,
+        animate(node, {
             marginRight: "0%",
             easing: "easeOutQuint",
             duration: 1400,
-            delay: params.delay,
+            // delay: params.delay,
             complete: () => {
                 node.style.marginRight = "";
                 node.style.transition = "";
@@ -313,13 +309,12 @@ export function workListIntro(node: HTMLElement, params?: { promise: Promise<any
     node.style.transform = "translateX(100%)"
 
     params.promise.then(() => {
-        anime({
-            targets: node, 
+        animate(node, {
             translateX: "0%",
             easing: "easeOutQuint",
             duration: 1600,
-            delay: params.delay,
-            update: (anim) => {
+            // delay: params.delay,
+            update: (anim: { progress: number; }) => {
                 const t = 1 - quintOut(anim.progress / 100);
                 workScrollSpeed.set(t * 2500);
             },

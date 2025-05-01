@@ -1,5 +1,5 @@
 <script lang="ts">
-	
+
 import slickScroll from "slickscrolljs";
 import { onMount } from "svelte";
 import { imgPromises, loaderAnimationPromise, loadPageResolve, slickScrollInstance, workItemsFetch, siteDataFetch } from "$lib/store";
@@ -12,8 +12,9 @@ import Footer from "$lib/components/footer.svelte";
 import CursorDot from "$lib/components/cursor-dot.svelte"
 import Loader from "$lib/components/loader.svelte";
 
-let scrollContainer: HTMLElement, navBar: HTMLElement;
-let loading: boolean = true;
+let scrollContainer: HTMLElement = $state()!;
+let navBar: HTMLElement = $state()!;
+let loading: boolean = $state(true);
 
 onMount(async () => {
 	// Disable scrolling on initial load
@@ -71,8 +72,6 @@ onMount(async () => {
 
 
 <style lang="sass">
-
-@import "$lib/consts"
 
 :global(canvas)
 	position: absolute
