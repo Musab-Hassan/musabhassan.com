@@ -73,6 +73,7 @@ export function letterSlideIn (node: HTMLElement, params?: { duration?: number, 
 
     // Call animation programmatically outside of svelte transitions with anime.js
     function animeAnimation(animeParams?: { easing?: string, onComplete?: () => void }) {
+        console.log("Fired", animeTargets, params);
         if (animeParams === undefined) animeParams = {};
         animate(animeTargets, {
             translateX: "0%",
@@ -80,7 +81,7 @@ export function letterSlideIn (node: HTMLElement, params?: { duration?: number, 
             easing: (animeParams.easing) ? animeParams.easing : "cubicBezier(.2, .58, .43, 1)",
             delay: stagger(params!.delay!, { start: params!.initDelay }),
             // Return node to original state if destroyLettersUponSuccess is true
-            complete: () => {
+            onComplete: () => {
                 // Return node to original state on completion
                 node.innerHTML = originalNodeHTML;
                 if (animeParams)
@@ -148,7 +149,7 @@ export function letterSlideOut (node: HTMLElement, params?: { duration?: number,
                 // duration: params!.duration,
                 delay: stagger(params!.delay!, { start: params!.initDelay }),
                 // Return node to original state if destroyLettersUponSuccess is true
-                complete: () => {
+                onComplete: () => {
                     // Return node to original state on completion
                     node.innerHTML = originalNodeHTML;
                 }
@@ -284,10 +285,10 @@ export function workImageIntro(node: HTMLElement, params?: { promise: Promise<an
     params.promise.then(() => {
         animate(node, {
             marginRight: "0%",
-            easing: "easeOutQuint",
+            easing: "outQuint",
             duration: 1400,
             // delay: params.delay,
-            complete: () => {
+            onComplete: () => {
                 node.style.marginRight = "";
                 node.style.transition = "";
             }
@@ -311,14 +312,14 @@ export function workListIntro(node: HTMLElement, params?: { promise: Promise<any
     params.promise.then(() => {
         animate(node, {
             translateX: "0%",
-            easing: "easeOutQuint",
+            easing: "outQuint",
             duration: 1600,
             // delay: params.delay,
-            update: (anim: { progress: number; }) => {
+            onUpdate: (anim: { progress: number; }) => {
                 const t = 1 - quintOut(anim.progress / 100);
                 workScrollState.speed = t * 2500;
             },
-            complete: () => {
+            onComplete: () => {
                 node.style.transform = "";
                 node.style.transition = "";
                 if (params.onComplete) params.onComplete();
