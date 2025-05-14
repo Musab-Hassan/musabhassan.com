@@ -10,7 +10,6 @@ export type WorkData = {
         description: string,
         summary: string
     },
-    date: string,
     roles: string[],
     links: {
         type: "web" | "android" | "ios" | undefined,
