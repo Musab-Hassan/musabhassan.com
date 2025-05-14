@@ -1,14 +1,11 @@
 <script lang="ts">
 
-	import { isMobile, isWorkScroll, loadPagePromise } from "$lib/store";
+	import { loadPagePromise } from "$lib/store";
+	import { workScrollState, viewPortState } from "$lib/state.svelte";
 
 	// Svelte class toggles for hover-container
-	let hover: boolean = false;
-	let disabled: boolean = false;
-	let introDisabled: boolean = true;
-
-	// Svelte store subscriptions
-	isWorkScroll.subscribe(val => disabled = val);
+	let hover: boolean = $state(false);
+	let introDisabled: boolean = $state(true);
 
 	let currentPosition = {
 		x: 0, y: 0
@@ -20,7 +17,7 @@
 	// onMouseMove, set current mouse coords and detect if any clickable is hovered
 	function updateMouseCoords(e: MouseEvent) {
 		// Don't do anything if its a touch mobile device
-		if ($isMobile) return;
+		if (viewPortState.isMobile) return;
 
 		if (introDisabled) setTimeout(() => introDisabled = false, 200);
 
@@ -81,12 +78,12 @@
 
 
 
-<svelte:body on:mousemove = {(e) => updateMouseCoords(e)}/>
+<svelte:body onmousemove={(e) => updateMouseCoords(e)}/>
 
 {#await loadPagePromise then _}
 	<div class="dot-container active"
 		class:hover
-		class:disabled={ introDisabled || disabled }
+		class:disabled={ introDisabled || workScrollState.active }
 		use:animate>
 		<div class="dot"></div>
 	</div>

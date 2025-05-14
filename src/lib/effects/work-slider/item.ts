@@ -1,6 +1,6 @@
 
 import * as THREE from "three";
-import { workScrollSpeed } from "../../store";
+import { workScrollState } from "../../state.svelte";
 import { ImageMesh } from "../defaults/image-mesh";
 import { fragmentShader, vertexShader } from "./shaders";
 
@@ -32,9 +32,6 @@ export class SliderImageMesh extends ImageMesh {
         super(element, scene, shaders, element.parentElement!, uniforms);
 
         this.clock = new THREE.Clock();
-        workScrollSpeed.subscribe(val => { // Get current slider speed from svelte stores
-            this.speed = val;
-        });
     }
 
     createMesh(): void {
@@ -45,6 +42,7 @@ export class SliderImageMesh extends ImageMesh {
     render(): void {
         super.render();
 
+        this.speed = workScrollState.speed;
         this.uniforms.uOffset!.value.set(this.speed * -0.0003, Math.abs(this.speed * 0.00005)); // Warping and Distortion effect
         this.uniforms.uTime!.value = this.clock.getElapsedTime() * 0.8;
     }

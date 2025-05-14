@@ -40,7 +40,6 @@ export function onScrolledIntoView(node: HTMLElement, entryInView: (entry: Inter
 
 export function devMsg() {
     const css = "font-size: 1.2rem; font-weight: bold;";
-    console.log("%cLooks like you're a developer.", css + "color: #22c55e;");
     console.log("%cInterested in how this site works?", css + "color: #22c55e;")
-    console.log("%cCheckout the source code: https://github.com/Musab-Hassan/musabhassan.com", css);
+    console.log("%cCheck out the source code: https://github.com/Musab-Hassan/musabhassan.com", css);
 }

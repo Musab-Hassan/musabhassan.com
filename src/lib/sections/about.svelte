@@ -1,11 +1,13 @@
 <script lang="ts">
 
 	import { onMount } from "svelte";
-	import { aboutAnchor, loadPagePromise, slickScrollInstance } from "$lib/store";
+	import { loadPagePromise } from "$lib/store";
 	import { letterSlideIn, maskSlideIn } from "$lib/animations";
 	import { loadImage, onScrolledIntoView } from "$lib/utils";
+    import { scrollAnchorState, viewPortState } from "$lib/state.svelte";
 
-	let section1Element: HTMLElement, section2Element: HTMLElement;
+	let section1Element: HTMLElement;
+	let section2Element: HTMLElement;
 	let profilePicContainer: HTMLElement;
 
 	// Promise which when resolved will trigger svelte animations
@@ -18,10 +20,10 @@
 		// Wait for page to load
 		await loadPagePromise;
 		// Set navbar about link's y location to top of aboutContainer
-		$aboutAnchor = section1Element;
+		scrollAnchorState.about = section1Element;
 
-		$slickScrollInstance.addOffset({
-			element: profilePicContainer,
+		viewPortState.slickscrollInstance.addOffset({
+			element: profilePicContainer!,
 			speedY: 0.8
 		});
 
@@ -36,7 +38,7 @@
 
 	// Add parallax scrolling offsets to slickScroll
 	function addSlickScrollOffset(node: HTMLElement) {
-		$slickScrollInstance.addOffset({
+		viewPortState.slickscrollInstance.addOffset({
 			element: node,
 			speedY: 0.8
 		});
@@ -145,8 +147,9 @@
 
 <style lang="sass">
 
-@import "../consts.sass"
-@include textStyles()
+@use "../consts.sass" as consts
+
+@include consts.textStyles()
 
 #content-container.about
 	display: flex
@@ -260,7 +263,7 @@
 			font-weight: bold
 
 		li
-			font-family: $font
+			font-family: consts.$font
 			text-transform: uppercase
 			font-size: 2vh
 			letter-spacing: 0.5vh

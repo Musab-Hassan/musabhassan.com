@@ -5,25 +5,16 @@
 	import { fade } from "svelte/transition";
 	import { ImageRenderer } from "$lib/effects/work-slider/renderer";
 	import { letterSlideIn, letterSlideOut, maskSlideIn, maskSlideOut, workImageIntro, workListIntro } from "$lib/animations";
-	import { isMobile, isWorkScroll, loadPagePromise, workAnchor, workItemsFetch, workScrollSpeed } from "$lib/store";
+	import { loadPagePromise } from "$lib/store";
+	import { dataState, scrollAnchorState, viewPortState, workScrollState } from "$lib/state.svelte";
 	import { loadImage, onScrolledIntoView } from "$lib/utils";
-	import type { WorkData } from '$lib/types';
-
-	// JSON Work data fetched from the work-data.json file
-	let data: WorkData = [];
-	workItemsFetch.subscribe(val => {
-		if (val !== undefined) data = val;
-	});
-
-	// Is user holding click
-	let isMouseDown: boolean = false;
-	isWorkScroll.subscribe(val => isMouseDown = val);
 
 
 	let workContainer: HTMLElement;
-	let container: HTMLElement, listContainer: HTMLElement; // Containers for Three meshes
+	let container: HTMLElement; 
+	let listContainer: HTMLElement; // Containers for Three meshes
 	let images: HTMLImageElement[] = []; // Array of images to be passed to WebGL Shader
-	let workItems: HTMLElement[]  = []; // Array of workItems to be animated
+	let workItems: HTMLElement[] = []; // Array of workItems to be animated
 
 	let breakTitleWords: boolean = false;
 	let currentActive: number = -1; // The work item to expand
@@ -46,13 +37,14 @@
 		lerpSpeed = 0.1;
 
 		onHold = (e: MouseEvent) => {
-			if (currentActive >= 0 || isMouseDown || (e.target! as HTMLElement).classList.contains("button")) return;
+			e.preventDefault();
+			if (currentActive >= 0 || workScrollState.active || (e.target! as HTMLElement).classList.contains("button")) return;
 
 			this.initialMouseX = e.clientX;
 			this.currentMouseX = e.clientX;
-			isWorkScroll.set(true);
+			workScrollState.active = true;
 
-			if (isMouseDown) {
+			if (workScrollState.active) {
 				let style = window.getComputedStyle(listContainer);
 				let matrix = new WebKitCSSMatrix(style.transform);
 
@@ -61,11 +53,12 @@
 		}
 
 		onRelease() {
-			isWorkScroll.set(false);
+			workScrollState.active = false;
 		}
 	
 		onMouseMove = (e: MouseEvent) => {
-			if (!isMouseDown) return; 
+			e.preventDefault();
+			if (!workScrollState.active) return; 
 			this.currentMouseX = e.clientX;
 
 			let diff = (this.currentMouseX - this.initialMouseX) * -1;
@@ -85,7 +78,7 @@
 			// Lerp easing
 			this.currentPosition = this.lerp(this.currentPosition, this.targetPosition, this.lerpSpeed);
 			
-			workScrollSpeed.set(Math.round((this.currentPosition - this.targetPosition) * 100) / 100); // Set Svelte Store value for the Canvas effect
+			workScrollState.speed = Math.round((this.currentPosition - this.targetPosition) * 100) / 100; // Set Svelte Store value for the Canvas effect
 			listContainer.style.transform = `translate3d(${ Math.round(this.currentPosition * 100) / 100 }px, 0px, 0px)`;
 
 			requestAnimationFrame(() => this.animate());
@@ -107,10 +100,10 @@
 		// GPU Tier to decide if effects should be enabled
 		const gpuTier = await getGPUTier();
 		// Svelte store for checking if device is a mobile device
-		$isMobile = gpuTier.isMobile!;
+		viewPortState.isMobile = gpuTier.isMobile!;
 
 		await loadPagePromise;
-		$workAnchor = workContainer;
+		scrollAnchorState.work = workContainer;
 
 		listContainer.style.transform = "translate3d(0px, 0px, 0px)";
 
@@ -141,10 +134,10 @@
 	<div class="content-wrapper" 
 		role="listbox"
 		tabindex="0"
-		on:mousedown|preventDefault={slider.onHold}
-		on:mouseup={slider.onRelease}
-		on:mouseleave={slider.onRelease}
-		on:mousemove|preventDefault={slider.onMouseMove}
+		onmousedown={slider.onHold}
+		onmouseup={slider.onRelease}
+		onmouseleave={slider.onRelease}
+		onmousemove={slider.onMouseMove}
 		bind:this={container}
 		class:disabled={currentActive >= 0}
 		use:workListIntro={{ promise: inViewPromise, onComplete: async () => {
@@ -153,13 +146,13 @@
 			if (!gpuTier.isMobile) slider.animate();
 		} }}
 	>
-		<div class:mobile={$isMobile}>
+		<div class:mobile={viewPortState.isMobile}>
 			<ul class="work-list" 
 				bind:this={listContainer} 
-				class:hold={isMouseDown}>
+				class:hold={workScrollState.active}>
 
 				<!-- Work items -->
-				{#each data as item, i}
+				{#each dataState.workData! as item, i}
 					<li use:workImageIntro={{ promise: inViewPromise, delay: i*30 }}>
 						<div class="list-item clickable passive" 
 							class:ambient="{ currentActive !== i && currentActive >= 0 }" 
@@ -168,11 +161,11 @@
 
 							<div class="img-wrapper">
 								{#await loadImage(`assets/imgs/work-back/${item.id}/cover.jpg`) then src}
-									<img bind:this={images[i]} src="{src}" on:dragstart|preventDefault draggable="false" alt="{item.title} Background">
+									<img bind:this={images[i]} src="{src}" ondragstart={(e) => {e.preventDefault()}} draggable="false" alt="{item.title} Background">
 								{/await}
 							</div>
 							{#await inViewPromise then _}
-								<div class="text-top-wrapper" class:hidden={currentActive >= 0 || isMouseDown}>
+								<div class="text-top-wrapper" class:hidden={currentActive >= 0 || workScrollState.active}>
 									<p 
 										class="item-index"
 										in:maskSlideIn={{
@@ -183,7 +176,7 @@
 									</p>
 								</div>
 								
-								<div class="text-wrapper" class:hidden={currentActive >= 0 || isMouseDown}>
+								<div class="text-wrapper" class:hidden={currentActive >= 0 || workScrollState.active}>
 									<h1 
 										class="item-title" 
 										>
@@ -198,7 +191,7 @@
 
 									<button 
 										class="button item-link interactive"
-										on:click={() => toggleActiveItem(i)}
+										onclick={() => toggleActiveItem(i)}
 										in:maskSlideIn={{
 											duration: 900,
 											delay: (i*30)+450,
@@ -231,7 +224,7 @@
 							</div>
 							<span class="line" transition:fade></span>
 							<h6 class="caption">
-								<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>{data[currentActive].details.summary}</div>
+								<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>{dataState.workData![currentActive].details.summary}</div>
 							</h6>
 						</div>
 					</div>
@@ -241,12 +234,12 @@
 							use:titleSlide
 							out:letterSlideOut
 							class:breakTitleWords
-							on:introend={() => setTimeout(() => breakTitleWords = true, 100)}
-							on:outrostart={() => setTimeout(() => breakTitleWords = false, 100)}>
+							onintroend={() => setTimeout(() => breakTitleWords = true, 100)}
+							onoutrostart={() => setTimeout(() => breakTitleWords = false, 100)}>
 
-							{data[currentActive].title}
+							{dataState.workData![currentActive].title}
 						</h1>
-						<button class="close-button-wrapper interactive" on:click={() => toggleActiveItem(currentActive)}>
+						<button class="close-button-wrapper interactive" onclick={() => toggleActiveItem(currentActive)}>
 							<div 
 								class ="close-button"
 								in:maskSlideIn={{ reverse: true }} 
@@ -261,7 +254,7 @@
 						<div>
 							<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>
 								<p class="paragraph">
-									{data[currentActive].details.description}
+									{dataState.workData![currentActive].details.description}
 								</p>
 							</div>
 						</div>
@@ -271,7 +264,7 @@
 									<p class="descriptor">Role</p>
 								</div>
 								<ul in:maskSlideIn={{ reverse: true, delay: 100 }} out:maskSlideOut>
-									{#each data[currentActive].roles as role}
+									{#each dataState.workData![currentActive].roles as role}
 										<li>{"+ " + role}</li>
 									{/each}
 								</ul>
@@ -279,7 +272,7 @@
 						</div>
 						<div in:maskSlideIn={{ reverse: true }} out:maskSlideOut>
 							<div class="links">
-								{#each data[currentActive].links as link}
+								{#each dataState.workData![currentActive].links as link}
 									<a href={link.link} target="_blank" class="button">{link.text}</a>
 								{/each}
 							</div>
@@ -294,8 +287,8 @@
 
 <style lang="sass">
 
-@import "../consts"
-@include textStyles()
+@use "../consts" as consts
+@include consts.textStyles()
 
 #content-container.work-click-area
 	margin-top: 30vh
@@ -354,13 +347,13 @@
 
 					h6.caption
 						position: relative
-						font-family: $font
+						font-family: consts.$font
 						text-transform: uppercase
 						font-weight: normal
 						font-size: 1.9vh
 
 					.index
-						font-family: $font
+						font-family: consts.$font
 						position: relative
 						font-size: 2.1vh
 
@@ -378,7 +371,7 @@
 
 				h1.title
 					position: relative
-					font-family: $titleFont
+					font-family: consts.$titleFont
 					font-size: 7vw
 					text-transform: lowercase
 					font-weight: normal
@@ -435,7 +428,7 @@
 					.descriptor
 						line-height: 270%
 						letter-spacing: 0.5vh
-						font-family: $font
+						font-family: consts.$font
 						text-transform: uppercase
 						font-weight: normal
 						font-size: 1.4vh
@@ -447,7 +440,7 @@
 						flex-direction: column
 
 						li
-							font-family: $font
+							font-family: consts.$font
 							text-transform: uppercase
 							font-weight: normal
 							font-size: 1.7vh
@@ -583,7 +576,7 @@
 					font-size: 1vw
 					letter-spacing: 0.1vw
 					text-transform: uppercase
-					font-family: $font
+					font-family: consts.$font
 
 			.text-wrapper
 				box-sizing: border-box
@@ -603,7 +596,7 @@
 					text-transform: uppercase
 
 				.item-title
-					font-family: $font
+					font-family: consts.$font
 					font-weight: normal
 					font-size: 2.5vw
 					z-index: 0

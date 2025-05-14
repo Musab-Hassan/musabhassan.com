@@ -59,7 +59,7 @@ export class ImageMesh {
 
     createMesh(): void {
         this.setDimensions();
-        this.geometry = new (THREE as any).PlaneBufferGeometry(1, 1, 4, 6);
+        this.geometry = new (THREE as any).PlaneGeometry(1, 1, 4, 6);
 
         const { width, height } = this.element.getBoundingClientRect();
 
