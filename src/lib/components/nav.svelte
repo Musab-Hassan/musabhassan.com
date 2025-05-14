@@ -100,7 +100,7 @@
 							</button>
 						</li>
 						<li class="mobile">
-							<a href="mailto:musabhassan04@gmail.com" target="_blank" in:mobileTransitionSwitcher={{ delay: 350 }}>Email</a>
+							<a href="mailto:musab@musabhassan.com" target="_blank" in:mobileTransitionSwitcher={{ delay: 350 }}>Contact</a>
 						</li>
 						<li use:introAnimation={{ delay: 1300 }}>
 							<a href="https://github.com/Musab-Hassan" target="_blank" in:mobileTransitionSwitcher={{ delay: 400 }}>Github</a>

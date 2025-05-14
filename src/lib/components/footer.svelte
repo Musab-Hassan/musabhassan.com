@@ -95,7 +95,7 @@
                     </p>
                 {/if}
             {/if}
-            <a class="button large-text" bind:this={fullEmailLinkElement} href="mailto:musabhassan04@gmail.com" target="_blank">musabhassan04@gmail.com</a>
+            <a class="button large-text" bind:this={fullEmailLinkElement} href="mailto:musab@musabhassan.com" target="_blank">musab@musabhassan.com</a>
         </div>
         
         <div class="credits-wrapper" bind:this={creditsElement}>
