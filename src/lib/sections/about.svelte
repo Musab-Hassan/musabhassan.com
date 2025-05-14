@@ -59,7 +59,7 @@
 			</div>
 			<div class="social-button-wrapper">
 				<div in:maskSlideIn={{ delay: 400, reverse: true }}>
-					<span class="button"><a href="mailto:musabhassan04@gmail.com" target="_blank" class="clickable sublink link">Email Me</a></span>
+					<span class="button"><a href="mailto:musab@musabhassan.com" target="_blank" class="clickable sublink link">Email Me</a></span>
 				</div>
 				<div in:maskSlideIn={{ delay: 700, reverse: true }}>
 					<span class="button"><a href="https://github.com/Musab-Hassan" target="_blank" class="clickable sublink link">Github</a></span>
