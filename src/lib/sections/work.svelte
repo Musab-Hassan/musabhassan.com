@@ -16,8 +16,8 @@
 	let images: HTMLImageElement[] = []; // Array of images to be passed to WebGL Shader
 	let workItems: HTMLElement[] = []; // Array of workItems to be animated
 
-	let breakTitleWords: boolean = $state(false);
-	let currentActive: number = $state(-1); // The work item to expand
+	let breakTitleWords: boolean = false;
+	let currentActive: number = -1; // The work item to expand
 
 	let inViewResolve: (_: boolean) => void;
 	const inViewPromise: Promise<boolean> = new Promise((resolve) => {

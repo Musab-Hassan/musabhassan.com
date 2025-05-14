@@ -73,12 +73,11 @@ export function letterSlideIn (node: HTMLElement, params?: { duration?: number, 
 
     // Call animation programmatically outside of svelte transitions with anime.js
     function animeAnimation(animeParams?: { easing?: string, onComplete?: () => void }) {
-        console.log("Fired", animeTargets, params);
         if (animeParams === undefined) animeParams = {};
         animate(animeTargets, {
             translateX: "0%",
-            // duration: params!.duration,
-            easing: (animeParams.easing) ? animeParams.easing : "cubicBezier(.2, .58, .43, 1)",
+            duration: params!.duration!,
+            ease: (animeParams.easing) ? animeParams.easing : "cubicBezier(.2, .58, .43, 1)",
             delay: stagger(params!.delay!, { start: params!.initDelay }),
             // Return node to original state if destroyLettersUponSuccess is true
             onComplete: () => {
@@ -110,6 +109,7 @@ export function letterSlideOut (node: HTMLElement, params?: { duration?: number,
 
     // Wrap every letter with a div and prepare it for animation
     let masks = tagLettersAndWords(node, { breakWord: params.breakWord });
+
     // Set initial style properties for each mask before animation begins
     masks.forEach((e: HTMLElement) => {
         e.style.display = "inline-flex";
@@ -128,25 +128,29 @@ export function letterSlideOut (node: HTMLElement, params?: { duration?: number,
         duration: params.duration,
         // Svelte transition animation
         tick: (t: number) => {
-            let eased = BezierEasing(.32, .24, .76, .26)(t);
+            const eased = BezierEasing(.32, .24, .76, .26)(t);
 
             masks.forEach((element: HTMLElement) => {
-                element.childNodes.forEach(child => {
-                    (child as HTMLElement).style.transform = `translate3d(${(-150 + (eased * 150)).toFixed(2)}%, 0px, 0px)`;
+                // Letter animation
+                element.childNodes.forEach(e => {
+                    (e as HTMLElement).style.transform = `translate3d(${(-150 + (eased * 150)).toFixed(2)}%, 0px, 0px)`;
                 });
 
+                // Word animation
                 element.style.transform = `translate3d(${(-80 + (eased * 80)).toFixed(2)}%, 0px, 0px)`;
             });
 
-            if (eased >= 1) node.innerHTML = originalNodeHTML;
+            if (eased <= 0) {
+                node.innerHTML = originalNodeHTML;
+            }
         },
 
         // Call animation outside of svelte blocks programmatically with anime.js
         anime: (easing?: string) => {
             animate(animeTargets, {
                 translateX: "-150%",
-                easing: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
-                // duration: params!.duration,
+                ease: easing ? easing : "cubicBezier(.2, .58, .43, 1)",
+                duration: params!.duration!,
                 delay: stagger(params!.delay!, { start: params!.initDelay }),
                 // Return node to original state if destroyLettersUponSuccess is true
                 onComplete: () => {
@@ -237,9 +241,9 @@ export function maskSlideIn(node: HTMLElement, params?: { duration?: number, del
     function animeAnimation(easing?: string) {
         animate([mask, node], {
             translateX: "0%",
-            easing: easing ? easing : "cubicBezier(.58,.14,.06,.97)",
-            // duration: params!.duration,
-            // delay: params!.delay
+            ease: easing ? easing : "cubicBezier(.58,.14,.06,.97)",
+            duration: params!.duration!,
+            delay: params!.delay!
         })
     }
 }
@@ -285,9 +289,9 @@ export function workImageIntro(node: HTMLElement, params?: { promise: Promise<an
     params.promise.then(() => {
         animate(node, {
             marginRight: "0%",
-            easing: "outQuint",
+            ease: "outQuint",
             duration: 1400,
-            // delay: params.delay,
+            delay: params.delay!,
             onComplete: () => {
                 node.style.marginRight = "";
                 node.style.transition = "";
@@ -312,11 +316,11 @@ export function workListIntro(node: HTMLElement, params?: { promise: Promise<any
     params.promise.then(() => {
         animate(node, {
             translateX: "0%",
-            easing: "outQuint",
+            ease: "outQuint",
             duration: 1600,
-            // delay: params.delay,
+            delay: params.delay!,
             onUpdate: (anim: { progress: number; }) => {
-                const t = 1 - quintOut(anim.progress / 100);
+                const t = 1 - quintOut(anim.progress);
                 workScrollState.speed = t * 2500;
             },
             onComplete: () => {

@@ -32,7 +32,6 @@ export class SliderImageMesh extends ImageMesh {
         super(element, scene, shaders, element.parentElement!, uniforms);
 
         this.clock = new THREE.Clock();
-        this.speed = workScrollState.speed;
     }
 
     createMesh(): void {
@@ -43,6 +42,7 @@ export class SliderImageMesh extends ImageMesh {
     render(): void {
         super.render();
 
+        this.speed = workScrollState.speed;
         this.uniforms.uOffset!.value.set(this.speed * -0.0003, Math.abs(this.speed * 0.00005)); // Warping and Distortion effect
         this.uniforms.uTime!.value = this.clock.getElapsedTime() * 0.8;
     }
