@@ -15,7 +15,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/kit": "^2.56.1",
-		"@sveltejs/vite-plugin-svelte": "^5.0.3",
+		"@sveltejs/vite-plugin-svelte": "^7.1.2",
 		"@types/animejs": "^3.1.13",
 		"@types/three": "^0.176.0",
 		"sass": "^1.87.0",
@@ -23,7 +23,7 @@
 		"svelte-check": "^4.1.6",
 		"tslib": "^2.8.1",
 		"typescript": "^5.8.3",
-		"vite": "^6.4.1"
+		"vite": "^8.0.16"
 	},
 	"dependencies": {
 		"animejs": "^4.0.2",
