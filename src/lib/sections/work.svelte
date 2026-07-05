@@ -45,8 +45,9 @@
 			workScrollState.active = true;
 
 			if (workScrollState.active) {
-				let style = window.getComputedStyle(listContainer);
-				let matrix = new WebKitCSSMatrix(style.transform);
+				const style = window.getComputedStyle(listContainer);
+				const transform = style.transform === "none" ? "matrix(1, 0, 0, 1, 0, 0)" : style.transform;
+				const matrix = new DOMMatrix(transform);
 
 				this.initialPosition = matrix.m41;
 			}

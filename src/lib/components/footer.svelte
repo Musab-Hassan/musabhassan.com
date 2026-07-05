@@ -89,6 +89,10 @@
                     <p class="large-text" bind:this={statusElement}>
                         i am currently accepting freelance work, <br>you may reach me on my email.
                     </p>
+                {:else if dataState.siteData!.availablity_date === "TBD"}
+                    <p class="large-text" bind:this={statusElement}>
+                        I am currently not available for freelance work, <br> but you may reach me on my email for any inquiries.
+                    </p>
                 {:else}
                     <p class="large-text" bind:this={statusElement}>
                         i am available for freelance work after <br> {dataState.siteData.availablity_date}.
