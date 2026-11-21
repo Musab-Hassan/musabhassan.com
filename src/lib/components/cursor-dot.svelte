@@ -1,7 +1,7 @@
 <script lang="ts">
 
-	import { loadPagePromise } from "$lib/store";
-	import { workScrollState, viewPortState } from "$lib/state.svelte";
+	import { loadPagePromise } from "#lib/store.js";
+	import { workScrollState, viewPortState } from "#lib/state.svelte.js";
 
 	// Svelte class toggles for hover-container
 	let hover: boolean = $state(false);

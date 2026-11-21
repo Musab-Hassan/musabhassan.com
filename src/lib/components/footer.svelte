@@ -1,10 +1,10 @@
 <script lang="ts">
 
     import { onMount } from "svelte";
-    import { letterSlideIn, maskSlideIn } from "$lib/animations";
-    import { loadPagePromise } from "$lib/store";
-    import { onScrolledIntoView } from "$lib/utils";
-    import { dataState } from "$lib/state.svelte";
+    import { letterSlideIn, maskSlideIn } from "#lib/animations.js";
+    import { loadPagePromise } from "#lib/store.js";
+    import { onScrolledIntoView } from "#lib/utils.js";
+    import { dataState } from "#lib/state.svelte.js";
 
     let footerContainerElement: HTMLElement = $state()!
     let logoElement: HTMLElement = $state()!; 

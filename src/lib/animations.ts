@@ -1,6 +1,6 @@
 import BezierEasing from "bezier-easing";
 import { animate, stagger } from "animejs";
-import { workScrollState } from "$lib/state.svelte";
+import { workScrollState } from "#lib/state.svelte.js";
 import { quintOut } from "svelte/easing";
 
 // Intro Letter reveal animation used declaratively with the 'in:' svelte directive or programmatically with anime.js

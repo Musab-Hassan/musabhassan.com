@@ -2,9 +2,9 @@
 
 	import { animate, stagger } from "animejs";
 	import { onMount } from "svelte";
-	import { loadPagePromise } from "$lib/store";
-	import { loadImage } from "$lib/utils";
-    import { scrollAnchorState, viewPortState } from "$lib/state.svelte";
+	import { loadPagePromise } from "#lib/store.js";
+	import { loadImage } from "#lib/utils.js";
+    import { scrollAnchorState, viewPortState } from "#lib/state.svelte.js";
 
 	// DOM Node Binds for animations
 	let homeContainerElement: HTMLElement = $state()!; // Container

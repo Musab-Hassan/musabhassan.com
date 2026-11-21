@@ -1,9 +1,9 @@
 <script lang="ts">
 
     import { onMount } from "svelte";
-    import { waitForElementTransition } from '$lib/wait-for-element-transition';
-    import { imgPromises, loaderAnimationResolve } from "$lib/store";
-    import { dataState } from "$lib/state.svelte";
+    import { waitForElementTransition } from '#lib/wait-for-element-transition.js';
+    import { imgPromises, loaderAnimationResolve } from "#lib/store.js";
+    import { dataState } from "#lib/state.svelte.js";
 
     let loader: HTMLElement = $state()!;
     let loadingDone = $state(false);
