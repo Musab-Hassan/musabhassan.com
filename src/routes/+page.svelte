@@ -2,16 +2,16 @@
 
 	import slickScroll from "slickscrolljs";
 	import { onMount } from "svelte";
-	import { loaderAnimationPromise, loadPageResolve, imgPromises } from "$lib/store";
-	import { devMsg, fetchJsonData } from "$lib/utils";
-	import HomeSection from "$lib/sections/home.svelte";
-	import WorkSection from "$lib/sections/work.svelte";
-	import AboutSection from "$lib/sections/about.svelte";
-	import NavComponent from "$lib/components/nav.svelte"
-	import Footer from "$lib/components/footer.svelte";
-	import CursorDot from "$lib/components/cursor-dot.svelte"
-	import Loader from "$lib/components/loader.svelte";
-    import { dataState, viewPortState } from "$lib/state.svelte";
+	import { loaderAnimationPromise, loadPageResolve, imgPromises } from "#lib/store.js";
+	import { devMsg, fetchJsonData } from "#lib/utils.js";
+	import HomeSection from "#lib/sections/home.svelte";
+	import WorkSection from "#lib/sections/work.svelte";
+	import AboutSection from "#lib/sections/about.svelte";
+	import NavComponent from "#lib/components/nav.svelte"
+	import Footer from "#lib/components/footer.svelte";
+	import CursorDot from "#lib/components/cursor-dot.svelte"
+	import Loader from "#lib/components/loader.svelte";
+    import { dataState, viewPortState } from "#lib/state.svelte.js";
 
 	let scrollContainer: HTMLElement = $state()!;
 	let navBar: HTMLElement = $state()!;

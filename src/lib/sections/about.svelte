@@ -1,10 +1,10 @@
 <script lang="ts">
 
 	import { onMount } from "svelte";
-	import { loadPagePromise } from "$lib/store";
-	import { letterSlideIn, maskSlideIn } from "$lib/animations";
-	import { loadImage, onScrolledIntoView } from "$lib/utils";
-    import { scrollAnchorState, viewPortState } from "$lib/state.svelte";
+	import { loadPagePromise } from "#lib/store.js";
+	import { letterSlideIn, maskSlideIn } from "#lib/animations.js";
+	import { loadImage, onScrolledIntoView } from "#lib/utils.js";
+    import { scrollAnchorState, viewPortState } from "#lib/state.svelte.js";
 
 	let section1Element: HTMLElement;
 	let section2Element: HTMLElement;

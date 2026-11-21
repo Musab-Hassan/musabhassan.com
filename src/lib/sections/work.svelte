@@ -3,11 +3,11 @@
 	import { getGPUTier } from 'detect-gpu';
 	import { onMount } from "svelte";
 	import { fade } from "svelte/transition";
-	import { ImageRenderer } from "$lib/effects/work-slider/renderer";
-	import { letterSlideIn, letterSlideOut, maskSlideIn, maskSlideOut, workImageIntro, workListIntro } from "$lib/animations";
-	import { loadPagePromise } from "$lib/store";
-	import { dataState, scrollAnchorState, viewPortState, workScrollState } from "$lib/state.svelte";
-	import { loadImage, onScrolledIntoView } from "$lib/utils";
+	import { ImageRenderer } from "#lib/effects/work-slider/renderer.js";
+	import { letterSlideIn, letterSlideOut, maskSlideIn, maskSlideOut, workImageIntro, workListIntro } from "#lib/animations.js";
+	import { loadPagePromise } from "#lib/store.js";
+	import { dataState, scrollAnchorState, viewPortState, workScrollState } from "#lib/state.svelte.js";
+	import { loadImage, onScrolledIntoView } from "#lib/utils.js";
 
 
 	let workContainer: HTMLElement;

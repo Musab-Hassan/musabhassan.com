@@ -1,10 +1,10 @@
 <script lang="ts">
 
 	import { animate } from "animejs";
-	import { loadPagePromise } from "$lib/store";
-	import { maskSlideIn } from "$lib/animations";
-	import { browser } from "$app/environment";
-    import { scrollAnchorState } from "$lib/state.svelte";
+	import { loadPagePromise } from "#lib/store.js";
+	import { maskSlideIn } from "#lib/animations.js";
+	import { browser } from "$app/env";
+    import { scrollAnchorState } from "#lib/state.svelte.js";
 	interface Props {
 		// Scroll container to allow scrolling when anchors are clicked
 		scrollContainer: HTMLElement;
